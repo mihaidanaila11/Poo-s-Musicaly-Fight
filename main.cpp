@@ -1,136 +1,168 @@
 #include <iostream>
-#include <array>
-#include <chrono>
-#include <thread>
 
+#include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
+#include <cmath>
 
-#include <Helper.h>
+#define GAME_TITLE      "Poo's Musicaly Fight"
 
-//////////////////////////////////////////////////////////////////////
-/// NOTE: this include is needed for environment-specific fixes     //
-/// You can remove this include and the call from main              //
-/// if you have tested on all environments, and it works without it //
-#include "env_fixes.h"                                              //
-//////////////////////////////////////////////////////////////////////
+class Entity {
+    sf::Image image;
+    sf::Texture texture;
+    sf::Sprite sprite;
 
-
-//////////////////////////////////////////////////////////////////////
-/// This class is used to test that the memory leak checks work as expected even when using a GUI
-class SomeClass {
 public:
-    explicit SomeClass(int) {}
+    Entity(const sf::Image &image_, const float& scaleX, const float& scaleY) : image(image_) {
+        if (!texture.loadFromImage(image)) {
+            std::cout << "Trouble loading texture image!\n";
+        } else {
+            sprite.setTexture(texture);
+            sprite.setScale(scaleX, scaleY);
+        }
+    }
+
+    Entity(const sf::Image &image_, const float& scaleX, const float& scaleY, const float& posX, const float& posY) : image(image_) {
+        if (!texture.loadFromImage(image)) {
+            std::cout << "Trouble loading texture image!\n";
+        } else {
+            sprite.setTexture(texture);
+            sprite.setScale(scaleX, scaleY);
+            sprite.setPosition(posX, posY);
+        }
+    }
+
+
+    void move(sf::Vector2f vector) {
+        sprite.move(vector);
+}
+
+     sf::Sprite getSprite() const { return sprite; }
 };
 
-SomeClass *getC() {
-    return new SomeClass{2};
+class Weapon{
+public:
+    enum weapon_types{TRUMPET, KEYS, FLUTE};
+private:
+    weapon_types weapon_type;
+    Entity weapon;
+
+    int damage;
+
+public:
+    Weapon(weapon_types weapon_type_, const sf::Image& image_, const float& scaleX, const float& scaleY, const float& posX, const float& posY) :
+        weapon_type(weapon_type_), weapon(image_, scaleX, scaleY, posX, posY){
+        switch (weapon_type) {
+            case TRUMPET:
+                damage = 25;
+            case KEYS:
+                damage = 40;
+            case FLUTE:
+                damage = 50;
+        }
+    }
+
+    Entity getEntity() const { return weapon; }
+
+};
+
+class Player{
+    int health = 100;
+    float speed;
+    Entity player;
+    Weapon weapon;
+
+    std::vector<sf::Sprite> sprites;
+
+public:
+    Player(const int& health_, const sf::Image& player_image_, const float& scaleX, const float& scaleY,
+           const float& posX, const float& posY, const Weapon::weapon_types weapon_type_,
+           const sf::Image& weapon_image_, const float& speed_) :
+    health(health_), speed(speed_), player(player_image_,
+                                           3.f, 3.f, posX, posY), weapon(weapon_type_, weapon_image_,
+                                                                            2.3, 2.3,
+                                                                            posX + 0.75 * player_image_.getSize().x * scaleX,
+                                                                            posY + 0.40 * player_image_.getSize().y * scaleY){
+        sprites.push_back(player.getSprite());
+        sprites.push_back(weapon.getEntity().getSprite());
+    }
+
+    std::vector<sf::Sprite> getSprites() const{ return sprites; }
+    float getSpeed() const { return speed; }
+
+    void moveSprites(float offsetX, float offsetY) {
+        for (auto &sprite: sprites) {
+            sprite.move(offsetX, offsetY);
+        }
+    }
+
+};
+
+void loadImage(sf::Image& image, const std::string& file_path){
+    if(!image.loadFromFile(file_path)){
+        std::cout << "Trouble at loading Image File\n";
+    }
 }
-//////////////////////////////////////////////////////////////////////
 
-
-int main() {
-    ////////////////////////////////////////////////////////////////////////
-    /// NOTE: this function call is needed for environment-specific fixes //
-    init_threads();                                                       //
-    ////////////////////////////////////////////////////////////////////////
-    ///
-    std::cout << "Hello, world!\n";
-    std::array<int, 100> v{};
-    int nr;
-    std::cout << "Introduceți nr: ";
-    /////////////////////////////////////////////////////////////////////////
-    /// Observație: dacă aveți nevoie să citiți date de intrare de la tastatură,
-    /// dați exemple de date de intrare folosind fișierul tastatura.txt
-    /// Trebuie să aveți în fișierul tastatura.txt suficiente date de intrare
-    /// (în formatul impus de voi) astfel încât execuția programului să se încheie.
-    /// De asemenea, trebuie să adăugați în acest fișier date de intrare
-    /// pentru cât mai multe ramuri de execuție.
-    /// Dorim să facem acest lucru pentru a automatiza testarea codului, fără să
-    /// mai pierdem timp de fiecare dată să introducem de la zero aceleași date de intrare.
-    ///
-    /// Pe GitHub Actions (bife), fișierul tastatura.txt este folosit
-    /// pentru a simula date introduse de la tastatură.
-    /// Bifele verifică dacă programul are erori de compilare, erori de memorie și memory leaks.
-    ///
-    /// Dacă nu puneți în tastatura.txt suficiente date de intrare, îmi rezerv dreptul să vă
-    /// testez codul cu ce date de intrare am chef și să nu pun notă dacă găsesc vreun bug.
-    /// Impun această cerință ca să învățați să faceți un demo și să arătați părțile din
-    /// program care merg (și să le evitați pe cele care nu merg).
-    ///
-    /////////////////////////////////////////////////////////////////////////
-    std::cin >> nr;
-    /////////////////////////////////////////////////////////////////////////
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "v[" << i << "] = ";
-        std::cin >> v[i];
+void drawSprites(sf::RenderWindow& renderWindow, const std::vector<sf::Sprite>& sprites){
+    for(const auto& i : sprites){
+        renderWindow.draw(i);
     }
-    std::cout << "\n\n";
-    std::cout << "Am citit de la tastatură " << nr << " elemente:\n";
-    for(int i = 0; i < nr; ++i) {
-        std::cout << "- " << v[i] << "\n";
-    }
-    ///////////////////////////////////////////////////////////////////////////
-    /// Pentru date citite din fișier, NU folosiți tastatura.txt. Creați-vă voi
-    /// alt fișier propriu cu ce alt nume doriți.
-    /// Exemplu:
-    /// std::ifstream fis("date.txt");
-    /// for(int i = 0; i < nr2; ++i)
-    ///     fis >> v2[i];
-    ///
-    ///////////////////////////////////////////////////////////////////////////
-    ///                Exemplu de utilizare cod generat                     ///
-    ///////////////////////////////////////////////////////////////////////////
-    Helper helper;
-    helper.help();
-    ///////////////////////////////////////////////////////////////////////////
+}
 
-    SomeClass *c = getC();
-    std::cout << c << "\n";
-    delete c;
 
-    sf::RenderWindow window;
-    ///////////////////////////////////////////////////////////////////////////
-    /// NOTE: sync with env variable APP_WINDOW from .github/workflows/cmake.yml:31
-    window.create(sf::VideoMode({800, 700}), "My Window", sf::Style::Default);
-    ///////////////////////////////////////////////////////////////////////////
-    //
-    ///////////////////////////////////////////////////////////////////////////
-    /// NOTE: mandatory use one of vsync or FPS limit (not both)            ///
-    /// This is needed so we do not burn the GPU                            ///
-    window.setVerticalSyncEnabled(true);                            ///
-    /// window.setFramerateLimit(60);                                       ///
-    ///////////////////////////////////////////////////////////////////////////
+int main(){
 
-    while(window.isOpen()) {
-        bool shouldExit = false;
-        sf::Event e{};
-        while(window.pollEvent(e)) {
-            switch(e.type) {
-            case sf::Event::Closed:
-                window.close();
-                break;
-            case sf::Event::Resized:
-                std::cout << "New width: " << window.getSize().x << '\n'
-                          << "New height: " << window.getSize().y << '\n';
-                break;
-            case sf::Event::KeyPressed:
-                std::cout << "Received key " << (e.key.code == sf::Keyboard::X ? "X" : "(other)") << "\n";
-                if(e.key.code == sf::Keyboard::Escape)
-                    shouldExit = true;
-                break;
-            default:
-                break;
+    sf::RenderWindow window{sf::VideoMode{800,600}, GAME_TITLE, sf::Style::Default};
+    window.setVerticalSyncEnabled(true);
+
+    // #    Loading Images for textures
+    sf::Image trumpet;
+    loadImage(trumpet, "Textures/Weapons/Trumpet.png");
+
+    sf::Image dummy;
+    loadImage(dummy, "Textures/Dummy.png");
+
+    // #    ---
+
+
+    Player player(100, dummy, 2.3f, 2.3f, 0,0, Weapon::weapon_types::TRUMPET, trumpet, 2.3f);
+
+    while(window.isOpen()){
+
+        sf::Event event{};
+        while (window.pollEvent(event)){
+            switch (event.type) {
+                case sf::Event::Closed:
+                    window.close();
+
+                default:
+                    continue;
             }
         }
-        if(shouldExit) {
-            window.close();
-            break;
-        }
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(300ms);
+        std::cout << player.getSprites()[0].getPosition().x << " " << player.getSprites()[0].getPosition().y << "\n";
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) &&
+        player.getSprites()[0].getPosition().y > 0){
+            player.moveSprites(0.f, -player.getSpeed());
 
-        window.clear();
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::S) &&
+        player.getSprites()[0].getPosition().y + floor(player.getSprites()[0].getTexture()->getSize().y) * player.getSprites()[0].getScale().y < 600){
+            player.moveSprites(0.f,player.getSpeed());
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) &&
+        player.getSprites()[0].getPosition().x > 0){
+            player.moveSprites(-player.getSpeed(),0.f);
+        }
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::D) &&
+        player.getSprites()[0].getPosition().x + floor(player.getSprites()[0].getTexture()->getSize().x) * player.getSprites()[0].getScale().x < 800){
+            player.moveSprites(player.getSpeed(),0.f);
+        }
+
+        window.clear(sf::Color(143, 143, 143));
+        drawSprites(window, player.getSprites());
         window.display();
+
     }
+
     return 0;
 }
