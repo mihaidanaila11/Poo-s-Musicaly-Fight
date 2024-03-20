@@ -147,7 +147,7 @@ target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE generated/include)
 # target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ext/<SomeHppLib>/include)
 target_include_directories(${PROJECT_NAME} SYSTEM PRIVATE ${SFML_SOURCE_DIR}/include)
 target_link_directories(${PROJECT_NAME} PRIVATE ${SFML_BINARY_DIR}/lib)
-target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-system Threads::Threads)
+target_link_libraries(${PROJECT_NAME} PRIVATE sfml-graphics sfml-window sfml-audio sfml-system Threads::Threads)
 
 if(APPLE)
 elseif(UNIX)
@@ -159,7 +159,7 @@ endif()
 # copy binaries to "bin" folder; these are uploaded as artifacts on each release
 # update name in .github/workflows/cmake.yml:29 when changing "bin" name here
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
-# install(DIRECTORY some_dir1 some_dir2 DESTINATION bin)
+install(DIRECTORY Textures DESTINATION bin)
 # install(FILES some_file1.txt some_file2.md DESTINATION bin)
 if(APPLE)
     install(FILES launcher.command DESTINATION bin)
