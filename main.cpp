@@ -3,6 +3,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <SFML/Audio.hpp>
 
 #define GAME_TITLE      "Poo's Musicaly Fight"
 
@@ -95,7 +96,7 @@ public:
         sprite.move(vector);
     }
 
-    const sf::Sprite& getSprite() const { return sprite; }
+    sf::Sprite getSprite() const { return sprite; }
     float getSpeed() const { return speed; }
 
 };
@@ -131,6 +132,17 @@ public:
         return os;
     }
 
+    void attack(sf::SoundBuffer& soundBuffer){
+        if(!soundBuffer.loadFromFile("Sound/Weapons/Trumpet.oog")){
+            std::cout << "Error loading Trumpet Sound File!";
+            return;
+        }
+
+        sf::Sound sound;
+        sound.setBuffer(soundBuffer);
+        sound.play();
+    }
+
     Entity getEntity() const { return weapon; }
 
 };
@@ -164,8 +176,8 @@ public:
             health(health_), player(player_image_,frameCount, facing,
                                                    3.f, 3.f, posX, posY, speed_), weapon(weapon_type_, weapon_image_,
                                                                                  2.3, 2.3,
-                                                                                 posX + 0.75 * player_image_.getSize().x * scaleX,
-                                                                                 posY + 0.40 * player_image_.getSize().y * scaleY){
+                                                                                 posX + 0.75 * player.getSprite().getTexture()->getSize().x * scaleX,
+                                                                                 posY + 0.40 * player.getSprite().getTexture()->getSize().y * scaleY){
         sprites.push_back(player.getSprite());
         sprites.push_back(weapon.getEntity().getSprite());
 
@@ -177,15 +189,17 @@ public:
         return os;
     }
 
-    const std::vector<sf::Sprite>& getSprites() const{ return sprites; }
+    std::vector<sf::Sprite> getSprites() const{ return sprites; }
 
-    const Entity& getEntity() const { return player; }
+    Entity getEntity() const { return player; }
 
     void moveSprites(float offsetX, float offsetY) {
         for (auto &sprite: sprites) {
             sprite.move(offsetX, offsetY);
         }
     }
+
+    void attack(sf::SoundBuffer& soundBuffer){ weapon.attack(soundBuffer); }
 
 };
 
@@ -203,6 +217,7 @@ void drawSprites(sf::RenderWindow& renderWindow, const std::vector<sf::Sprite>& 
 
 
 int main(){
+    std::cout << sizeof(int*);
 
     sf::RenderWindow window{sf::VideoMode{800,600}, GAME_TITLE, sf::Style::Default};
     window.setVerticalSyncEnabled(true);
@@ -221,6 +236,11 @@ int main(){
     loadImage(player_spriteSheet, "Textures/Player_SpriteSheet.png");
 
     // #    ---
+
+    // #    Loading Sounds
+
+    sf::SoundBuffer buffer;
+    //#     ---
     Player player(100, player_spriteSheet, 2, Entity::RIGHT, 2.3f, 2.3f, 0,0, Weapon::weapon_types::TRUMPET, trumpet, 2.3f);
 
     while(window.isOpen()){
@@ -252,6 +272,10 @@ int main(){
         if(sf::Keyboard::isKeyPressed(sf::Keyboard::D) &&
         player.getSprites()[0].getPosition().x + floor(player.getSprites()[0].getTexture()->getSize().x) * player.getSprites()[0].getScale().x < 800){
             player.moveSprites(player.getEntity().getSpeed(),0.f);
+        }
+
+        if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+            player.attack(buffer);
         }
 
         window.clear(sf::Color(143, 143, 143));
