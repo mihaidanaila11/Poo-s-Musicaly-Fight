@@ -27,10 +27,15 @@ private:
 
 public:
     //Constructor de copiere
+
+    //Ignor warning pt constructor de copiere pt ca face parte din cerinta
+    //NOLINTNEXTLINE
     Entity(const Entity& other) : image(other.image), textureRect(other.textureRect), texture(other.texture),
         sprite(other.sprite), frameSize(other.frameSize), frameCount(other.frameCount), facing(other.facing), speed(other.speed){}
 
     // Constructor operator= de copiere
+    //Ignor warning pt operator= pt ca face parte din cerinta
+    //NOLINTNEXTLINE
     Entity& operator= (const Entity& other){
         image = other.image;
         textureRect = other.textureRect;
@@ -58,9 +63,27 @@ public:
         }
     }
 
-    Entity(const std::string texture_path, const float& scaleX,
+    Entity(const std::string& texture_path, const float& scaleX,
            const float& scaleY, const float& posX, const float& posY) :
-           textureRect(0,0,0,0), frameCount(0), facing(RIGHT) {
+           textureRect(0,0,0,0), frameCount(0), facing(RIGHT), speed(0) {
+
+        if(!image.loadFromFile(texture_path)){
+            std::cout << "Trouble loading image!\n";
+        }
+        frameSize = image.getSize().x;
+        if (!texture.loadFromImage(image)) {
+            std::cout << "Trouble loading texture!\n";
+        } else {
+            sprite.setTexture(texture);
+            sprite.setScale(scaleX, scaleY);
+            sprite.setPosition(posX, posY);
+        }
+    }
+
+    Entity(const std::string& texture_path, const float& scaleX,
+           const float& scaleY, const float& posX, const float& posY, const int speed_) :
+            textureRect(0,0,0,0), frameCount(0), facing(RIGHT), speed(speed_) {
+
         if(!image.loadFromFile(texture_path)){
             std::cout << "Trouble loading image!\n";
         }
@@ -126,7 +149,7 @@ private:
     int damage;
 
 public:
-    Weapon(weapon_types weapon_type_, const std::string texture_path, const float& scaleX, const float& scaleY, const float& posX, const float& posY) :
+    Weapon(weapon_types weapon_type_, const std::string& texture_path, const float& scaleX, const float& scaleY, const float& posX, const float& posY) :
         weapon_type(weapon_type_), weapon(texture_path, scaleX, scaleY, posX, posY){
         switch (weapon_type) {
             case TRUMPET:
@@ -141,7 +164,7 @@ public:
         }
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Weapon weapon_){
+    friend std::ostream& operator<<(std::ostream& os, const Weapon& weapon_){
         os << "Weapon Type: " << weapon_.weapon_type << ", Weapon Damange: " << weapon_.damage << "\n";
 
         return os;
@@ -160,9 +183,6 @@ public:
 
     Entity getEntity() { return weapon; }
 
-    void setPosition(float x, float y){
-
-    }
 
 };
 
@@ -179,9 +199,9 @@ private:
 public:
     Player(const int& health_, const std::string& texture_path, const float& scaleX, const float& scaleY,
            const float& posX, const float& posY, const Weapon::weapon_types weapon_type_,
-           const std::string& weapon_texture_path, const float& speed_) :
+           const std::string& weapon_texture_path, const int& speed_) :
     health(health_), player(texture_path,
-                                           3.f, 3.f, posX, posY), weapon(weapon_type_, weapon_texture_path,
+                                           3.f, 3.f, posX, posY, speed_), weapon(weapon_type_, weapon_texture_path,
                                                                             2.3, 2.3,
                                                                             posX, posY){
         //De optimizat/schimbat:
@@ -251,6 +271,16 @@ public:
 
 };
 
+class Enemy{
+    Entity& target;
+    int health;
+
+public:
+    Enemy(Entity& target_, const int health_) : target(target_), health(health_){
+        
+    }
+};
+
 class Scene{
     sf::RenderWindow window;
     sf::Event event;
@@ -258,7 +288,8 @@ class Scene{
 
 public:
     Scene(const unsigned int windowWidth, const unsigned int windowHeight, const std::vector<std::string>& image_paths) :
-    window(sf::VideoMode{windowWidth, windowHeight}, GAME_TITLE, sf::Style::Default){
+    window(sf::VideoMode{windowWidth, windowHeight}, GAME_TITLE, sf::Style::Default),
+    event(){
         window.setVerticalSyncEnabled(true);
         for(const auto& path : image_paths){
             sf::Image image;
@@ -289,6 +320,7 @@ public:
 class Game{
     Scene scene;
     Player player;
+    std::vector<Entity> enemies;
 
 public:
     Game(const Scene& scene_, Player  player_) : scene(scene_), player(std::move(player_)){
