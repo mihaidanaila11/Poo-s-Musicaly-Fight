@@ -74,7 +74,7 @@ public:
         }
     }
 
-    Entity(const std::string texture_path, const int frameCount_ , const direction& facing_, const float& scaleX,
+    Entity(const std::string& texture_path, const int frameCount_ , const direction& facing_, const float& scaleX,
            const float& scaleY, const float& posX, const float& posY, const float& speed_) :
            frameCount(frameCount_), facing(facing_), speed(speed_) {
         if(!image.loadFromFile(texture_path)){
@@ -357,35 +357,11 @@ void drawSprites(sf::RenderWindow& renderWindow, const std::vector<sf::Sprite>& 
 
 int main(){
 
-    sf::RenderWindow window{sf::VideoMode{800,600}, GAME_TITLE, sf::Style::Default};
-    window.setVerticalSyncEnabled(true);
-
-    // #    Loading Images for textures
-    sf::Image trumpet;
-    loadImage(trumpet, "Textures/Weapons/Trumpet.png");
-
-    sf::Image dummy;
-    loadImage(dummy, "Textures/Dummy.png");
-
-    sf::Image player_1;
-    loadImage(dummy, "Textures/Player.png");
-
-    sf::Image player_spriteSheet;
-    loadImage(player_spriteSheet, "Textures/Player_SpriteSheet.png");
-
-    // #    ---
-
-    // #    Loading Sounds
-
-    //sf::SoundBuffer buffer;
-    //#     ---
-    ;
-
     Game game{Scene{800, 600, std::vector<std::string>{
             "Textures/Weapons/Trumpet.png",
             "Textures/Dummy.png",
             "Textures/Player.png"
-    }}, Player(100, "Textures/Player.png", 2, Entity::RIGHT, 2.3f, 2.3f,
+    }}, Player(100, "Textures/Player_SpriteSheet.png", 2, Entity::RIGHT, 2.3f, 2.3f,
     0,0, Weapon::weapon_types::TRUMPET, "Textures/Weapons/Trumpet.png", 0.5f)};
 
     return 0;
