@@ -18,8 +18,8 @@ private:
     sf::Texture texture;
     sf::Sprite sprite;
 
-    int frameSize;
-    int frameCount;
+    unsigned int frameSize;
+    unsigned int frameCount;
 
 
     direction facing;
@@ -81,7 +81,7 @@ public:
     }
 
     Entity(const std::string& texture_path, const float& scaleX,
-           const float& scaleY, const float& posX, const float& posY, const int speed_) :
+           const float& scaleY, const float& posX, const float& posY, const float& speed_) :
             textureRect(0,0,0,0), frameCount(0), facing(RIGHT), speed(speed_) {
 
         if(!image.loadFromFile(texture_path)){
@@ -132,7 +132,9 @@ public:
         sprite.move(vector);
     }
 
-    sf::Sprite getSprite()  { return sprite; }
+
+    sf::Sprite& getSprite() { return sprite; }
+    sf::Texture& getTexture() { return texture; }
     float getSpeed() const { return speed; }
 
 
@@ -169,6 +171,8 @@ public:
 
         return os;
     }
+
+
 /*
     void attack(sf::SoundBuffer& soundBuffer){
         if(!soundBuffer.loadFromFile("Sound/Weapons/Trumpet.oog")){
@@ -199,7 +203,7 @@ private:
 public:
     Player(const int& health_, const std::string& texture_path, const float& scaleX, const float& scaleY,
            const float& posX, const float& posY, const Weapon::weapon_types weapon_type_,
-           const std::string& weapon_texture_path, const int& speed_) :
+           const std::string& weapon_texture_path, const float& speed_) :
     health(health_), player(texture_path,
                                            3.f, 3.f, posX, posY, speed_), weapon(weapon_type_, weapon_texture_path,
                                                                             2.3, 2.3,
@@ -243,6 +247,7 @@ public:
 
     Entity& getEntity()  { return player; }
 
+
     void moveSprites(Entity::direction dir) {
         float offsetX=0, offsetY=0;
 
@@ -272,14 +277,21 @@ public:
 };
 
 class Enemy{
+    Entity enemy;
     Entity& target;
     int health;
 
 public:
-    Enemy(Entity& target_, const int health_) : target(target_), health(health_){
-        
+    Enemy(const std::string& texture_path, const float& scaleX, const float& scaleY,
+          const float& posX, const float& posY,const float& speed_, Entity& target_, const int health_) :
+          enemy(texture_path, scaleX, scaleY, posX, posY), target(target_), health(health_){
+
+        //TODO Thread de urmarire player!
     }
+
+    Entity& getEntity() { return enemy; }
 };
+
 
 class Scene{
     sf::RenderWindow window;
@@ -320,11 +332,10 @@ public:
 class Game{
     Scene scene;
     Player player;
-    std::vector<Entity> enemies;
+    std::vector<Enemy> enemies;
 
 public:
     Game(const Scene& scene_, Player  player_) : scene(scene_), player(std::move(player_)){
-
         gameProc();
     }
 
@@ -333,14 +344,17 @@ private:
         switch (event.type) {
             case sf::Event::Closed:
                 scene.close();
-
-
             default:
                 break;
         }
     }
 
+    void addEnemy(const float x, const float y){
+        enemies.emplace_back("Textures/Dummy.png", 2.3f, 2.3f, x, y, 0, player.getEntity(), 25);
+    }
+
     void gameProc(){
+        addEnemy(300.f, 300.f);
         while(scene.isOpen()){
             while(scene.pollEvent()){
                 handleEvents(scene.getEvent());
@@ -365,8 +379,15 @@ private:
             }
 
             scene.clear();
-            scene.draw(player.getSprites()[0]);
-            scene.draw(player.getSprites()[1]);
+
+            for(auto& sprite : player.getSprites()){
+                scene.draw(sprite);
+            }
+
+            for(auto& enemy : enemies){
+                scene.draw(enemy.getEntity().getSprite());
+            }
+
             scene.display();
 
         }
