@@ -348,6 +348,8 @@ public:
         gameProc();
     }
 
+    void start(){ gameProc(); }
+
 private:
     void handleEvents(const sf::Event& event){
         switch (event.type) {
@@ -431,6 +433,8 @@ int main(){
             "Textures/Grass.jpg"
     }}, Player(100, "Textures/Player_SpriteSheet.png", 2, Entity::RIGHT, 2.3f, 2.3f,
                0,0, Weapon::weapon_types::TRUMPET, "Textures/Weapons/Trumpet.png", 7.5f)};
+
+    game.start();
 
     return 0;
 }
