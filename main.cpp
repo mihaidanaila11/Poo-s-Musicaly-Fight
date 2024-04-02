@@ -73,7 +73,7 @@ public:
     }
 
     Entity(const std::string& texture_path, const float& scaleX,
-           const float& scaleY, const float& posX, const float& posY) :
+           const float& scaleY, const double& posX, const double& posY) :
             textureRect(0,0,0,0), frameCount(0), facing(RIGHT), speed(0) {
 
         if(!image.loadFromFile(texture_path)){
@@ -85,7 +85,7 @@ public:
         } else {
             sprite.setTexture(texture);
             sprite.setScale(scaleX, scaleY);
-            sprite.setPosition(posX, posY);
+            sprite.setPosition(static_cast<float>(posX), static_cast<float>(posY));
         }
     }
 
@@ -161,7 +161,7 @@ private:
     int damage;
 
 public:
-    Weapon(weapon_types weapon_type_, const std::string& texture_path, const float& scaleX, const float& scaleY, const float& posX, const float& posY) :
+    Weapon(weapon_types weapon_type_, const std::string& texture_path, const float& scaleX, const float& scaleY, const double& posX, const double& posY) :
             weapon_type(weapon_type_), weapon(texture_path, scaleX, scaleY, posX, posY){
         switch (weapon_type) {
             case TRUMPET:
@@ -268,7 +268,7 @@ public:
 class Enemy{
     Entity enemy;
     Player& target;
-    int speed;
+    float speed;
 
 
 public:
