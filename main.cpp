@@ -31,7 +31,7 @@ public:
     //Ignor warning pt constructor de copiere pt ca face parte din cerinta
     //NOLINTNEXTLINE
     Entity(const Entity& other) : image(other.image), textureRect(other.textureRect), texture(other.texture),
-        sprite(other.sprite), frameSize(other.frameSize), frameCount(other.frameCount), facing(other.facing), speed(other.speed){}
+                                  sprite(other.sprite), frameSize(other.frameSize), frameCount(other.frameCount), facing(other.facing), speed(other.speed){}
 
     // Constructor operator= de copiere
     //Ignor warning pt operator= pt ca face parte din cerinta
@@ -54,7 +54,7 @@ public:
         std::cout << "Destructorul a fost apelat!\n";
     }
     Entity(const sf::Image &image_, const float& scaleX, const float& scaleY) : image(image_), textureRect(0,0,0,0), frameSize(image_.getSize().x),
-    frameCount(0), facing(RIGHT), speed(0){
+                                                                                frameCount(0), facing(RIGHT), speed(0){
         if (!texture.loadFromImage(image)) {
             std::cout << "Trouble loading texture image!\n";
         } else {
@@ -65,7 +65,7 @@ public:
 
     Entity(const std::string& texture_path, const float& scaleX,
            const float& scaleY, const float& posX, const float& posY) :
-           textureRect(0,0,0,0), frameCount(0), facing(RIGHT), speed(0) {
+            textureRect(0,0,0,0), frameCount(0), facing(RIGHT), speed(0) {
 
         if(!image.loadFromFile(texture_path)){
             std::cout << "Trouble loading image!\n";
@@ -99,7 +99,7 @@ public:
 
     Entity(const std::string& texture_path, const int frameCount_ , const direction& facing_, const float& scaleX,
            const float& scaleY, const float& posX, const float& posY, const float& speed_) :
-           frameCount(frameCount_), facing(facing_), speed(speed_) {
+            frameCount(frameCount_), facing(facing_), speed(speed_) {
         if(!image.loadFromFile(texture_path)){
             std::cout << "Trouble loading image!\n";
         }
@@ -118,7 +118,7 @@ public:
     // Operator <<
     friend std::ostream& operator<<(std::ostream& os, const Entity& entity){
         os << "Texture Size: " << entity.texture.getSize().x << "/" << entity.texture.getSize().y << ", Frame Count: "
-        << entity.frameCount << ", Facing Direction: " << entity.facing << "\n";
+           << entity.frameCount << ", Facing Direction: " << entity.facing << "\n";
 
         return os;
     }
@@ -152,7 +152,7 @@ private:
 
 public:
     Weapon(weapon_types weapon_type_, const std::string& texture_path, const float& scaleX, const float& scaleY, const float& posX, const float& posY) :
-        weapon_type(weapon_type_), weapon(texture_path, scaleX, scaleY, posX, posY){
+            weapon_type(weapon_type_), weapon(texture_path, scaleX, scaleY, posX, posY){
         switch (weapon_type) {
             case TRUMPET:
                 damage = 25;
@@ -204,10 +204,10 @@ public:
     Player(const int& health_, const std::string& texture_path, const float& scaleX, const float& scaleY,
            const float& posX, const float& posY, const Weapon::weapon_types weapon_type_,
            const std::string& weapon_texture_path, const float& speed_) :
-    health(health_), player(texture_path,
-                                           3.f, 3.f, posX, posY, speed_), weapon(weapon_type_, weapon_texture_path,
-                                                                            2.3, 2.3,
-                                                                            posX, posY){
+            health(health_), player(texture_path,
+                                    3.f, 3.f, posX, posY, speed_), weapon(weapon_type_, weapon_texture_path,
+                                                                          2.3, 2.3,
+                                                                          posX, posY){
         //De optimizat/schimbat:
         sf::Image image;
 
@@ -226,11 +226,11 @@ public:
            const float& posX, const float& posY, const Weapon::weapon_types weapon_type_,
            const std::string& weapon_texture_path, const float& speed_) :
             health(health_), player(texture_path,frameCount, facing,
-                                                   3.f, 3.f, posX, posY, speed_),
-                                                   weapon(weapon_type_, weapon_texture_path,
-                                                          2.3, 2.3,
-                                                          posX + 0.75 * player.getSprite().getTexture()->getSize().x * scaleX,
-                                                          posY + 0.40 * player.getSprite().getTexture()->getSize().y * scaleY){
+                                    3.f, 3.f, posX, posY, speed_),
+            weapon(weapon_type_, weapon_texture_path,
+                   2.3, 2.3,
+                   posX + 0.75 * player.getSprite().getTexture()->getSize().x * scaleX,
+                   posY + 0.40 * player.getSprite().getTexture()->getSize().y * scaleY){
         sprites.push_back(player.getSprite());
         sprites.push_back(weapon.getEntity().getSprite());
 
@@ -248,21 +248,21 @@ public:
     Entity& getEntity()  { return player; }
 
 
-    void moveSprites(Entity::direction dir) {
+    void moveSprites(Entity::direction dir, float delta) {
         float offsetX=0, offsetY=0;
 
         if(dir == Entity::RIGHT){
-            offsetX = player.getSpeed();
+            offsetX = player.getSpeed() * delta;
 
         }
         else if(dir == Entity::LEFT){
-            offsetX = -player.getSpeed();
+            offsetX = -player.getSpeed() * delta;
         }
         else if(dir == Entity::UP){
-            offsetY = -player.getSpeed();
+            offsetY = -player.getSpeed() * delta;
         }
         else if(dir == Entity::DOWN){
-            offsetY = player.getSpeed();
+            offsetY = player.getSpeed() * delta;
         }
 
         std::cout << offsetX << " " << offsetY << "\n";
@@ -284,7 +284,7 @@ class Enemy{
 public:
     Enemy(const std::string& texture_path, const float& scaleX, const float& scaleY,
           const float& posX, const float& posY,const float& speed_, Entity& target_, const int health_) :
-          enemy(texture_path, scaleX, scaleY, posX, posY), target(target_), health(health_){
+            enemy(texture_path, scaleX, scaleY, posX, posY), target(target_), health(health_){
 
         //TODO Thread de urmarire player!
     }
@@ -300,8 +300,8 @@ class Scene{
 
 public:
     Scene(const unsigned int windowWidth, const unsigned int windowHeight, const std::vector<std::string>& image_paths) :
-    window(sf::VideoMode{windowWidth, windowHeight}, GAME_TITLE, sf::Style::Default),
-    event(){
+            window(sf::VideoMode{windowWidth, windowHeight}, GAME_TITLE, sf::Style::Default),
+            event(){
         window.setVerticalSyncEnabled(true);
         for(const auto& path : image_paths){
             sf::Image image;
@@ -316,7 +316,7 @@ public:
     Scene(const Scene& other) : window(sf::VideoMode{other.window.getSize().x,
                                                      other.window.getSize().y},
                                        GAME_TITLE, sf::Style::Default),
-                                       event(other.event), images(other.images){}
+                                event(other.event), images(other.images){}
 
     sf::Event getEvent() const { return event; }
     bool isOpen() { return window.isOpen(); }
@@ -355,27 +355,33 @@ private:
 
     void gameProc(){
         addEnemy(300.f, 300.f);
+
+        sf::Clock clock;
+        float delta;
+
         while(scene.isOpen()){
+            delta = clock.restart().asSeconds() * 60;
+
             while(scene.pollEvent()){
                 handleEvents(scene.getEvent());
             }
 
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::W) &&
                player.getSprites()[0].getPosition().y > 0){
-                player.moveSprites(Entity::UP);
+                player.moveSprites(Entity::UP, delta);
 
             }
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::S) &&
                player.getSprites()[0].getPosition().y + floor(player.getSprites()[0].getTexture()->getSize().y) * player.getSprites()[0].getScale().y < 600){
-                player.moveSprites(Entity::DOWN);
+                player.moveSprites(Entity::DOWN, delta);
             }
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::A) &&
                player.getSprites()[0].getPosition().x > 0){
-                player.moveSprites(Entity::LEFT);
+                player.moveSprites(Entity::LEFT, delta);
             }
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::D) &&
                player.getSprites()[0].getPosition().x + floor(player.getSprites()[0].getTexture()->getSize().x) * player.getSprites()[0].getScale().x < 800){
-                player.moveSprites(Entity::RIGHT);
+                player.moveSprites(Entity::RIGHT, delta);
             }
 
             scene.clear();
@@ -415,7 +421,7 @@ int main(){
             "Textures/Dummy.png",
             "Textures/Player.png"
     }}, Player(100, "Textures/Player_SpriteSheet.png", 2, Entity::RIGHT, 2.3f, 2.3f,
-    0,0, Weapon::weapon_types::TRUMPET, "Textures/Weapons/Trumpet.png", 0.5f)};
+               0,0, Weapon::weapon_types::TRUMPET, "Textures/Weapons/Trumpet.png", 7.5f)};
 
     return 0;
 }
