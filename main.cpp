@@ -273,7 +273,7 @@ class Enemy{
 
 public:
     Enemy(const std::string& texture_path, const float& scaleX, const float& scaleY,
-          const float& posX, const float& posY,const float& speed_, Player& target_, const int health_) :
+          const float& posX, const float& posY,const float& speed_, Player& target_) :
             enemy(texture_path, scaleX, scaleY, posX, posY), target(target_), speed(speed_){
 
         //TODO Thread de urmarire player!
@@ -363,7 +363,7 @@ private:
     }
 
     void addEnemy(const float x, const float y){
-        enemies.emplace_back("Textures/Dummy.png", 2.3f, 2.3f, x, y, 2.5f, player, 25);
+        enemies.emplace_back("Textures/Dummy.png", 2.3f, 2.3f, x, y, 2.5f, player);
     }
 
     void gameProc(){
