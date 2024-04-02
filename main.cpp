@@ -8,6 +8,15 @@
 
 #define GAME_TITLE      "Poo's Musicaly Fight"
 
+sf::Vector2f normalize(const sf::Vector2f& source)
+{
+    float length = sqrt((source.x * source.x) + (source.y * source.y));
+    if (length != 0)
+        return {source.x / length, source.y / length};
+    else
+        return source;
+}
+
 class Entity {
 public:
     enum direction{LEFT, RIGHT, UP, DOWN};
@@ -136,6 +145,7 @@ public:
     sf::Sprite& getSprite() { return sprite; }
     sf::Texture& getTexture() { return texture; }
     float getSpeed() const { return speed; }
+    sf::Vector2f getPosition() const { return sprite.getPosition(); };
 
 
 
@@ -201,26 +211,6 @@ private:
 
 
 public:
-    Player(const int& health_, const std::string& texture_path, const float& scaleX, const float& scaleY,
-           const float& posX, const float& posY, const Weapon::weapon_types weapon_type_,
-           const std::string& weapon_texture_path, const float& speed_) :
-            health(health_), player(texture_path,
-                                    3.f, 3.f, posX, posY, speed_), weapon(weapon_type_, weapon_texture_path,
-                                                                          2.3, 2.3,
-                                                                          posX, posY){
-        //De optimizat/schimbat:
-        sf::Image image;
-
-        if(!image.loadFromFile(weapon_texture_path)){
-            std::cout << "Trouble loading image!\n";
-        }
-
-        weapon.getEntity().setPosition(posX + 0.75 * image.getSize().x * scaleX,
-                                       posY + 0.40 * image.getSize().y * scaleY);
-        sprites.push_back(player.getSprite());
-        sprites.push_back(weapon.getEntity().getSprite());
-
-    }
 
     Player(const int& health_, const std::string& texture_path, const int frameCount, const Entity::direction& facing, const float& scaleX, const float& scaleY,
            const float& posX, const float& posY, const Weapon::weapon_types weapon_type_,
@@ -246,6 +236,7 @@ public:
     std::vector<sf::Sprite> getSprites() const{ return sprites; }
 
     Entity& getEntity()  { return player; }
+    sf::Vector2f getPosition() const { return player.getPosition(); }
 
 
     void moveSprites(Entity::direction dir, float delta) {
@@ -265,8 +256,6 @@ public:
             offsetY = player.getSpeed() * delta;
         }
 
-        std::cout << offsetX << " " << offsetY << "\n";
-
         for (auto &sprite: sprites) {
             sprite.move(offsetX, offsetY);
         }
@@ -281,15 +270,29 @@ class Enemy{
     Entity& target;
     int health;
 
+
 public:
     Enemy(const std::string& texture_path, const float& scaleX, const float& scaleY,
           const float& posX, const float& posY,const float& speed_, Entity& target_, const int health_) :
             enemy(texture_path, scaleX, scaleY, posX, posY), target(target_), health(health_){
 
         //TODO Thread de urmarire player!
+        std::cout << "Inainte\n";
+
+        std::cout << "Dupa\n";
+    }
+
+
+    void followTarget(){
+        while(!enemy.getSprite().getTextureRect().intersects(target.getSprite().getTextureRect())){
+            std::cout << "alo";
+            sf::Vector2f direction = normalize(enemy.getPosition() - target.getPosition());
+            enemy.move(sf::Vector2f{0.4f * direction.x, 0.4f * direction.y});
+        }
     }
 
     Entity& getEntity() { return enemy; }
+    Entity& getTarget() const { return target; }
 };
 
 
@@ -326,6 +329,9 @@ public:
     void close() { window.close(); }
     bool pollEvent() { return window.pollEvent(event); }
     sf::Event& getEvent() { return event; }
+    sf::Vector2u getWindowSize() const { return window.getSize(); }
+
+    std::vector<sf::Image>& getImages(){ return images; }
 
 };
 
@@ -334,8 +340,21 @@ class Game{
     Player player;
     std::vector<Enemy> enemies;
 
+    sf::Sprite background;
+
 public:
     Game(const Scene& scene_, Player  player_) : scene(scene_), player(std::move(player_)){
+        sf::Texture texture;
+        sf::IntRect rect{0, 0, (int)scene.getWindowSize().x, (int)scene.getWindowSize().y};
+        texture.setRepeated(true);
+
+        if(!texture.loadFromImage(scene.getImages()[3])){
+            std::cout << "Trouble loading Image!\n";
+        }
+
+
+        background.setTexture(texture);
+        background.setTextureRect(rect);
         gameProc();
     }
 
@@ -384,7 +403,17 @@ private:
                 player.moveSprites(Entity::RIGHT, delta);
             }
 
+            for(auto& enemy : enemies){
+                sf::Vector2f  direction = normalize(enemy.getEntity().getPosition() - player.getSprites()[0].getPosition());
+                std::cout << "X " << direction.x << " Y " << direction.y << "\n";
+                direction.x *= -2.5f * delta;
+                direction.y *= -2.5f * delta;
+                //std::cout << direction.x << " " << direction.y << "\n";
+                enemy.getEntity().move(direction);
+            }
+
             scene.clear();
+            scene.draw(background);
 
             for(auto& sprite : player.getSprites()){
                 scene.draw(sprite);
@@ -397,6 +426,7 @@ private:
             scene.display();
 
         }
+
 
     }
 };
@@ -419,7 +449,8 @@ int main(){
     Game game{Scene{800, 600, std::vector<std::string>{
             "Textures/Weapons/Trumpet.png",
             "Textures/Dummy.png",
-            "Textures/Player.png"
+            "Textures/Player.png",
+            "Textures/Grass.jpg"
     }}, Player(100, "Textures/Player_SpriteSheet.png", 2, Entity::RIGHT, 2.3f, 2.3f,
                0,0, Weapon::weapon_types::TRUMPET, "Textures/Weapons/Trumpet.png", 7.5f)};
 
