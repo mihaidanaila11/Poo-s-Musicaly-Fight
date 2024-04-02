@@ -236,7 +236,7 @@ public:
     std::vector<sf::Sprite> getSprites() const{ return sprites; }
 
     Entity& getEntity()  { return player; }
-    sf::Vector2f getPosition() const { return player.getPosition(); }
+    sf::Vector2f getPosition() const { return sprites[0].getPosition(); }
 
 
     void moveSprites(Entity::direction dir, float delta) {
@@ -267,15 +267,14 @@ public:
 
 class Enemy{
     Entity enemy;
-    Entity& target;
-    int health;
+    Player& target;
     int speed;
 
 
 public:
     Enemy(const std::string& texture_path, const float& scaleX, const float& scaleY,
-          const float& posX, const float& posY,const float& speed_, Entity& target_, const int health_) :
-            enemy(texture_path, scaleX, scaleY, posX, posY), target(target_), health(health_), speed(speed_){
+          const float& posX, const float& posY,const float& speed_, Player& target_, const int health_) :
+            enemy(texture_path, scaleX, scaleY, posX, posY), target(target_), speed(speed_){
 
         //TODO Thread de urmarire player!
         std::cout << "Inainte\n";
@@ -285,6 +284,7 @@ public:
 
     Entity& getEntity() { return enemy; }
     float getSpeed() const { return speed; }
+    Player& getTarget() const { return target; }
 };
 
 
@@ -363,7 +363,7 @@ private:
     }
 
     void addEnemy(const float x, const float y){
-        enemies.emplace_back("Textures/Dummy.png", 2.3f, 2.3f, x, y, 2.5f, player.getEntity(), 25);
+        enemies.emplace_back("Textures/Dummy.png", 2.3f, 2.3f, x, y, 2.5f, player, 25);
     }
 
     void gameProc(){
@@ -398,11 +398,10 @@ private:
             }
 
             for(auto& enemy : enemies){
-                sf::Vector2f  direction = normalize(enemy.getEntity().getPosition() - player.getSprites()[0].getPosition());
-                std::cout << "X " << direction.x << " Y " << direction.y << "\n";
+                sf::Vector2f  direction = normalize(enemy.getEntity().getPosition() - enemy.getTarget().getPosition());
                 direction.x *= -enemy.getSpeed() * delta;
                 direction.y *= -enemy.getSpeed() * delta;
-                //std::cout << direction.x << " " << direction.y << "\n";
+
                 enemy.getEntity().move(direction);
             }
 
