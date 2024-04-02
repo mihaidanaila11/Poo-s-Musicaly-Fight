@@ -212,7 +212,7 @@ private:
 
 public:
 
-    Player(const int& health_, const std::string& texture_path, const int frameCount, const Entity::direction& facing, const float& scaleX, const float& scaleY,
+    Player(const int& health_, const std::string& texture_path, const int frameCount, const Entity::direction& facing, const double& scaleX, const double& scaleY,
            const double& posX, const double& posY, const Weapon::weapon_types weapon_type_,
            const std::string& weapon_texture_path, const float& speed_) :
             health(health_), player(texture_path,frameCount, facing,
