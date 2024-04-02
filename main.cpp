@@ -282,17 +282,7 @@ public:
         std::cout << "Dupa\n";
     }
 
-
-    void followTarget(){
-        while(!enemy.getSprite().getTextureRect().intersects(target.getSprite().getTextureRect())){
-            std::cout << "alo";
-            sf::Vector2f direction = normalize(enemy.getPosition() - target.getPosition());
-            enemy.move(sf::Vector2f{0.4f * direction.x, 0.4f * direction.y});
-        }
-    }
-
     Entity& getEntity() { return enemy; }
-    Entity& getTarget() const { return target; }
 };
 
 
@@ -355,7 +345,6 @@ public:
 
         background.setTexture(texture);
         background.setTextureRect(rect);
-        gameProc();
     }
 
 private:
@@ -431,18 +420,6 @@ private:
     }
 };
 
-void loadImage(sf::Image& image, const std::string& file_path){
-    if(!image.loadFromFile(file_path)){
-        std::cout << "Trouble at loading Image File\n";
-    }
-}
-
-void drawSprites(sf::RenderWindow& renderWindow, const std::vector<sf::Sprite>& sprites){
-    for(const auto& i : sprites){
-        renderWindow.draw(i);
-    }
-}
-
 
 int main(){
 
@@ -453,6 +430,8 @@ int main(){
             "Textures/Grass.jpg"
     }}, Player(100, "Textures/Player_SpriteSheet.png", 2, Entity::RIGHT, 2.3f, 2.3f,
                0,0, Weapon::weapon_types::TRUMPET, "Textures/Weapons/Trumpet.png", 7.5f)};
+
+    game.start();
 
     return 0;
 }
