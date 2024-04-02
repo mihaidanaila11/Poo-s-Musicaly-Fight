@@ -345,6 +345,7 @@ public:
 
         background.setTexture(texture);
         background.setTextureRect(rect);
+        gameProc();
     }
 
 private:
@@ -365,10 +366,10 @@ private:
         addEnemy(300.f, 300.f);
 
         sf::Clock clock;
-        float delta;
+
 
         while(scene.isOpen()){
-            delta = clock.restart().asSeconds() * 60;
+            float delta = clock.restart().asSeconds() * 60;
 
             while(scene.pollEvent()){
                 handleEvents(scene.getEvent());
@@ -430,8 +431,6 @@ int main(){
             "Textures/Grass.jpg"
     }}, Player(100, "Textures/Player_SpriteSheet.png", 2, Entity::RIGHT, 2.3f, 2.3f,
                0,0, Weapon::weapon_types::TRUMPET, "Textures/Weapons/Trumpet.png", 7.5f)};
-
-    game.start();
 
     return 0;
 }
