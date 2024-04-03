@@ -92,7 +92,7 @@ public:
     }
 
     Entity(const std::string& texture_path, const float& scaleX,
-           const float& scaleY, const double& posX, const double& posY, const float& speed_) :
+           const float& scaleY, const float& posX, const float& posY, const float& speed_) :
             textureRect(0,0,0,0), frameCount(0), facing(RIGHT), speed(speed_) {
 
         if(!image.loadFromFile(texture_path)){
@@ -109,7 +109,7 @@ public:
     }
 
     Entity(const std::string& texture_path, const int frameCount_ , const direction& facing_, const float& scaleX,
-           const float& scaleY, const double& posX, const double& posY, const float& speed_) :
+           const float& scaleY, const float& posX, const float& posY, const float& speed_) :
             frameCount(frameCount_), facing(facing_), speed(speed_) {
         if(!image.loadFromFile(texture_path)){
             std::cout << "Trouble loading image!\n";
@@ -203,13 +203,13 @@ private:
 
 public:
 
-    Player(const int& health_, const std::string& texture_path, const int frameCount, const Entity::direction& facing, const double& scaleX, const double& scaleY,
-           const double& posX, const double& posY, const Weapon::weapon_types weapon_type_,
+    Player(const int& health_, const std::string& texture_path, const int frameCount, const Entity::direction& facing, const float& scaleX, const float& scaleY,
+           const float& posX, const float& posY, const Weapon::weapon_types weapon_type_,
            const std::string& weapon_texture_path, const float& speed_) :
             health(health_), player(texture_path,frameCount, facing,
                                     3.f, 3.f, posX, posY, speed_),
             weapon(weapon_type_, weapon_texture_path,
-                   (double)2.3, (double)2.3,
+                   2.3, 2.3,
                    posX + 0.75 * player.getSprite().getTexture()->getSize().x * scaleX,
                    posY + 0.40 * player.getSprite().getTexture()->getSize().y * scaleY){
         sprites.push_back(player.getSprite());
@@ -261,7 +261,7 @@ class Enemy{
 
 
 public:
-    Enemy(const sf::Image image, const float& scaleX, const float& scaleY,
+    Enemy(const sf::Image& image, const float& scaleX, const float& scaleY,
           const float& posX, const float& posY,const float& speed_, Player& target_) :
             enemy(image, scaleX, scaleY, posX, posY), target(target_), speed(speed_){}
 
