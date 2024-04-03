@@ -209,7 +209,7 @@ public:
             health(health_), player(texture_path,frameCount, facing,
                                     3.f, 3.f, posX, posY, speed_),
             weapon(weapon_type_, weapon_texture_path,
-                   2.3, 2.3,
+                   (double)2.3, (double)2.3,
                    posX + 0.75 * player.getSprite().getTexture()->getSize().x * scaleX,
                    posY + 0.40 * player.getSprite().getTexture()->getSize().y * scaleY){
         sprites.push_back(player.getSprite());
