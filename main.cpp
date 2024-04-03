@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <utility>
-//#include <SFML/Audio.hpp>
+#include <SFML/Audio.hpp>
 
 #define GAME_TITLE      "Poo's Musicaly Fight"
 
@@ -62,13 +62,15 @@ public:
     ~Entity() {
         std::cout << "Destructorul a fost apelat!\n";
     }
-    Entity(const sf::Image &image_, const float& scaleX, const float& scaleY) : image(image_), textureRect(0,0,0,0), frameSize(image_.getSize().x),
+    Entity(const sf::Image &image_, const float& scaleX, const float& scaleY,
+           const double& posX, const double& posY) : image(image_), textureRect(0,0,0,0), frameSize(image_.getSize().x),
                                                                                 frameCount(0), facing(RIGHT), speed(0){
         if (!texture.loadFromImage(image)) {
             std::cout << "Trouble loading texture image!\n";
         } else {
             sprite.setTexture(texture);
             sprite.setScale(scaleX, scaleY);
+            sprite.setPosition(static_cast<float>(posX), static_cast<float>(posY));
         }
     }
 
@@ -142,6 +144,8 @@ public:
     }
 
 
+
+
     sf::Sprite& getSprite() { return sprite; }
     sf::Texture& getTexture() { return texture; }
     float getSpeed() const { return speed; }
@@ -181,19 +185,6 @@ public:
 
         return os;
     }
-
-
-/*
-    void attack(sf::SoundBuffer& soundBuffer){
-        if(!soundBuffer.loadFromFile("Sound/Weapons/Trumpet.oog")){
-            std::cout << "Error loading Trumpet Sound File!";
-            return;
-        }
-
-        sf::Sound sound;
-        sound.setBuffer(soundBuffer);
-        sound.play();
-    }*/
 
     Entity getEntity() { return weapon; }
 
@@ -235,7 +226,6 @@ public:
 
     std::vector<sf::Sprite> getSprites() const{ return sprites; }
 
-    Entity& getEntity()  { return player; }
     sf::Vector2f getPosition() const { return sprites[0].getPosition(); }
 
 
@@ -261,7 +251,6 @@ public:
         }
     }
 
-    //void attack(sf::SoundBuffer& soundBuffer){ weapon.attack(soundBuffer); }
 
 };
 
@@ -272,15 +261,13 @@ class Enemy{
 
 
 public:
+    Enemy(const sf::Image image, const float& scaleX, const float& scaleY,
+          const float& posX, const float& posY,const float& speed_, Player& target_) :
+            enemy(image, scaleX, scaleY, posX, posY), target(target_), speed(speed_){}
+
     Enemy(const std::string& texture_path, const float& scaleX, const float& scaleY,
           const float& posX, const float& posY,const float& speed_, Player& target_) :
-            enemy(texture_path, scaleX, scaleY, posX, posY), target(target_), speed(speed_){
-
-        //TODO Thread de urmarire player!
-        std::cout << "Inainte\n";
-
-        std::cout << "Dupa\n";
-    }
+            enemy(texture_path, scaleX, scaleY, posX, posY), target(target_), speed(speed_){}
 
     Entity& getEntity() { return enemy; }
     float getSpeed() const { return speed; }
@@ -363,13 +350,14 @@ private:
     }
 
     void addEnemy(const float x, const float y){
-        enemies.emplace_back("Textures/Dummy.png", 2.3f, 2.3f, x, y, 2.5f, player);
+        Enemy enemy = *new Enemy{"Textures/Dummy.png", 2.3f, 2.3f, x, y, 2.5f, player};
+        enemies.push_back(enemy);
     }
 
     void gameProc(){
-        addEnemy(300.f, 300.f);
 
         sf::Clock clock;
+        sf::Clock enemySpawnClock;
 
 
         while(scene.isOpen()){
@@ -395,6 +383,18 @@ private:
             if(sf::Keyboard::isKeyPressed(sf::Keyboard::D) &&
                player.getSprites()[0].getPosition().x + floor(player.getSprites()[0].getTexture()->getSize().x) * player.getSprites()[0].getScale().x < 800){
                 player.moveSprites(Entity::RIGHT, delta);
+            }
+
+            if(enemySpawnClock.getElapsedTime().asSeconds() >= 2){
+                int x = rand() % scene.getWindowSize().x + 1;
+                int y = rand() % scene.getWindowSize().y + 1;
+                while(x == player.getSprites()[0].getPosition().x &&
+                        y == player.getSprites()[0].getPosition().y){
+                    x = rand() % scene.getWindowSize().x + 1;
+                    y = rand() % scene.getWindowSize().y + 1;
+                }
+                addEnemy(x, y);
+                enemySpawnClock.restart();
             }
 
             for(auto& enemy : enemies){
