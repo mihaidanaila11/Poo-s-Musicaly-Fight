@@ -436,12 +436,11 @@ class Game {
 
     bool paused;
 
-    int score;
 
     sf::Sprite background;
 
 public:
-    Game(const Scene &scene_, Player player_) : scene(scene_), player(std::move(player_)), attackCooldown(), paused(false), score(0) {
+    Game(const Scene &scene_, Player player_) : scene(scene_), player(std::move(player_)), attackCooldown(), paused(false){
         sf::Texture texture;
         sf::IntRect rect{0, 0, (int) scene.getWindowSize().x, (int) scene.getWindowSize().y};
         texture.setRepeated(true);
