@@ -197,6 +197,32 @@ public:
 
 };
 
+class Enemy{
+    Entity enemy;
+    float speed;
+
+    int health;
+
+public:
+    Enemy(const sf::Image& image, const float& scaleX, const float& scaleY,
+          const float& posX, const float& posY,const int& health_, const float& speed_) :
+            enemy(image, scaleX, scaleY, posX, posY), speed(speed_), health(health_){}
+
+    Enemy(const std::string& texture_path, const float& scaleX, const float& scaleY,
+          const float& posX, const float& posY, const int& health_, const float& speed_) :
+            enemy(texture_path, scaleX, scaleY, posX, posY), speed(speed_), health(health_){}
+
+    Entity& getEntity() { return enemy; }
+    float getSpeed() const { return speed; }
+
+    void damage(int damage, std::vector<Enemy>& enemies, int index){
+        health -= damage;
+        if(health <= 0){
+            enemies.erase(enemies.begin() + index);
+        }
+    }
+};
+
 class Player{
 private:
     int health = 100;
@@ -257,29 +283,38 @@ public:
         }
     }
 
+    bool intersect(sf::Sprite& sprite1, sf::Sprite& sprite2) const {
+        float offset = 10.f;
 
+        float x1 = sprite1.getPosition().x - offset;
+        float y1 = sprite1.getPosition().y - offset;
+        float x2 = x1 + ((float)sprite1.getTexture()->getSize().x * sprite1.getScale().x) + offset;
+        float y2 = y1 + ((float)sprite1.getTexture()->getSize().y * sprite1.getScale().y) + offset;
+
+        float x3 = sprite2.getPosition().x;
+        float y3 = sprite2.getPosition().y;
+        float x4 = x3 + ((float)sprite2.getTexture()->getSize().x * sprite2.getScale().x);
+        float y4 = y3 + ((float)sprite2.getTexture()->getSize().y * sprite2.getScale().y);
+
+        if(x1 > x4 || x3 > x2){
+            return false;
+        }
+
+        if(y2 < y3 || y4 < y1){
+            return false;
+        }
+
+        return true;
+    }
+
+    void attack(std::vector<Enemy>& targets){
+        for(unsigned int i=0; i<targets.size(); i++){
+            if(intersect(sprites[0], targets[i].getEntity().getSprite())){
+                targets[i].damage(50, targets, i);
+            }
+        }
+    }
 };
-
-class Enemy{
-    Entity enemy;
-    Player& target;
-    float speed;
-
-
-public:
-    Enemy(const sf::Image& image, const float& scaleX, const float& scaleY,
-          const float& posX, const float& posY,const float& speed_, Player& target_) :
-            enemy(image, scaleX, scaleY, posX, posY), target(target_), speed(speed_){}
-
-    Enemy(const std::string& texture_path, const float& scaleX, const float& scaleY,
-          const float& posX, const float& posY,const float& speed_, Player& target_) :
-            enemy(texture_path, scaleX, scaleY, posX, posY), target(target_), speed(speed_){}
-
-    Entity& getEntity() { return enemy; }
-    float getSpeed() const { return speed; }
-    Player& getTarget() const { return target; }
-};
-
 
 class Scene{
     sf::RenderWindow window;
@@ -399,13 +434,20 @@ private:
                 if(event.key.scancode == 37){
                     paused = true;
                 }
+                else if(event.key.scancode == sf::Keyboard::Scan::Space){
+                    std::vector<Entity> entities;
+                    for(auto& enemy : enemies){
+                        entities.push_back(enemy.getEntity());
+                    }
+                    player.attack(enemies);
+                }
             default:
                 break;
         }
     }
 
     void addEnemy(const float x, const float y){
-        Enemy enemy = *new Enemy{"Textures/Dummy.png", 2.3f, 2.3f, x, y, 2.5f, player};
+        Enemy enemy = *new Enemy{"Textures/Dummy.png", 2.3f, 2.3f, x, y, 50, 2.5f};
         enemies.push_back(enemy);
     }
 
@@ -509,7 +551,7 @@ private:
                 player.moveSprites(Entity::RIGHT, delta);
             }
 
-            if(enemySpawnClock.getElapsedTime().asSeconds() >= 2 && enemies.size() < 5){
+            if(enemySpawnClock.getElapsedTime().asSeconds() >= 2 && enemies.size() < 1){
                 int x = rand() % scene.getWindowSize().x + 1;
                 int y = rand() % scene.getWindowSize().y + 1;
                 while(x == player.getSprites()[0].getPosition().x &&
@@ -522,7 +564,7 @@ private:
             }
 
             for(auto& enemy : enemies){
-                sf::Vector2f  direction = normalize(enemy.getEntity().getPosition() - enemy.getTarget().getPosition());
+                sf::Vector2f  direction = normalize(enemy.getEntity().getPosition() - player.getSprites()[0].getPosition());
                 direction.x *= -enemy.getSpeed() * delta;
                 direction.y *= -enemy.getSpeed() * delta;
 
