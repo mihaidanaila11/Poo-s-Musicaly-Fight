@@ -6,7 +6,7 @@
 #include <utility>
 #include <SFML/Audio.hpp>
 
-#define GAME_TITLE      "Poo's Musicaly Fight"
+const std::string GAME_TITLE   =   "Poo's Musicaly Fight";
 
 sf::Vector2f normalize(const sf::Vector2f& source)
 {
@@ -36,6 +36,12 @@ private:
 
 public:
     //Constructor de copiere
+
+
+    //TODO comentarii mai explicite
+    //TODO DE BAGAT OPERATORI DE AFISARE PT RESTU CLASELOR;
+    //TODO GRUP DE INAMICI
+    //TODO FUNCTIONALITATE DE QUIT
 
     //Ignor warning pt constructor de copiere pt ca face parte din cerinta
     //NOLINTNEXTLINE
@@ -303,7 +309,9 @@ public:
     sf::Event getEvent() const { return event; }
     bool isOpen() { return window.isOpen(); }
     void clear(){ window.clear(); }
-    void draw(const sf::Sprite& sprite) { window.draw(sprite); }
+
+    template<typename T>
+    void draw(const T& sprite) { window.draw(sprite); }
     void display() { window.display(); }
     void close() { window.close(); }
     bool pollEvent() { return window.pollEvent(event); }
@@ -314,15 +322,57 @@ public:
 
 };
 
+class Button{
+    sf::Texture texture;
+    sf::Sprite button;
+    sf::Font font;
+    sf::Text text;
+
+public:
+    Button(const std::string& image_path, const std::string& font_path, const std::string& text_){
+        sf::Image image;
+        image.loadFromFile(image_path);
+        texture.loadFromImage(image);
+
+        button.setTexture(texture);
+
+        font.loadFromFile(font_path);
+        text.setFont(font);
+        text.setString(text_);
+
+        text.setPosition(button.getPosition());
+    }
+
+    std::pair<sf::Sprite, sf::Text> getButton() const {
+        return std::pair<sf::Sprite, sf::Text>{button, text};
+    }
+
+    void setPosition(sf::Vector2f vector){
+        button.setPosition(vector);
+        text.setPosition(vector);
+    }
+
+    bool clicked(sf::Event::MouseButtonEvent mouse){
+        sf::IntRect checkRect{static_cast<int>(button.getPosition().x),
+                              static_cast<int>(button.getPosition().y),
+                              static_cast<int>(button.getTexture()->getSize().x),
+                              static_cast<int>(button.getTexture()->getSize().y)};
+
+        return checkRect.contains(mouse.x, mouse.y);
+    }
+};
+
 class Game{
     Scene scene;
     Player player;
     std::vector<Enemy> enemies;
 
+    bool paused;
+
     sf::Sprite background;
 
 public:
-    Game(const Scene& scene_, Player  player_) : scene(scene_), player(std::move(player_)){
+    Game(const Scene& scene_, Player  player_) : scene(scene_), player(std::move(player_)), paused(false){
         sf::Texture texture;
         sf::IntRect rect{0, 0, (int)scene.getWindowSize().x, (int)scene.getWindowSize().y};
         texture.setRepeated(true);
@@ -344,6 +394,11 @@ private:
         switch (event.type) {
             case sf::Event::Closed:
                 scene.close();
+            case sf::Event::KeyPressed:
+                //37 is the key code for ESC
+                if(event.key.scancode == 37){
+                    paused = true;
+                }
             default:
                 break;
         }
@@ -354,14 +409,82 @@ private:
         enemies.push_back(enemy);
     }
 
+    void renderSprites(){
+
+        for(auto& sprite : player.getSprites()){
+            scene.draw(sprite);
+        }
+
+        for(auto& enemy : enemies){
+            scene.draw(enemy.getEntity().getSprite());
+        }
+    }
+
+    void pause(){
+        Button resume("Textures/Buton.png", "daydream_3/Daydream.ttf", "Resume");
+        resume.setPosition(sf::Vector2f{250,100});
+
+        Button quit("Textures/Buton.png", "daydream_3/Daydream.ttf", "Quit");
+        quit.setPosition(sf::Vector2f{250,400});
+
+        while(paused){
+            while(scene.pollEvent()){
+                switch (scene.getEvent().type) {
+                    case sf::Event::Closed:
+                        scene.close();
+                        return;
+
+                    case sf::Event::KeyPressed:
+                        //37 is the key code for ESC
+                        if(scene.getEvent().key.scancode == 37){
+                            paused = false;
+                            return;
+                        }
+
+                    case sf::Event::MouseButtonPressed:
+                        if(scene.getEvent().mouseButton.button == sf::Mouse::Left){
+
+                            if(resume.clicked(scene.getEvent().mouseButton)){
+                                paused = false;
+                                return;
+                            }
+                            else if(quit.clicked(scene.getEvent().mouseButton)){
+                                scene.close();
+                                return;
+                            }
+                        }
+
+                    default:
+                        break;
+                }
+            }
+            scene.clear();
+
+            scene.draw(background);
+            renderSprites();
+            scene.draw(std::get<0>(resume.getButton()));
+            scene.draw(std::get<1>(resume.getButton()));
+
+            scene.draw(std::get<0>(quit.getButton()));
+            scene.draw(std::get<1>(quit.getButton()));
+
+            scene.display();
+        }
+    }
+
     void gameProc(){
 
         sf::Clock clock;
         sf::Clock enemySpawnClock;
 
-
         while(scene.isOpen()){
             float delta = clock.restart().asSeconds() * 60;
+
+            if(paused) {
+                pause();
+                clock.restart();
+                delta = clock.getElapsedTime().asSeconds() * 60;
+            }
 
             while(scene.pollEvent()){
                 handleEvents(scene.getEvent());
@@ -397,7 +520,9 @@ private:
                 enemySpawnClock.restart();
             }
 
-            for(auto& enemy : enemies){
+
+
+            for(auto& enemy : enemies){;
                 sf::Vector2f  direction = normalize(enemy.getEntity().getPosition() - enemy.getTarget().getPosition());
                 direction.x *= -enemy.getSpeed() * delta;
                 direction.y *= -enemy.getSpeed() * delta;
@@ -405,17 +530,10 @@ private:
                 enemy.getEntity().move(direction);
             }
 
+
             scene.clear();
             scene.draw(background);
-
-            for(auto& sprite : player.getSprites()){
-                scene.draw(sprite);
-            }
-
-            for(auto& enemy : enemies){
-                scene.draw(enemy.getEntity().getSprite());
-            }
-
+            renderSprites();
             scene.display();
 
         }
