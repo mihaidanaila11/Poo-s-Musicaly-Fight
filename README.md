@@ -1,8 +1,13 @@
 # POO's Musicaly Fight!
 
 ### Descriere
-POO's Musicaly Fight este un joc de tip wave fighting ce foloseste muzica drept arma principala!
-Jucatorul trebuie să elimine valuri de inamici care devin din ce în ce mai periculoși!
+POO's Musicaly Fight este un joc de tip wave fighting ce folosește muzica drept armă principală!
+Jucătorul trebuie să elimine valuri de inamici care devin din ce în ce mai periculoși!
+
+### Controale:
+- Movement: W,A,S,D (SUS, STANGA, JOS, DREAPTA)
+- Attack: SPACE
+- Pause: ESC
 
 ### Important!
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
