@@ -248,6 +248,12 @@ public:
           const float &posX, const float &posY, const int &health_, const float &speed_) :
             enemy(texture_path, scaleX, scaleY, posX, posY), speed(speed_), health(health_) {}
 
+    friend std::ostream &operator<<(std::ostream &os, const Enemy &enemy_) {
+        os << "Health: " << enemy_.health << ", Speed: " << enemy_.speed << "\n";
+
+        return os;
+    }
+
     Entity &getEntity() { return enemy; }
 
     float getSpeed() const { return speed; }
@@ -290,7 +296,7 @@ public:
 
 
     friend std::ostream &operator<<(std::ostream &os, const Player &player_) {
-        os << "Health: " << player_.health << "\n";
+        os << "Health: " << player_.health << ", Alive?: " << player_.alive << "\n";
 
         return os;
     }
@@ -365,6 +371,12 @@ public:
                                        GAME_TITLE, sf::Style::Default),
                                 event(other.event), images(other.images) {}
 
+    friend std::ostream &operator<<(std::ostream &os, const Scene &scene_) {
+        os << "Window size: " << scene_.window.getSize().x << "x" << scene_.window.getSize().y<< "\n";
+
+        return os;
+    }
+
     sf::Event getEvent() const { return event; }
 
     bool isOpen() { return window.isOpen(); }
@@ -390,7 +402,7 @@ public:
 
 class Button {
     sf::Texture texture;
-    sf::Sprite button;
+    sf::Sprite sprite;
     sf::Font font;
     sf::Text text;
 
@@ -400,29 +412,36 @@ public:
         image.loadFromFile(image_path);
         texture.loadFromImage(image);
 
-        button.setTexture(texture);
+        sprite.setTexture(texture);
 
         font.loadFromFile(font_path);
         text.setFont(font);
         text.setString(text_);
 
-        text.setPosition(button.getPosition());
+        text.setPosition(sprite.getPosition());
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Button &button_) {
+        os << "Position: " << button_.sprite.getPosition().x << "," << button_.sprite.getPosition().y <<
+        " Text: " << static_cast<std::string>(button_.text.getString()) << "\n";
+
+        return os;
     }
 
     std::pair<sf::Sprite, sf::Text> getButton() const {
-        return std::pair<sf::Sprite, sf::Text>{button, text};
+        return std::pair<sf::Sprite, sf::Text>{sprite, text};
     }
 
     void setPosition(sf::Vector2f vector) {
-        button.setPosition(vector);
+        sprite.setPosition(vector);
         text.setPosition(vector);
     }
 
     bool clicked(sf::Event::MouseButtonEvent mouse) {
-        sf::IntRect checkRect{static_cast<int>(button.getPosition().x),
-                              static_cast<int>(button.getPosition().y),
-                              static_cast<int>(button.getTexture()->getSize().x),
-                              static_cast<int>(button.getTexture()->getSize().y)};
+        sf::IntRect checkRect{static_cast<int>(sprite.getPosition().x),
+                              static_cast<int>(sprite.getPosition().y),
+                              static_cast<int>(sprite.getTexture()->getSize().x),
+                              static_cast<int>(sprite.getTexture()->getSize().y)};
 
         return checkRect.contains(mouse.x, mouse.y);
     }
@@ -453,6 +472,12 @@ public:
         background.setTexture(texture);
         background.setTextureRect(rect);
         gameProc();
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Game &game_) {
+        os << "Paused?: " << game_.paused <<  "\n";
+
+        return os;
     }
 
     void start() { gameProc(); }
