@@ -463,6 +463,7 @@ private:
         switch (event.type) {
             case sf::Event::Closed:
                 scene.close();
+                break;
             case sf::Event::KeyPressed:
                 //37 is the key code for ESC
                 if (event.key.scancode == 37) {
@@ -480,6 +481,7 @@ private:
                     }
 
                 }
+                break;
             default:
                 break;
         }
@@ -513,7 +515,7 @@ private:
                 switch (scene.getEvent().type) {
                     case sf::Event::Closed:
                         scene.close();
-                        return;
+                        break;
 
                     case sf::Event::KeyPressed:
                         //37 is the key code for ESC
@@ -521,6 +523,7 @@ private:
                             paused = false;
                             return;
                         }
+                        break;
 
                     case sf::Event::MouseButtonPressed:
                         if (scene.getEvent().mouseButton.button == sf::Mouse::Left) {
@@ -533,6 +536,7 @@ private:
                                 return;
                             }
                         }
+                        break;
 
                     default:
                         break;
