@@ -477,6 +477,7 @@ private:
         sf::Clock clock;
         sf::Clock enemySpawnClock;
 
+
         while(scene.isOpen()){
             float delta = clock.restart().asSeconds() * 60;
 
@@ -520,16 +521,13 @@ private:
                 enemySpawnClock.restart();
             }
 
-
-
-            for(auto& enemy : enemies){;
+            for(auto& enemy : enemies){
                 sf::Vector2f  direction = normalize(enemy.getEntity().getPosition() - enemy.getTarget().getPosition());
                 direction.x *= -enemy.getSpeed() * delta;
                 direction.y *= -enemy.getSpeed() * delta;
 
                 enemy.getEntity().move(direction);
             }
-
 
             scene.clear();
             scene.draw(background);
