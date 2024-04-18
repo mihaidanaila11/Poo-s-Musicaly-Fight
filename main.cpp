@@ -16,7 +16,7 @@ sf::Vector2f normalize(const sf::Vector2f &source) {
         return source;
 }
 
-static bool intersect(sf::Sprite &sprite1, sf::Sprite &sprite2, bool offseted) {
+static bool intersect(sf::Sprite const& sprite1, sf::Sprite const& sprite2, bool offseted) {
     float offset;
     if(offseted){
          offset = 30.f;
@@ -80,7 +80,7 @@ public:
                                   facing(other.facing), speed(other.speed) {
 
         std::cout << "copy\n";
-        if (!texture.loadFromImage(image)) {
+        if (!texture.loadFromImage(image, textureRect)) {
             std::cout << "Trouble loading texture image!\n";
         } else {
             sprite.setTexture(texture);
@@ -194,7 +194,7 @@ public:
     }
 
 
-    sf::Sprite& getSprite() { return sprite; }
+    const sf::Sprite& getSprite() const { return sprite; }
 
     sf::Texture &getTexture() { return texture; }
 
@@ -212,14 +212,14 @@ public:
     };
 private:
     weapon_types weapon_type;
-    Entity weapon;
+    Entity entity;
 
     int damage;
 
 public:
     Weapon(weapon_types weapon_type_, const std::string &texture_path, const float &scaleX, const float &scaleY,
            const double &posX, const double &posY) :
-            weapon_type(weapon_type_), weapon(texture_path, scaleX, scaleY, posX, posY) {
+            weapon_type(weapon_type_), entity(texture_path, scaleX, scaleY, posX, posY) {
         switch (weapon_type) {
             case TRUMPET:
                 damage = 25;
@@ -239,7 +239,11 @@ public:
         return os;
     }
 
-    Entity getEntity() { return weapon; }
+    void move(sf::Vector2f vector){
+        entity.move(vector);
+    }
+
+     sf::Sprite getSprite() const { return entity.getSprite(); }
 
 
 };
@@ -285,7 +289,6 @@ private:
     Entity entity;
     Weapon weapon;
 
-    std::vector<sf::Sprite> sprites;
 
 
 public:
@@ -300,9 +303,6 @@ public:
                    2.3f, 2.3f,
                    posX + 0.75 * entity.getSprite().getTexture()->getSize().x * scaleX,
                    posY + 0.40 * entity.getSprite().getTexture()->getSize().y * scaleY) {
-        sprites.push_back(entity.getSprite());
-        sprites.push_back(weapon.getEntity().getSprite());
-
     }
 
 
@@ -312,47 +312,44 @@ public:
         return os;
     }
 
-    std::vector<sf::Sprite> getSprites() const { return sprites; }
-
-    sf::Vector2f getPosition() const { return sprites[0].getPosition(); }
+    sf::Vector2f getPosition() const { return entity.getPosition(); }
 
 
     void moveSprites(Entity::direction dir, float delta) {
-        float offsetX = 0, offsetY = 0;
+        sf::Vector2f offset{0,0};
 
         if (dir == Entity::RIGHT) {
-            if(sprites[0].getPosition().x +
-            floor(sprites[0].getTexture()->getSize().x) * entity.getSprite().getScale().x >= 800){
+            if(entity.getPosition().x +
+            floor(entity.getTexture().getSize().x) * entity.getSprite().getScale().x >= 800){
                 return;
             }
-            offsetX = entity.getSpeed() * delta;
+            offset.x = entity.getSpeed() * delta;
 
         } else if (dir == Entity::LEFT) {
-            if(sprites[0].getPosition().x <= 0){
+            if(entity.getPosition().x <= 0){
                 return;
             }
-            offsetX = -entity.getSpeed() * delta;
+            offset.x = -entity.getSpeed() * delta;
         } else if (dir == Entity::UP) {
-            if(sprites[0].getPosition().y <= 0){
+            if(entity.getPosition().y <= 0){
                 return;
             }
-            offsetY = -entity.getSpeed() * delta;
+            offset.y = -entity.getSpeed() * delta;
         } else if (dir == Entity::DOWN) {
-            if(sprites[0].getPosition().y +
-               floor(sprites[0].getTexture()->getSize().y) * entity.getSprite().getScale().y >= 600){
+            if(entity.getPosition().y +
+               floor(entity.getTexture().getSize().y) * entity.getSprite().getScale().y >= 600){
                 return;
             }
-            offsetY = entity.getSpeed() * delta;
+            offset.y = entity.getSpeed() * delta;
         }
 
-        for (auto &sprite: sprites) {
-            sprite.move(offsetX, offsetY);
-        }
+        entity.move(offset);
+        weapon.move(offset);
     }
 
     void attack(std::vector<Enemy> &targets) {
         for (unsigned int i = 0; i < targets.size(); i++) {
-            if (intersect(sprites[0], targets[i].getEntity().getSprite(), true)) {
+            if (intersect(entity.getSprite(), targets[i].getEntity().getSprite(), true)) {
                 targets[i].damage(50, targets, i);
                 return;
             }
@@ -368,6 +365,9 @@ public:
     }
 
     bool isAlive() const { return alive; }
+
+    const sf::Sprite& getSprite() { return entity.getSprite(); }
+    const Weapon& getWeapon() const { return weapon; }
 };
 
 class Scene {
@@ -554,9 +554,8 @@ private:
 
     void renderSprites() {
 
-        for (auto &sprite: player.getSprites()) {
-            scene.draw(sprite);
-        }
+        scene.draw(player.getSprite());
+        scene.draw(player.getWeapon().getSprite());
 
         for (auto &enemy: enemies) {
             scene.draw(enemy.getEntity().getSprite());
@@ -658,8 +657,8 @@ private:
             if (enemySpawnClock.getElapsedTime().asSeconds() >= 2 && enemies.size() < 10) {
                 int x = rand() % scene.getWindowSize().x + 1;
                 int y = rand() % scene.getWindowSize().y + 1;
-                while (x == player.getSprites()[0].getPosition().x &&
-                       y == player.getSprites()[0].getPosition().y) {
+                while (x == player.getPosition().x &&
+                       y == player.getPosition().y) {
                     x = rand() % scene.getWindowSize().x + 1;
                     y = rand() % scene.getWindowSize().y + 1;
                 }
@@ -669,13 +668,13 @@ private:
 
             for (auto &enemy: enemies) {
                 sf::Vector2f direction = normalize(
-                        enemy.getEntity().getPosition() - player.getSprites()[0].getPosition());
+                        enemy.getEntity().getPosition() - player.getPosition());
                 direction.x *= -enemy.getSpeed() * delta;
                 direction.y *= -enemy.getSpeed() * delta;
 
                 enemy.getEntity().move(direction);
 
-                if (intersect(player.getSprites()[0], enemy.getEntity().getSprite(), false)) {
+                if (intersect(player.getSprite(), enemy.getEntity().getSprite(), false)) {
 
                     if (damageCooldown.getElapsedTime().asSeconds() > 2) {
                         std::cout << "damage\n";
