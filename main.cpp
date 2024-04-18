@@ -76,8 +76,19 @@ public:
     //Ignor warning pt constructor de copiere pt ca face parte din cerinta
     //NOLINTNEXTLINE
     Entity(const Entity &other) : image(other.image), textureRect(other.textureRect), texture(other.texture),
-                                  sprite(other.sprite), frameSize(other.frameSize), frameCount(other.frameCount),
-                                  facing(other.facing), speed(other.speed) {}
+                                  frameSize(other.frameSize), frameCount(other.frameCount),
+                                  facing(other.facing), speed(other.speed) {
+
+        std::cout << "copy\n";
+        if (!texture.loadFromImage(image)) {
+            std::cout << "Trouble loading texture image!\n";
+        } else {
+            sprite.setTexture(texture);
+            sprite.setScale(other.sprite.getScale().x, other.sprite.getScale().y);
+            sprite.setPosition(static_cast<float>(other.sprite.getPosition().x),
+                               static_cast<float>(other.sprite.getPosition().y));
+        }
+    }
 
     // Constructor operator= de copiere
     //Ignor warning pt operator= pt ca face parte din cerinta
@@ -147,8 +158,8 @@ public:
         }
     }
 
-    Entity(const std::string &texture_path, const int frameCount_, const direction &facing_, const float &scaleX,
-           const float &scaleY, const float &posX, const float &posY, const float &speed_) :
+    Entity(const std::string &texture_path, const int& frameCount_, const direction& facing_, const float& scaleX,
+           const float& scaleY, const float& posX, const float& posY, const float& speed_) :
             frameCount(frameCount_), facing(facing_), speed(speed_) {
         if (!image.loadFromFile(texture_path)) {
             std::cout << "Trouble loading image!\n";
@@ -183,7 +194,7 @@ public:
     }
 
 
-    sf::Sprite &getSprite() { return sprite; }
+    sf::Sprite& getSprite() { return sprite; }
 
     sf::Texture &getTexture() { return texture; }
 
@@ -271,7 +282,7 @@ private:
     int health = 100;
     bool alive = true;
 
-    Entity player;
+    Entity entity;
     Weapon weapon;
 
     std::vector<sf::Sprite> sprites;
@@ -283,13 +294,13 @@ public:
            const float &scaleX, const float &scaleY,
            const float &posX, const float &posY, const Weapon::weapon_types weapon_type_,
            const std::string &weapon_texture_path, const float &speed_) :
-            health(health_), player(texture_path, frameCount, facing,
+            health(health_), entity(texture_path, frameCount, facing,
                                     3.f, 3.f, posX, posY, speed_),
             weapon(weapon_type_, weapon_texture_path,
                    2.3f, 2.3f,
-                   posX + 0.75 * player.getSprite().getTexture()->getSize().x * scaleX,
-                   posY + 0.40 * player.getSprite().getTexture()->getSize().y * scaleY) {
-        sprites.push_back(player.getSprite());
+                   posX + 0.75 * entity.getSprite().getTexture()->getSize().x * scaleX,
+                   posY + 0.40 * entity.getSprite().getTexture()->getSize().y * scaleY) {
+        sprites.push_back(entity.getSprite());
         sprites.push_back(weapon.getEntity().getSprite());
 
     }
@@ -310,14 +321,28 @@ public:
         float offsetX = 0, offsetY = 0;
 
         if (dir == Entity::RIGHT) {
-            offsetX = player.getSpeed() * delta;
+            if(sprites[0].getPosition().x +
+            floor(sprites[0].getTexture()->getSize().x) * entity.getSprite().getScale().x >= 800){
+                return;
+            }
+            offsetX = entity.getSpeed() * delta;
 
         } else if (dir == Entity::LEFT) {
-            offsetX = -player.getSpeed() * delta;
+            if(sprites[0].getPosition().x <= 0){
+                return;
+            }
+            offsetX = -entity.getSpeed() * delta;
         } else if (dir == Entity::UP) {
-            offsetY = -player.getSpeed() * delta;
+            if(sprites[0].getPosition().y <= 0){
+                return;
+            }
+            offsetY = -entity.getSpeed() * delta;
         } else if (dir == Entity::DOWN) {
-            offsetY = player.getSpeed() * delta;
+            if(sprites[0].getPosition().y +
+               floor(sprites[0].getTexture()->getSize().y) * entity.getSprite().getScale().y >= 600){
+                return;
+            }
+            offsetY = entity.getSpeed() * delta;
         }
 
         for (auto &sprite: sprites) {
@@ -365,6 +390,17 @@ public:
             images.push_back(image);
         }
     }
+
+    Scene& operator=(const Scene& other){
+        event = other.event;
+        images = other.images;
+
+        return *this;
+    }
+
+    ~Scene() = default;
+
+
 
     Scene(const Scene &other) : window(sf::VideoMode{other.window.getSize().x,
                                                      other.window.getSize().y},
@@ -512,7 +548,7 @@ private:
     }
 
     void addEnemy(const float x, const float y) {
-        Enemy enemy = *new Enemy{"Textures/Dummy.png", 2.3f, 2.3f, x, y, 50, 2.5f};
+        Enemy enemy{"Textures/Dummy.png", 2.3f, 2.3f, x, y, 50, 2.5f};
         enemies.push_back(enemy);
     }
 
@@ -605,23 +641,17 @@ private:
                 handleEvents(scene.getEvent());
             }
 
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W) &&
-                player.getSprites()[0].getPosition().y > 0) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
                 player.moveSprites(Entity::UP, delta);
 
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S) &&
-                player.getSprites()[0].getPosition().y +
-                floor(player.getSprites()[0].getTexture()->getSize().y) * player.getSprites()[0].getScale().y < 600) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
                 player.moveSprites(Entity::DOWN, delta);
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A) &&
-                player.getSprites()[0].getPosition().x > 0) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
                 player.moveSprites(Entity::LEFT, delta);
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D) &&
-                player.getSprites()[0].getPosition().x +
-                floor(player.getSprites()[0].getTexture()->getSize().x) * player.getSprites()[0].getScale().x < 800) {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
                 player.moveSprites(Entity::RIGHT, delta);
             }
 
@@ -724,3 +754,4 @@ int main() {
 }
 
 //
+//socoban
