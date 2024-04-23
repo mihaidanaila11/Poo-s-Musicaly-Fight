@@ -5,6 +5,7 @@
 #include <cmath>
 #include <utility>
 #include <SFML/Audio.hpp>
+#include <unordered_map>
 
 const std::string GAME_TITLE = "Poo's Musicaly Fight";
 
@@ -48,7 +49,6 @@ public:
     }
 
     bool intersects(const Hitbox& other){
-        //std::cout << rect.getSize().x << " " << rect.getSize().y;
         float x1 = rect.getPosition().x;
         float y1 = rect.getPosition().y;
         float x2 = x1 + ((float) rect.getSize().x);
@@ -89,9 +89,8 @@ public:
     };
 
 private:
-    sf::Image image;
     sf::IntRect textureRect;
-    sf::Texture texture;
+    sf::Texture& texture;
     sf::Sprite sprite;
 
     unsigned int frameSize;
@@ -112,26 +111,21 @@ public:
 
     //Ignor warning pt constructor de copiere pt ca face parte din cerinta
     //NOLINTNEXTLINE
-    Entity(const Entity &other) : image(other.image), textureRect(other.textureRect), texture(other.texture),
+    Entity(const Entity &other) : textureRect(other.textureRect), texture(other.texture),
     frameSize(other.frameSize), frameCount(other.frameCount), hitbox(other.hitbox),
                                   facing(other.facing), speed(other.speed) {
-
-        if (!texture.loadFromImage(image)) {
-            std::cout << "Trouble loading texture image!\n";
-        } else {
+        std::cout << "copiere\n";
             sprite.setTexture(texture);
             sprite.setTextureRect(textureRect);
             sprite.setScale(other.sprite.getScale().x, other.sprite.getScale().y);
             sprite.setPosition(static_cast<float>(other.sprite.getPosition().x),
                                static_cast<float>(other.sprite.getPosition().y));
-        }
     }
 
     // Constructor operator= de copiere
     //Ignor warning pt operator= pt ca face parte din cerinta
     //NOLINTNEXTLINE
     Entity &operator=(const Entity &other) {
-        image = other.image;
         textureRect = other.textureRect;
         texture = other.texture;
         sprite = other.sprite;
@@ -146,22 +140,16 @@ public:
 
     // Destructor
     ~Entity() {
-        //std::cout << "Destructorul a fost apelat!\n";
+        std::cout << "Destructorul a fost apelat!\n";
     }
 
-    Entity(const std::string &texture_path, const float &scaleX,
+    Entity(sf::Texture& texture_, const float &scaleX,
            const float &scaleY, const double &posX, const double &posY) :
-            textureRect(), frameCount(1), facing(RIGHT), speed(0) {
+            textureRect(), texture(texture_), frameCount(1), facing(RIGHT), speed(0) {
 
-        if (!image.loadFromFile(texture_path)) {
-            std::cout << "Trouble loading image!\n";
-        }
-        frameSize = image.getSize().x;
-        if (!texture.loadFromImage(image)) {
-            std::cout << "Trouble loading texture!\n";
-        } else {
-            textureRect.width = (int)image.getSize().x;
-            textureRect.height = (int)image.getSize().y;
+        frameSize = texture.getSize().x;
+            textureRect.width = (int)texture.getSize().x;
+            textureRect.height = (int)texture.getSize().y;
 
             sprite.setTexture(texture);
             sprite.setTextureRect(textureRect);
@@ -170,27 +158,20 @@ public:
 
             hitbox = Hitbox{sprite};
 
-        }
     }
 
-    Entity(const std::string &texture_path, const int& frameCount_, const direction& facing_, const sf::Vector2f& hitboxOffset, const float& scaleX,
-           const float& scaleY, const float& posX, const float& posY, const float& speed_) :
+    Entity(sf::Texture& texture_, const int& frameCount_, const direction& facing_, const sf::Vector2f& hitboxOffset, const float& scaleX,
+           const float& scaleY, const float& posX, const float& posY, const float& speed_) : texture(texture_),
             frameCount(frameCount_), facing(facing_), speed(speed_) {
-        if (!image.loadFromFile(texture_path)) {
-            std::cout << "Trouble loading image!\n";
-        }
-        textureRect = sf::IntRect(0, 0, image.getSize().x / frameCount, image.getSize().y);
-        frameSize = image.getSize().x / frameCount;
-        if (!texture.loadFromImage(image)) {
-            std::cout << "Trouble loading texture image!\n";
-        } else {
+
+        textureRect = sf::IntRect(0, 0, texture.getSize().x / frameCount, texture.getSize().y);
+        frameSize = texture.getSize().x / frameCount;
             sprite.setTexture(texture);
             sprite.setTextureRect(textureRect);
             sprite.setScale(scaleX, scaleY);
             sprite.setPosition(posX, posY);
 
             hitbox = Hitbox{sprite, frameCount, frameSize, hitboxOffset};
-        }
 
     }
 
@@ -252,9 +233,9 @@ private:
     int damage;
 
 public:
-    Weapon(weapon_types weapon_type_, const std::string &texture_path, const float &scaleX, const float &scaleY,
+    Weapon(weapon_types weapon_type_, sf::Texture &texture, const float &scaleX, const float &scaleY,
            const double &posX, const double &posY) :
-            weapon_type(weapon_type_), entity(texture_path, scaleX, scaleY, posX, posY) {
+            weapon_type(weapon_type_), entity(texture, scaleX, scaleY, posX, posY) {
         switch (weapon_type) {
             case TRUMPET:
                 damage = 25;
@@ -290,9 +271,9 @@ class Enemy {
     int health;
 
 public:
-    Enemy(const std::string &texture_path, const float &scaleX, const float &scaleY,
+    Enemy(sf::Texture& texture, const float &scaleX, const float &scaleY,
           const float &posX, const float &posY, const int &health_, const float &speed_) :
-            entity(texture_path, scaleX, scaleY, posX, posY), speed(speed_), health(health_) {}
+            entity(texture, scaleX, scaleY, posX, posY), speed(speed_), health(health_) {}
 
     friend std::ostream &operator<<(std::ostream &os, const Enemy &enemy_) {
         os << "Health: " << enemy_.health << ", Speed: " << enemy_.speed << "\n";
@@ -332,13 +313,13 @@ private:
 
 public:
 
-    Player(const int &health_, const std::string &texture_path, const int frameCount, const Entity::direction &facing,
+    Player(const int &health_, sf::Texture& texture, const int frameCount, const Entity::direction &facing,
            const float &scaleX, const float &scaleY,
            const float &posX, const float &posY, const sf::Vector2f& hitboxOffset, const sf::Vector2f& attackRadius, const Weapon::weapon_types weapon_type_,
-           const std::string &weapon_texture_path, const float &speed_) :
-            health(health_), entity(texture_path, frameCount, facing, hitboxOffset,
+           sf::Texture &weapon_texture, const float &speed_) :
+            health(health_), entity(texture, frameCount, facing, hitboxOffset,
                                     3.f, 3.f, posX, posY, speed_),
-            weapon(weapon_type_, weapon_texture_path,
+            weapon(weapon_type_, weapon_texture,
                    2.3f, 2.3f,
                    posX + 0.50 * entity.getSprite().getTexture()->getSize().x * scaleX,
                    posY + 0.40 * entity.getSprite().getTexture()->getSize().y * scaleY),
@@ -392,11 +373,8 @@ public:
     }
 
     void attack(std::vector<Enemy> &targets) {
-        std::cout <<"1\n";
         for (unsigned int i = 0; i < targets.size(); i++) {
-            std::cout <<"2\n";
             if (attackRange.intersects(targets[i].getHitbox())) {
-                std::cout << "attacked!\n";
                 targets[i].damage(50, targets, i);
                 return;
             }
@@ -423,27 +401,44 @@ public:
 class Scene {
     sf::RenderWindow window;
     sf::Event event;
-    std::vector<sf::Image> images;
+
+    std::unordered_map<std::string, sf::Texture> textures;
 
 public:
-    Scene(const unsigned int windowWidth, const unsigned int windowHeight, const std::vector<std::string> &image_paths)
-            :
+    Scene(const unsigned int windowWidth, const unsigned int windowHeight, const std::vector<std::string> &image_paths):
             window(sf::VideoMode{windowWidth, windowHeight}, GAME_TITLE, sf::Style::Default),
             event() {
         window.setVerticalSyncEnabled(true);
         for (const auto &path: image_paths) {
+
+            std::string name;
+            for(int i = path.size() - 5; i>=0; i--){
+                if(path[i] == '/'){
+                    break;
+                }
+                    name += path[i];
+            }
+            std::reverse(name.begin(), name.end());
+
             sf::Image image;
             if (!image.loadFromFile(path)) {
                 std::cout << "Trouble at loading Image File\n";
                 continue;
             }
-            images.push_back(image);
+
+            sf::Texture texture;
+            if(!texture.loadFromImage(image)){
+                std::cout << "Trouble at loading Texture\n";
+                continue;
+            }
+
+            textures[name] = texture;
         }
     }
 
     Scene& operator=(const Scene& other){
         event = other.event;
-        images = other.images;
+        textures = other.textures;
 
         return *this;
     }
@@ -455,13 +450,15 @@ public:
     Scene(const Scene &other) : window(sf::VideoMode{other.window.getSize().x,
                                                      other.window.getSize().y},
                                        GAME_TITLE, sf::Style::Default),
-                                event(other.event), images(other.images) {}
+                                event(other.event), textures(other.textures) {}
 
     friend std::ostream &operator<<(std::ostream &os, const Scene &scene_) {
         os << "Window size: " << scene_.window.getSize().x << "x" << scene_.window.getSize().y<< "\n";
 
         return os;
     }
+
+    sf::Texture& getTexture(std::string key) { return textures[key]; }
 
     sf::Event getEvent() const { return event; }
 
@@ -482,7 +479,6 @@ public:
 
     sf::Vector2u getWindowSize() const { return window.getSize(); }
 
-    std::vector<sf::Image> &getImages() { return images; }
 
 };
 
@@ -546,17 +542,17 @@ class Game {
     sf::Sprite background;
 
 public:
-    Game(const Scene &scene_, Player player_) : scene(scene_), player(std::move(player_)), attackCooldown(), paused(false){
+    Game(const Scene &scene_) : scene(scene_),
+    player(100, scene.getTexture("Player_SpriteSheet"), 2, Entity::RIGHT, 2.3f, 2.3f,
+           0, 0, sf::Vector2f{-20.f, -10.f}, sf::Vector2f{40.f, 20.f}, Weapon::weapon_types::TRUMPET,
+           scene.getTexture("Trumpet"), 7.5f),
+           attackCooldown(), paused(false){
         sf::Texture texture;
         sf::IntRect rect{0, 0, (int) scene.getWindowSize().x, (int) scene.getWindowSize().y};
-        texture.setRepeated(true);
 
-        if (!texture.loadFromImage(scene.getImages()[3])) {
-            std::cout << "Trouble loading Image!\n";
-        }
+        scene.getTexture("Grass").setRepeated(true);
 
-
-        background.setTexture(texture);
+        background.setTexture(scene.getTexture("Grass"));
         background.setTextureRect(rect);
         gameProc();
     }
@@ -596,7 +592,7 @@ private:
     }
 
     void addEnemy(const float x, const float y) {
-        enemies.emplace_back("Textures/Dummy.png", 2.3f, 2.3f, x, y, 50, 2.5f);
+        enemies.emplace_back(scene.getTexture("Dummy"), 2.3f, 2.3f, x, y, 50, 2.5f);
     }
 
     void renderSprites() {
@@ -727,7 +723,6 @@ private:
                 if (player.getHitbox().intersects(enemy.getHitbox())) {
 
                     if (damageCooldown.getElapsedTime().asSeconds() > 2) {
-                        std::cout << "damage\n";
                         player.damage(25);
                         damageCooldown.restart();
                     }
@@ -792,10 +787,9 @@ int main() {
     Game game{Scene{800, 600, std::vector<std::string>{
             "Textures/Weapons/Trumpet.png",
             "Textures/Dummy.png",
-            "Textures/Player.png",
+            "Textures/Player_SpriteSheet.png",
             "Textures/Grass.jpg"
-    }}, Player(100, "Textures/Player_SpriteSheet.png", 2, Entity::RIGHT, 2.3f, 2.3f,
-               0, 0, sf::Vector2f{-20.f, -10.f}, sf::Vector2f{40.f, 20.f}, Weapon::weapon_types::TRUMPET, "Textures/Weapons/Trumpet.png", 7.5f)};
+    }}};
 
     game.start();
 
