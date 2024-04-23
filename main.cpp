@@ -16,35 +16,71 @@ sf::Vector2f normalize(const sf::Vector2f &source) {
         return source;
 }
 
-static bool intersect(sf::Sprite const& sprite1, sf::Sprite const& sprite2, bool offseted) {
-    float offset;
-    if(offseted){
-         offset = 30.f;
-    }
-    else{
-        offset = -20.f;
-    }
 
-    float x1 = sprite1.getPosition().x - offset;
-    float y1 = sprite1.getPosition().y - offset;
-    float x2 = x1 + ((float) sprite1.getTexture()->getSize().x * sprite1.getScale().x) + offset;
-    float y2 = y1 + ((float) sprite1.getTexture()->getSize().y * sprite1.getScale().y) + offset;
+class Hitbox {
+private:
+    sf::RectangleShape rect;
 
-    float x3 = sprite2.getPosition().x;
-    float y3 = sprite2.getPosition().y;
-    float x4 = x3 + ((float) sprite2.getTexture()->getSize().x * sprite2.getScale().x);
-    float y4 = y3 + ((float) sprite2.getTexture()->getSize().y * sprite2.getScale().y);
+public:
 
-    if (x1 > x4 || x3 > x2) {
-        return false;
+    Hitbox() : rect() {}
+
+    Hitbox(const sf::Sprite& sprite, const unsigned int& frameCount, const unsigned int& frameSize, const sf::Vector2f & hitboxOffset) {
+
+        rect.setSize(sf::Vector2f{(((float)sprite.getTexture()->getSize().x * sprite.getScale().x +(2 * hitboxOffset.x)) / (float)frameCount),
+                                    (float) sprite.getTexture()->getSize().y * sprite.getScale().y +(2*hitboxOffset.y)});
+
+        rect.setPosition(sf::Vector2f{sprite.getPosition().x + (float)frameSize / 2 * sprite.getScale().x - rect.getSize().x / 2,
+                                      sprite.getPosition().y + (float)sprite.getTexture()->getSize().y / 2 * sprite.getScale().y - rect.getSize().y / 2});
+        rect.setFillColor(sf::Color::Transparent);
+        rect.setOutlineColor(sf::Color::Red);
+        rect.setOutlineThickness(3.f);
     }
 
-    if (y2 < y3 || y4 < y1) {
-        return false;
+    Hitbox(const sf::Sprite& sprite){
+        rect.setSize(sf::Vector2f{(float) sprite.getTexture()->getSize().x * sprite.getScale().x,
+                                    (float) sprite.getTexture()->getSize().y * sprite.getScale().y});
+
+        rect.setPosition(sprite.getPosition());
+        rect.setFillColor(sf::Color::Transparent);
+        rect.setOutlineColor(sf::Color::Red);
+        rect.setOutlineThickness(3.f);
     }
 
-    return true;
-}
+    bool intersects(const Hitbox& other){
+        //std::cout << rect.getSize().x << " " << rect.getSize().y;
+        float x1 = rect.getPosition().x;
+        float y1 = rect.getPosition().y;
+        float x2 = x1 + ((float) rect.getSize().x);
+        float y2 = y1 + ((float) rect.getSize().y);
+
+        float x3 = other.getRect().getPosition().x;
+        float y3 = other.getRect().getPosition().y;
+        float x4 = x3 + ((float) other.rect.getSize().x);
+        float y4 = y3 + ((float) other.rect.getSize().y);;
+
+        if (x1 > x4 || x3 > x2) {
+            return false;
+
+        }
+
+        if (y2 < y3 || y4 < y1) {
+            return false;
+        }
+
+        return true;
+    }
+
+    sf::RectangleShape getRect() const { return rect; }
+
+    void setPosition(float& x, float& y){
+        rect.setPosition(x, y);
+    }
+
+    void move(sf::Vector2f vector){
+        rect.move(vector);
+    }
+};
 
 class Entity {
 public:
@@ -61,6 +97,7 @@ private:
     unsigned int frameSize;
     unsigned int frameCount;
 
+    Hitbox hitbox;
 
     direction facing;
     float speed;
@@ -76,14 +113,14 @@ public:
     //Ignor warning pt constructor de copiere pt ca face parte din cerinta
     //NOLINTNEXTLINE
     Entity(const Entity &other) : image(other.image), textureRect(other.textureRect), texture(other.texture),
-                                  frameSize(other.frameSize), frameCount(other.frameCount),
+    frameSize(other.frameSize), frameCount(other.frameCount), hitbox(other.hitbox),
                                   facing(other.facing), speed(other.speed) {
 
-        std::cout << "copy\n";
-        if (!texture.loadFromImage(image, textureRect)) {
+        if (!texture.loadFromImage(image)) {
             std::cout << "Trouble loading texture image!\n";
         } else {
             sprite.setTexture(texture);
+            sprite.setTextureRect(textureRect);
             sprite.setScale(other.sprite.getScale().x, other.sprite.getScale().y);
             sprite.setPosition(static_cast<float>(other.sprite.getPosition().x),
                                static_cast<float>(other.sprite.getPosition().y));
@@ -98,6 +135,7 @@ public:
         textureRect = other.textureRect;
         texture = other.texture;
         sprite = other.sprite;
+        hitbox = other.hitbox;
         frameSize = other.frameSize;
         frameCount = other.frameCount;
         facing = other.facing;
@@ -111,22 +149,9 @@ public:
         //std::cout << "Destructorul a fost apelat!\n";
     }
 
-    Entity(const sf::Image &image_, const float &scaleX, const float &scaleY,
-           const double &posX, const double &posY) : image(image_), textureRect(0, 0, 0, 0),
-                                                     frameSize(image_.getSize().x),
-                                                     frameCount(0), facing(RIGHT), speed(0) {
-        if (!texture.loadFromImage(image)) {
-            std::cout << "Trouble loading texture image!\n";
-        } else {
-            sprite.setTexture(texture);
-            sprite.setScale(scaleX, scaleY);
-            sprite.setPosition(static_cast<float>(posX), static_cast<float>(posY));
-        }
-    }
-
     Entity(const std::string &texture_path, const float &scaleX,
            const float &scaleY, const double &posX, const double &posY) :
-            textureRect(0, 0, 0, 0), frameCount(0), facing(RIGHT), speed(0) {
+            textureRect(), frameCount(1), facing(RIGHT), speed(0) {
 
         if (!image.loadFromFile(texture_path)) {
             std::cout << "Trouble loading image!\n";
@@ -135,30 +160,20 @@ public:
         if (!texture.loadFromImage(image)) {
             std::cout << "Trouble loading texture!\n";
         } else {
+            textureRect.width = (int)image.getSize().x;
+            textureRect.height = (int)image.getSize().y;
+
             sprite.setTexture(texture);
+            sprite.setTextureRect(textureRect);
             sprite.setScale(scaleX, scaleY);
             sprite.setPosition(static_cast<float>(posX), static_cast<float>(posY));
+
+            hitbox = Hitbox{sprite};
+
         }
     }
 
-    Entity(const std::string &texture_path, const float &scaleX,
-           const float &scaleY, const float &posX, const float &posY, const float &speed_) :
-            textureRect(0, 0, 0, 0), frameCount(0), facing(RIGHT), speed(speed_) {
-
-        if (!image.loadFromFile(texture_path)) {
-            std::cout << "Trouble loading image!\n";
-        }
-        frameSize = image.getSize().x;
-        if (!texture.loadFromImage(image)) {
-            std::cout << "Trouble loading texture!\n";
-        } else {
-            sprite.setTexture(texture);
-            sprite.setScale(scaleX, scaleY);
-            sprite.setPosition(posX, posY);
-        }
-    }
-
-    Entity(const std::string &texture_path, const int& frameCount_, const direction& facing_, const float& scaleX,
+    Entity(const std::string &texture_path, const int& frameCount_, const direction& facing_, const sf::Vector2f& hitboxOffset, const float& scaleX,
            const float& scaleY, const float& posX, const float& posY, const float& speed_) :
             frameCount(frameCount_), facing(facing_), speed(speed_) {
         if (!image.loadFromFile(texture_path)) {
@@ -166,12 +181,15 @@ public:
         }
         textureRect = sf::IntRect(0, 0, image.getSize().x / frameCount, image.getSize().y);
         frameSize = image.getSize().x / frameCount;
-        if (!texture.loadFromImage(image, textureRect)) {
+        if (!texture.loadFromImage(image)) {
             std::cout << "Trouble loading texture image!\n";
         } else {
             sprite.setTexture(texture);
+            sprite.setTextureRect(textureRect);
             sprite.setScale(scaleX, scaleY);
             sprite.setPosition(posX, posY);
+
+            hitbox = Hitbox{sprite, frameCount, frameSize, hitboxOffset};
         }
 
     }
@@ -184,19 +202,36 @@ public:
         return os;
     }
 
+    void setTextureFrame(const int& frame){
+
+        if(frame*(int)frameSize == textureRect.left){
+            return;
+        }
+
+        textureRect.left = (int)frameSize*frame;
+        sprite.setTextureRect(textureRect);
+
+        std::cout << sprite.getTextureRect().left<< "\n";
+    }
+
     void setPosition(float x, float y) {
         sprite.setPosition(x, y);
+        hitbox.setPosition(x, y);
     }
 
 
     void move(sf::Vector2f vector) {
         sprite.move(vector);
+        hitbox.move(vector);
     }
 
 
     const sf::Sprite& getSprite() const { return sprite; }
+    unsigned int getFrameCount() const {return frameCount; }
+    unsigned int getFrameSize() const { return frameSize; }
 
     sf::Texture &getTexture() { return texture; }
+    Hitbox getHitbox() const { return hitbox; }
 
     float getSpeed() const { return speed; }
 
@@ -215,6 +250,7 @@ private:
     Entity entity;
 
     int damage;
+    float attackRange;
 
 public:
     Weapon(weapon_types weapon_type_, const std::string &texture_path, const float &scaleX, const float &scaleY,
@@ -244,24 +280,20 @@ public:
     }
 
      sf::Sprite getSprite() const { return entity.getSprite(); }
-
+     Hitbox getHitbox() const { return entity.getHitbox(); }
 
 };
 
 class Enemy {
-    Entity enemy;
+    Entity entity;
     float speed;
 
     int health;
 
 public:
-    Enemy(const sf::Image &image, const float &scaleX, const float &scaleY,
-          const float &posX, const float &posY, const int &health_, const float &speed_) :
-            enemy(image, scaleX, scaleY, posX, posY), speed(speed_), health(health_) {}
-
     Enemy(const std::string &texture_path, const float &scaleX, const float &scaleY,
           const float &posX, const float &posY, const int &health_, const float &speed_) :
-            enemy(texture_path, scaleX, scaleY, posX, posY), speed(speed_), health(health_) {}
+            entity(texture_path, scaleX, scaleY, posX, posY), speed(speed_), health(health_) {}
 
     friend std::ostream &operator<<(std::ostream &os, const Enemy &enemy_) {
         os << "Health: " << enemy_.health << ", Speed: " << enemy_.speed << "\n";
@@ -269,9 +301,16 @@ public:
         return os;
     }
 
-    Entity &getEntity() { return enemy; }
+    const sf::Sprite& getSprite() const { return entity.getSprite(); }
+
+    sf::Vector2f getPosition() const { return entity.getPosition(); }
+
+    void move(sf::Vector2f vector){
+        entity.move(vector);
+    }
 
     float getSpeed() const { return speed; }
+    Hitbox getHitbox() const { return entity.getHitbox(); }
 
     void damage(int damage, std::vector<Enemy> &enemies, int index) {
         health -= damage;
@@ -289,20 +328,23 @@ private:
     Entity entity;
     Weapon weapon;
 
+    Hitbox attackRange;
 
 
 public:
 
     Player(const int &health_, const std::string &texture_path, const int frameCount, const Entity::direction &facing,
            const float &scaleX, const float &scaleY,
-           const float &posX, const float &posY, const Weapon::weapon_types weapon_type_,
+           const float &posX, const float &posY, const sf::Vector2f& hitboxOffset, const sf::Vector2f& attackRadius, const Weapon::weapon_types weapon_type_,
            const std::string &weapon_texture_path, const float &speed_) :
-            health(health_), entity(texture_path, frameCount, facing,
+            health(health_), entity(texture_path, frameCount, facing, hitboxOffset,
                                     3.f, 3.f, posX, posY, speed_),
             weapon(weapon_type_, weapon_texture_path,
                    2.3f, 2.3f,
-                   posX + 0.75 * entity.getSprite().getTexture()->getSize().x * scaleX,
-                   posY + 0.40 * entity.getSprite().getTexture()->getSize().y * scaleY) {
+                   posX + 0.50 * entity.getSprite().getTexture()->getSize().x * scaleX,
+                   posY + 0.40 * entity.getSprite().getTexture()->getSize().y * scaleY),
+                   attackRange(entity.getSprite(), entity.getFrameCount(),
+                               entity.getFrameSize(), attackRadius){
     }
 
 
@@ -323,12 +365,14 @@ public:
             floor(entity.getTexture().getSize().x) * entity.getSprite().getScale().x >= 800){
                 return;
             }
+            entity.setTextureFrame(0);
             offset.x = entity.getSpeed() * delta;
 
         } else if (dir == Entity::LEFT) {
             if(entity.getPosition().x <= 0){
                 return;
             }
+            entity.setTextureFrame(1);
             offset.x = -entity.getSpeed() * delta;
         } else if (dir == Entity::UP) {
             if(entity.getPosition().y <= 0){
@@ -344,12 +388,16 @@ public:
         }
 
         entity.move(offset);
+        attackRange.move(offset);
         weapon.move(offset);
     }
 
     void attack(std::vector<Enemy> &targets) {
+        std::cout <<"1\n";
         for (unsigned int i = 0; i < targets.size(); i++) {
-            if (intersect(entity.getSprite(), targets[i].getEntity().getSprite(), true)) {
+            std::cout <<"2\n";
+            if (attackRange.intersects(targets[i].getHitbox())) {
+                std::cout << "attacked!\n";
                 targets[i].damage(50, targets, i);
                 return;
             }
@@ -368,6 +416,9 @@ public:
 
     const sf::Sprite& getSprite() { return entity.getSprite(); }
     const Weapon& getWeapon() const { return weapon; }
+
+    Hitbox getAttackRange() const { return attackRange; }
+    Hitbox getHitbox() const { return entity.getHitbox(); }
 };
 
 class Scene {
@@ -489,6 +540,7 @@ class Game {
     std::vector<Enemy> enemies;
     sf::Clock attackCooldown;
 
+
     bool paused;
 
 
@@ -528,16 +580,13 @@ private:
                 //37 is the key code for ESC
                 if (event.key.scancode == 37) {
                     paused = true;
+                    break;
                 }
                 if (event.key.scancode == sf::Keyboard::Scan::Space) {
-                    std::cout << (attackCooldown.getElapsedTime().asSeconds() > 1.f) << "\n";
                     if(attackCooldown.getElapsedTime().asSeconds() > 1.f){
-                        std::vector<Entity> entities;
-                        for (auto &enemy: enemies) {
-                            entities.push_back(enemy.getEntity());
-                        }
                         player.attack(enemies);
                         attackCooldown.restart();
+                        break;
                     }
 
                 }
@@ -548,17 +597,17 @@ private:
     }
 
     void addEnemy(const float x, const float y) {
-        Enemy enemy{"Textures/Dummy.png", 2.3f, 2.3f, x, y, 50, 2.5f};
-        enemies.push_back(enemy);
+        enemies.emplace_back("Textures/Dummy.png", 2.3f, 2.3f, x, y, 50, 2.5f);
     }
 
     void renderSprites() {
 
         scene.draw(player.getSprite());
         scene.draw(player.getWeapon().getSprite());
+        scene.draw(player.getAttackRange().getRect());
 
         for (auto &enemy: enemies) {
-            scene.draw(enemy.getEntity().getSprite());
+            scene.draw(enemy.getSprite());
         }
     }
 
@@ -649,9 +698,11 @@ private:
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
                 player.moveSprites(Entity::LEFT, delta);
+
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
                 player.moveSprites(Entity::RIGHT, delta);
+
             }
 
             if (enemySpawnClock.getElapsedTime().asSeconds() >= 2 && enemies.size() < 10) {
@@ -668,13 +719,13 @@ private:
 
             for (auto &enemy: enemies) {
                 sf::Vector2f direction = normalize(
-                        enemy.getEntity().getPosition() - player.getPosition());
+                        enemy.getPosition() - player.getPosition());
                 direction.x *= -enemy.getSpeed() * delta;
                 direction.y *= -enemy.getSpeed() * delta;
 
-                enemy.getEntity().move(direction);
+                enemy.move(direction);
 
-                if (intersect(player.getSprite(), enemy.getEntity().getSprite(), false)) {
+                if (player.getHitbox().intersects(enemy.getHitbox())) {
 
                     if (damageCooldown.getElapsedTime().asSeconds() > 2) {
                         std::cout << "damage\n";
@@ -745,7 +796,7 @@ int main() {
             "Textures/Player.png",
             "Textures/Grass.jpg"
     }}, Player(100, "Textures/Player_SpriteSheet.png", 2, Entity::RIGHT, 2.3f, 2.3f,
-               0, 0, Weapon::weapon_types::TRUMPET, "Textures/Weapons/Trumpet.png", 7.5f)};
+               0, 0, sf::Vector2f{-20.f, -10.f}, sf::Vector2f{40.f, 20.f}, Weapon::weapon_types::TRUMPET, "Textures/Weapons/Trumpet.png", 7.5f)};
 
     game.start();
 
