@@ -542,7 +542,7 @@ class Game {
     sf::Sprite background;
 
 public:
-    Game(const Scene &scene_) : scene(scene_),
+    explicit Game(const Scene &scene_) : scene(scene_),
     player(100, scene.getTexture("Player_SpriteSheet"), 2, Entity::RIGHT, 2.3f, 2.3f,
            0, 0, sf::Vector2f{-20.f, -10.f}, sf::Vector2f{40.f, 20.f}, Weapon::weapon_types::TRUMPET,
            scene.getTexture("Trumpet"), 7.5f),
