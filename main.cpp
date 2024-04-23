@@ -599,7 +599,6 @@ private:
 
         scene.draw(player.getSprite());
         scene.draw(player.getWeapon().getSprite());
-        scene.draw(player.getAttackRange().getRect());
 
         for (auto &enemy: enemies) {
             scene.draw(enemy.getSprite());
