@@ -37,7 +37,7 @@ public:
         rect.setOutlineThickness(3.f);
     }
 
-    Hitbox(const sf::Sprite& sprite){
+    explicit Hitbox(const sf::Sprite& sprite){
         rect.setSize(sf::Vector2f{(float) sprite.getTexture()->getSize().x * sprite.getScale().x,
                                     (float) sprite.getTexture()->getSize().y * sprite.getScale().y});
 
@@ -250,7 +250,6 @@ private:
     Entity entity;
 
     int damage;
-    float attackRange;
 
 public:
     Weapon(weapon_types weapon_type_, const std::string &texture_path, const float &scaleX, const float &scaleY,
