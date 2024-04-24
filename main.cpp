@@ -394,7 +394,6 @@ public:
     const sf::Sprite& getSprite() { return entity.getSprite(); }
     const Weapon& getWeapon() const { return weapon; }
 
-    Hitbox getAttackRange() const { return attackRange; }
     Hitbox getHitbox() const { return entity.getHitbox(); }
 };
 
