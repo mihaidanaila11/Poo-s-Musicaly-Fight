@@ -43,7 +43,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
   - vor fi adăugate în fișierul `tastatura.txt` DOAR exemple de date de intrare de la tastatură (dacă există); dacă aveți nevoie de date din fișiere, creați alte fișiere separat
 -->
 - [X] tag de `git`: de exemplu `v0.1`
-- [ ] serviciu de integrare continuă (CI); exemplu: GitHub Actions
+- [X] serviciu de integrare continuă (CI); exemplu: GitHub Actions
 
 ## Tema 2
 
