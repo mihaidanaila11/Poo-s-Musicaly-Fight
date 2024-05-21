@@ -110,6 +110,22 @@ add_executable(${PROJECT_NAME}
     main.cpp
     generated/src/Helper.cpp
     env_fixes.h
+        Classes/Hitbox/Hitbox.h
+        Classes/Hitbox/Hitbox.cpp
+        Classes/Entity/Entity.h
+        Classes/Entity/Entity.cpp
+        Classes/Weapon/Weapon.cpp
+        Classes/Weapon/Weapon.h
+        Classes/Enemy/Enemy.cpp
+        Classes/Enemy/Enemy.h
+        Classes/Player/Player.cpp
+        Classes/Player/Player.h
+        Classes/Scene/Scene.cpp
+        Classes/Scene/Scene.h
+        Classes/Button/Button.cpp
+        Classes/Button/Button.h
+        Classes/Game/Game.cpp
+        Classes/Game/Game.h
 )
 
 ###############################################################################
