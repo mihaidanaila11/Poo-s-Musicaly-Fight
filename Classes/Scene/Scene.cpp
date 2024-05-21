@@ -74,6 +74,7 @@ sf::Event& Scene::getEvent() { return event; }
 sf::Vector2u Scene::getWindowSize() const { return window->getSize(); }
 
 Scene &Scene::operator=(const Scene &other) {
+    window = other.window;
     event = other.event;
     textures = other.textures;
 
