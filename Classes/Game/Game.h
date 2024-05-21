@@ -19,7 +19,7 @@ class Game : Scene{
     sf::Sprite background;
 
 public:
-    explicit Game(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string fontPath) :
+    explicit Game(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath) :
     Scene(renderWindow, image_paths, fontPath),
     player(100, Scene::getTexture("Player_SpriteSheet"), 2, Entity::RIGHT, 2.3f, 2.3f,
            0, 0, sf::Vector2f{-20.f, -10.f}, sf::Vector2f{40.f, 20.f}, Weapon::weapon_types::TRUMPET,
