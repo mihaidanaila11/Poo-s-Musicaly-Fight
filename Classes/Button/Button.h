@@ -11,15 +11,18 @@ class Button {
     sf::Text text;
 
 public:
-    Button(const std::string &image_path, const std::string &font_path, const std::string &text_);
+    Button(const sf::Texture& texture_, const sf::Font &font, const std::string &text_);
 
     friend std::ostream &operator<<(std::ostream &os, const Button &button_);
 
-    std::pair<sf::Sprite, sf::Text> getButton() const;
+    const sf::Sprite& getSprite() const;
+    const sf::Text& getText() const;
 
     void setPosition(sf::Vector2f vector);
 
     bool clicked(sf::Event::MouseButtonEvent mouse);
+
+    sf::FloatRect getLocalBounds() const;
 };
 
 

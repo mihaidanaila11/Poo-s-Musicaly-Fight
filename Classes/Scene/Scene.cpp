@@ -1,9 +1,11 @@
-#include "Scene.h"
+#include "Scene.hpp"
 
-Scene::Scene(const unsigned int windowWidth, const unsigned int windowHeight, const std::vector<std::string> &image_paths):
-        window(sf::VideoMode{windowWidth, windowHeight}, GAME_TITLE, sf::Style::Default),
-        event() {
-    window.setVerticalSyncEnabled(true);
+
+Scene::Scene(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath):
+        window(renderWindow),
+        event(), font() {
+    std::cout << "constructor scene\n";
+    window->setVerticalSyncEnabled(true);
     for (const auto &path: image_paths) {
 
         std::string name;
@@ -29,43 +31,47 @@ Scene::Scene(const unsigned int windowWidth, const unsigned int windowHeight, co
 
         textures[name] = texture;
     }
+
+    if(!font.loadFromFile(fontPath)){
+        std::cout << "Error loading font from file";
+    }
 }
 
 
 
-Scene::~Scene() = default;
+Scene::~Scene(){
+    std::cout << "Scene destructor\n";
+}
 
 
 
-Scene::Scene(const Scene &other) : window(sf::VideoMode{other.window.getSize().x,
-                                                 other.window.getSize().y},
-                                   GAME_TITLE, sf::Style::Default),
+Scene::Scene(const Scene &other) : window(other.window),
                             event(other.event), textures(other.textures) {}
 
 std::ostream &operator<<(std::ostream &os, const Scene &scene_) {
-    os << "Window size: " << scene_.window.getSize().x << "x" << scene_.window.getSize().y<< "\n";
+    os << "Window size: " << scene_.window->getSize().x << "x" << scene_.window->getSize().y<< "\n";
 
     return os;
 }
 
-sf::Texture& Scene::getTexture(std::string key) { return textures[key]; }
+sf::Texture& Scene::getTexture(const std::string& key) { return textures[key]; }
 
 sf::Event Scene::getEvent() const { return event; }
 
-bool Scene::isOpen() { return window.isOpen(); }
+bool Scene::isOpen() { return window->isOpen(); }
 
-void Scene::clear() { window.clear(); }
+void Scene::clear() { window->clear(); }
 
 
-void Scene::display() { window.display(); }
+void Scene::display() { window->display(); }
 
-void Scene::close() { window.close(); }
+void Scene::close() { window->close(); }
 
-bool Scene::pollEvent() { return window.pollEvent(event); }
+bool Scene::pollEvent() { return window->pollEvent(event); }
 
 sf::Event& Scene::getEvent() { return event; }
 
-sf::Vector2u Scene::getWindowSize() const { return window.getSize(); }
+sf::Vector2u Scene::getWindowSize() const { return window->getSize(); }
 
 Scene &Scene::operator=(const Scene &other) {
     event = other.event;
@@ -73,3 +79,6 @@ Scene &Scene::operator=(const Scene &other) {
 
     return *this;
 }
+
+const sf::Font& Scene::getFont() const { return font; }
+

@@ -121,11 +121,13 @@ add_executable(${PROJECT_NAME}
         Classes/Player/Player.cpp
         Classes/Player/Player.h
         Classes/Scene/Scene.cpp
-        Classes/Scene/Scene.h
+        Classes/Scene/Scene.hpp
         Classes/Button/Button.cpp
         Classes/Button/Button.h
         Classes/Game/Game.cpp
         Classes/Game/Game.h
+        Scenes/MainMenu/MainMenu.cpp
+        Scenes/MainMenu/MainMenu.h
 )
 
 ###############################################################################
@@ -176,6 +178,7 @@ endif()
 # update name in .github/workflows/cmake.yml:29 when changing "bin" name here
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 install(DIRECTORY Textures DESTINATION bin)
+install(DIRECTORY daydream_3 DESTINATION bin)
 # install(FILES some_file1.txt some_file2.md DESTINATION bin)
 if(APPLE)
     install(FILES launcher.command DESTINATION bin)

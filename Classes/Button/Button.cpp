@@ -1,18 +1,22 @@
 #include "Button.h"
 
-Button::Button(const std::string &image_path, const std::string &font_path, const std::string &text_) {
-    sf::Image image;
-    image.loadFromFile(image_path);
-    texture.loadFromImage(image);
+Button::Button(const sf::Texture& texture_, const sf::Font &font, const std::string &text_) : texture(texture_){
 
     sprite.setTexture(texture);
 
-    font.loadFromFile(font_path);
     text.setFont(font);
+    text.setCharacterSize(32);
+    text.setOutlineThickness(1);
+    text.setOutlineColor(sf::Color::Black);
     text.setString(text_);
 
-    text.setPosition(sprite.getPosition());
+    sf::FloatRect spriteBounds = sprite.getLocalBounds();
+    sf::FloatRect textBounds = text.getLocalBounds();
+
+    text.setPosition(sprite.getPosition().x + spriteBounds.width/2 - textBounds.width/2,
+                     sprite.getPosition().y + spriteBounds.height/2 - textBounds.height/2);
 }
+
 
 std::ostream &operator<<(std::ostream &os, const Button &button_) {
     os << "Position: " << button_.sprite.getPosition().x << "," << button_.sprite.getPosition().y <<
@@ -21,13 +25,16 @@ std::ostream &operator<<(std::ostream &os, const Button &button_) {
     return os;
 }
 
-std::pair<sf::Sprite, sf::Text> Button::getButton() const {
-    return std::pair<sf::Sprite, sf::Text>{sprite, text};
-}
+const sf::Sprite& Button::getSprite() const { return sprite; }
+const sf::Text& Button::getText() const { return text; }
 
 void Button::setPosition(sf::Vector2f vector) {
     sprite.setPosition(vector);
-    text.setPosition(vector);
+    sf::FloatRect spriteBounds = sprite.getLocalBounds();
+    sf::FloatRect textBounds = text.getLocalBounds();
+
+    text.setPosition(sprite.getPosition().x + spriteBounds.width/2 - textBounds.width/2,
+                     sprite.getPosition().y + spriteBounds.height/2 - textBounds.height/2 - 10);
 }
 
 bool Button::clicked(sf::Event::MouseButtonEvent mouse) {
@@ -38,3 +45,5 @@ bool Button::clicked(sf::Event::MouseButtonEvent mouse) {
 
     return checkRect.contains(mouse.x, mouse.y);
 }
+
+sf::FloatRect Button::getLocalBounds() const { return sprite.getLocalBounds(); }

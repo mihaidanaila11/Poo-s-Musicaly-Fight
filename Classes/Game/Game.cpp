@@ -1,7 +1,6 @@
 #include "Game.h"
 
 
-
 sf::Vector2f Game::normalize(const sf::Vector2f &source) {
     float length = sqrt((source.x * source.x) + (source.y * source.y));
     if (length != 0)
@@ -13,7 +12,7 @@ sf::Vector2f Game::normalize(const sf::Vector2f &source) {
 void Game::handleEvents(const sf::Event &event) {
     switch (event.type) {
         case sf::Event::Closed:
-            scene.close();
+            Scene::close();
             break;
         case sf::Event::KeyPressed:
             //37 is the key code for ESC
@@ -36,49 +35,49 @@ void Game::handleEvents(const sf::Event &event) {
 }
 
 void Game::addEnemy(const float x, const float y) {
-    enemies.emplace_back(scene.getTexture("Dummy"), 2.3f, 2.3f, x, y, 50, 2.5f);
+    enemies.emplace_back(Scene::getTexture("Dummy"), 2.3f, 2.3f, x, y, 50, 2.5f);
 }
 
 void Game::renderSprites() {
 
-    scene.draw(player.getSprite());
-    scene.draw(player.getWeapon().getSprite());
+    Scene::draw(player.getSprite());
+    Scene::draw(player.getWeapon().getSprite());
 
     for (auto &enemy: enemies) {
-        scene.draw(enemy.getSprite());
+        Scene::draw(enemy.getSprite());
     }
 }
 
 void Game::pause() {
-    Button resume("Textures/Buton.png", "daydream_3/Daydream.ttf", "Resume");
+    Button resume(Scene::getTexture("Buton"), Scene::getFont(), "Resume");
     resume.setPosition(sf::Vector2f{250, 100});
 
-    Button quit("Textures/Buton.png", "daydream_3/Daydream.ttf", "Quit");
+    Button quit(Scene::getTexture("Buton"), Scene::getFont(), "Quit");
     quit.setPosition(sf::Vector2f{250, 400});
 
     while (paused) {
-        while (scene.pollEvent()) {
-            switch (scene.getEvent().type) {
+        while (Scene::pollEvent()) {
+            switch (Scene::getEvent().type) {
                 case sf::Event::Closed:
-                    scene.close();
+                    Scene::close();
                     break;
 
                 case sf::Event::KeyPressed:
                     //37 is the key code for ESC
-                    if (scene.getEvent().key.scancode == 37) {
+                    if (Scene::getEvent().key.scancode == 37) {
                         paused = false;
                         return;
                     }
                     break;
 
                 case sf::Event::MouseButtonPressed:
-                    if (scene.getEvent().mouseButton.button == sf::Mouse::Left) {
+                    if (Scene::getEvent().mouseButton.button == sf::Mouse::Left) {
 
-                        if (resume.clicked(scene.getEvent().mouseButton)) {
+                        if (resume.clicked(Scene::getEvent().mouseButton)) {
                             paused = false;
                             return;
-                        } else if (quit.clicked(scene.getEvent().mouseButton)) {
-                            scene.close();
+                        } else if (quit.clicked(Scene::getEvent().mouseButton)) {
+                            Scene::close();
                             return;
                         }
                     }
@@ -88,17 +87,17 @@ void Game::pause() {
                     break;
             }
         }
-        scene.clear();
+        Scene::clear();
 
-        scene.draw(background);
+        Scene::draw(background);
         renderSprites();
-        scene.draw(std::get<0>(resume.getButton()));
-        scene.draw(std::get<1>(resume.getButton()));
+        Scene::draw(resume.getSprite());
+        Scene::draw(resume.getText());
 
-        scene.draw(std::get<0>(quit.getButton()));
-        scene.draw(std::get<1>(quit.getButton()));
+        Scene::draw(quit.getSprite());
+        Scene::draw(quit.getText());
 
-        scene.display();
+        Scene::display();
     }
 }
 
@@ -109,7 +108,7 @@ void Game::gameProc() {
     sf::Clock damageCooldown;
 
 
-    while (scene.isOpen()) {
+    while (Scene::isOpen()) {
         float delta = clock.restart().asSeconds() * 60;
 
         if (!player.isAlive()) {
@@ -123,8 +122,8 @@ void Game::gameProc() {
             delta = clock.getElapsedTime().asSeconds() * 60;
         }
 
-        while (scene.pollEvent()) {
-            handleEvents(scene.getEvent());
+        while (Scene::pollEvent()) {
+            handleEvents(Scene::getEvent());
         }
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
@@ -144,12 +143,12 @@ void Game::gameProc() {
         }
 
         if (enemySpawnClock.getElapsedTime().asSeconds() >= 2 && enemies.size() < 10) {
-            int x = rand() % scene.getWindowSize().x + 1;
-            int y = rand() % scene.getWindowSize().y + 1;
+            int x = rand() % Scene::getWindowSize().x + 1;
+            int y = rand() % Scene::getWindowSize().y + 1;
             while (x == player.getPosition().x &&
                    y == player.getPosition().y) {
-                x = rand() % scene.getWindowSize().x + 1;
-                y = rand() % scene.getWindowSize().y + 1;
+                x = rand() % Scene::getWindowSize().x + 1;
+                y = rand() % Scene::getWindowSize().y + 1;
             }
             addEnemy(x, y);
             enemySpawnClock.restart();
@@ -173,10 +172,10 @@ void Game::gameProc() {
             }
         }
 
-        scene.clear();
-        scene.draw(background);
+        Scene::clear();
+        Scene::draw(background);
         renderSprites();
-        scene.display();
+        Scene::display();
 
     }
 
@@ -191,27 +190,27 @@ void Game::end() {
     gameover.setFont(font);
     gameover.setString("GameOver!");
 
-    Button quit("Textures/Buton.png", "daydream_3/Daydream.ttf", "Quit");
+    Button quit(Scene::getTexture("Buton"), Scene::getFont(), "Quit");
     quit.setPosition(sf::Vector2f{250, 400});
 
-    scene.draw(gameover);
-    scene.draw(std::get<0>(quit.getButton()));
-    scene.draw(std::get<1>(quit.getButton()));
-    scene.display();
+    Scene::draw(gameover);
+    Scene::draw(quit.getSprite());
+    Scene::draw(quit.getText());
+    Scene::display();
 
 
 
-    while (scene.isOpen()) {
-        while (scene.pollEvent()) {
-            switch (scene.getEvent().type) {
+    while (Scene::isOpen()) {
+        while (Scene::pollEvent()) {
+            switch (Scene::getEvent().type) {
                 case sf::Event::Closed:
-                    scene.close();
+                    Scene::close();
                     return;
 
                 case sf::Event::MouseButtonPressed:
-                    if (scene.getEvent().mouseButton.button == sf::Mouse::Left) {
-                        if (quit.clicked(scene.getEvent().mouseButton)) {
-                            scene.close();
+                    if (Scene::getEvent().mouseButton.button == sf::Mouse::Left) {
+                        if (quit.clicked(Scene::getEvent().mouseButton)) {
+                            Scene::close();
                             return;
                         }
                     }
