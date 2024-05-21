@@ -9,18 +9,18 @@ sf::Vector2f Game::normalize(const sf::Vector2f &source) {
         return source;
 }
 
-void Game::handleEvents(const sf::Event &event) {
-    switch (event.type) {
+void Game::handleEvents(const sf::Event &handeledEvent) {
+    switch (handeledEvent.type) {
         case sf::Event::Closed:
             Scene::close();
             break;
         case sf::Event::KeyPressed:
             //37 is the key code for ESC
-            if (event.key.scancode == 37) {
+            if (handeledEvent.key.scancode == 37) {
                 paused = true;
                 break;
             }
-            if (event.key.scancode == sf::Keyboard::Scan::Space) {
+            if (handeledEvent.key.scancode == sf::Keyboard::Scan::Space) {
                 if(attackCooldown.getElapsedTime().asSeconds() > 1.f){
                     player.attack(enemies);
                     attackCooldown.restart();
@@ -183,11 +183,9 @@ void Game::gameProc() {
 }
 
 void Game::end() {
-    sf::Font font;
-    font.loadFromFile("daydream_3/Daydream.ttf");
 
     sf::Text gameover;
-    gameover.setFont(font);
+    gameover.setFont(Scene::getFont());
     gameover.setString("GameOver!");
 
     Button quit(Scene::getTexture("Buton"), Scene::getFont(), "Quit");

@@ -47,7 +47,7 @@ public:
 private:
     static sf::Vector2f normalize(const sf::Vector2f &source);
 
-    void handleEvents(const sf::Event &event);
+    void handleEvents(const sf::Event &handeledEvent);
 
     void addEnemy(float x, float y);
 
