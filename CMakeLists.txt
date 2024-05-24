@@ -128,6 +128,10 @@ add_executable(${PROJECT_NAME}
         Classes/Game/Game.h
         Scenes/MainMenu/MainMenu.cpp
         Scenes/MainMenu/MainMenu.h
+        Classes/Hud/Hud.cpp
+        Classes/Hud/Hud.h
+        Classes/Hud/HealthBar/HealthBar.cpp
+        Classes/Hud/HealthBar/HealthBar.h
 )
 
 ###############################################################################

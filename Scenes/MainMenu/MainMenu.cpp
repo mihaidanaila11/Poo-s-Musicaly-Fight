@@ -16,6 +16,8 @@ Scene(renderWindow, image_paths, fontPath){
 
 
 int MainMenu::start() {
+
+
     sf::Text title{"POO'S MUSICALY FIGHT", Scene::getFont(), 40};
     title.setFillColor(sf::Color(239, 230, 103));
     title.setOutlineThickness(1.f);
@@ -31,6 +33,15 @@ int MainMenu::start() {
     Button quit{Scene::getTexture("Buton"), Scene::getFont(), "QUIT"};
     quit.setPosition(sf::Vector2f {(float)Scene::getWindowSize().x/2 - quit.getLocalBounds().width/2,
                                    (float)Scene::getWindowSize().y/2 + quit.getLocalBounds().height + 20.f});
+
+    Scene::clear();
+    Scene::draw(background);
+    Scene::draw(title);
+    Scene::draw(play.getSprite());
+    Scene::draw(play.getText());
+    Scene::draw(quit.getSprite());
+    Scene::draw(quit.getText());
+    Scene::display();
 
     while(Scene::isOpen()){
         while(Scene::pollEvent()){
@@ -57,14 +68,7 @@ int MainMenu::start() {
             }
         }
 
-        Scene::clear();
-        Scene::draw(background);
-        Scene::draw(title);
-        Scene::draw(play.getSprite());
-        Scene::draw(play.getText());
-        Scene::draw(quit.getSprite());
-        Scene::draw(quit.getText());
-        Scene::display();
+
     }
     return 0;
 }

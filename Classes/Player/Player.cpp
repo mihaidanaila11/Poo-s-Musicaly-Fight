@@ -79,4 +79,6 @@ bool Player::isAlive() const { return alive; }
 const sf::Sprite& Player::getSprite() { return entity.getSprite(); }
 const Weapon& Player::getWeapon() const { return weapon; }
 
+int Player::getHealth() const { return health; }
+
 Hitbox Player::getHitbox() const { return entity.getHitbox(); }

@@ -1,5 +1,24 @@
 #include "Game.h"
 
+Game::Game(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath) :
+Scene(renderWindow, image_paths, fontPath),
+player(100, Scene::getTexture("Player_SpriteSheet"), 2, Entity::RIGHT, 2.3f, 2.3f,
+0, 0, sf::Vector2f{-20.f, -10.f}, sf::Vector2f{40.f, 20.f}, Weapon::weapon_types::TRUMPET,
+Scene::getTexture("Trumpet"), 7.5f),
+attackCooldown(), paused(false){
+    sf::Texture texture;
+    sf::IntRect rect{0, 0, (int) Scene::getWindowSize().x,
+                     (int) Scene::getWindowSize().y};
+
+    Scene::getTexture("Grass").setRepeated(true);
+
+    background.setTexture(Scene::getTexture("Grass"));
+    background.setTextureRect(rect);
+
+    hud = Hud{Scene::getTexture("HealthBottom"), Scene::getTexture("HealthBar"), Scene::getWindowSize(), 100};
+
+    gameProc();
+}
 
 sf::Vector2f Game::normalize(const sf::Vector2f &source) {
     float length = sqrt((source.x * source.x) + (source.y * source.y));
@@ -7,6 +26,12 @@ sf::Vector2f Game::normalize(const sf::Vector2f &source) {
         return {source.x / length, source.y / length};
     else
         return source;
+}
+
+std::ostream &operator<<(std::ostream &os, const Game &game_) {
+    os << "Paused?: " << game_.paused <<  "\n";
+
+    return os;
 }
 
 void Game::handleEvents(const sf::Event &handeledEvent) {
@@ -45,6 +70,12 @@ void Game::renderSprites() {
 
     for (auto &enemy: enemies) {
         Scene::draw(enemy.getSprite());
+    }
+}
+
+void Game::renderHud(){
+    for (const auto& sprite : hud.getSprites()){
+        Scene::draw(sprite);
     }
 }
 
@@ -93,7 +124,6 @@ void Game::pause() {
         renderSprites();
         Scene::draw(resume.getSprite());
         Scene::draw(resume.getText());
-
         Scene::draw(quit.getSprite());
         Scene::draw(quit.getText());
 
@@ -106,7 +136,6 @@ void Game::gameProc() {
     sf::Clock clock;
     sf::Clock enemySpawnClock;
     sf::Clock damageCooldown;
-
 
     while (Scene::isOpen()) {
         float delta = clock.restart().asSeconds() * 60;
@@ -166,6 +195,7 @@ void Game::gameProc() {
 
                 if (damageCooldown.getElapsedTime().asSeconds() > 2) {
                     player.damage(25);
+                    hud.updateHealth(player.getHealth());
                     damageCooldown.restart();
                 }
 
@@ -175,6 +205,7 @@ void Game::gameProc() {
         Scene::clear();
         Scene::draw(background);
         renderSprites();
+        renderHud();
         Scene::display();
 
     }
@@ -191,6 +222,7 @@ void Game::end() {
     Button quit(Scene::getTexture("Buton"), Scene::getFont(), "Quit");
     quit.setPosition(sf::Vector2f{250, 400});
 
+    renderHud();
     Scene::draw(gameover);
     Scene::draw(quit.getSprite());
     Scene::draw(quit.getText());

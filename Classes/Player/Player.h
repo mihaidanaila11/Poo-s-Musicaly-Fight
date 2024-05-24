@@ -41,6 +41,7 @@ public:
 
     const sf::Sprite& getSprite();
     const Weapon& getWeapon() const;
+    int getHealth() const;
 
     Hitbox getHitbox() const;
 };
