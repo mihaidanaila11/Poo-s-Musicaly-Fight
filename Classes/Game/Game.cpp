@@ -27,8 +27,6 @@ paused(false){
     background.setTextureRect(rect);
 
     hud = Hud{Scene::getTexture("HealthBottom"), Scene::getTexture("HealthBar"), Scene::getWindowSize(), 100};
-
-    gameProc();
 }
 
 sf::Vector2f Game::normalize(const sf::Vector2f &source) {
