@@ -9,19 +9,20 @@
 const std::string GAME_TITLE = "Poo's Musicaly Fight";
 
 class Scene {
+
     sf::RenderWindow* window;
     sf::Event event;
 
     std::unordered_map<std::string, sf::Texture> textures;
     sf::Font font;
 
+
 public:
-    //Scene(unsigned int windowWidth, unsigned int windowHeight, const std::vector<std::string> &image_paths);
     Scene(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
 
     Scene& operator=(const Scene& other);
 
-    ~Scene();
+    virtual ~Scene();
 
     Scene(const Scene &other);
 
@@ -49,6 +50,7 @@ public:
 
     sf::Vector2u getWindowSize() const;
 
+    virtual void handleEvents() = 0;
 };
 
 

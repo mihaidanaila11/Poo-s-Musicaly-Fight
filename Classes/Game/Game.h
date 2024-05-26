@@ -14,7 +14,6 @@ class Game : Scene{
     sf::Clock attackCooldown;
 
     Hud hud;
-
     bool paused;
 
 
@@ -30,7 +29,7 @@ public:
 private:
     static sf::Vector2f normalize(const sf::Vector2f &source);
 
-    void handleEvents(const sf::Event &handeledEvent);
+    void handleEvents() override;
 
     void addEnemy(float x, float y);
 

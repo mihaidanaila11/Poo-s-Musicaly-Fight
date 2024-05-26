@@ -4,7 +4,9 @@
 
 MainMenu::MainMenu(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths,
                    const std::string& fontPath) :
-Scene(renderWindow, image_paths, fontPath){
+Scene(renderWindow, image_paths, fontPath), play(Scene::getTexture("Buton"), Scene::getFont(), "PLAY"),
+quit(Scene::getTexture("Buton"), Scene::getFont(), "QUIT"),
+returnFlag(-1){
     sf::IntRect rect{0, 0, (int) Scene::getWindowSize().x,
                      (int) Scene::getWindowSize().y};
 
@@ -12,6 +14,35 @@ Scene(renderWindow, image_paths, fontPath){
     background.setTexture(Scene::getTexture("Grass_blured"));
 
     background.setTextureRect(rect);
+}
+
+void MainMenu::handleEvents() {
+    while(Scene::pollEvent()){
+        sf::Event handledEvent = Scene::getEvent();
+        switch (handledEvent.type) {
+            case sf::Event::Closed:
+                Scene::close();
+                break;
+
+            case sf::Event::MouseButtonPressed:
+                if (handledEvent.mouseButton.button == sf::Mouse::Left) {
+
+                    if (play.clicked(Scene::getEvent().mouseButton)) {
+                        returnFlag = 1;
+                        return;
+                    } else if (quit.clicked(Scene::getEvent().mouseButton)) {
+                        Scene::close();
+                        returnFlag = 0;
+                        return;
+
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
 }
 
 
@@ -22,17 +53,15 @@ int MainMenu::start() {
     title.setFillColor(sf::Color(239, 230, 103));
     title.setOutlineThickness(1.f);
     title.setOutlineColor(sf::Color::Black);
-
-    sf::FloatRect localBounds = title.getLocalBounds();
-    title.setPosition((float)Scene::getWindowSize().x/2 - localBounds.width/2, 20);
-
-    Button play{Scene::getTexture("Buton"), Scene::getFont(), "PLAY"};
     play.setPosition(sf::Vector2f {(float)Scene::getWindowSize().x/2 - play.getLocalBounds().width/2,
                                    (float)Scene::getWindowSize().y/2 - play.getLocalBounds().height - 20.f});
 
-    Button quit{Scene::getTexture("Buton"), Scene::getFont(), "QUIT"};
     quit.setPosition(sf::Vector2f {(float)Scene::getWindowSize().x/2 - quit.getLocalBounds().width/2,
                                    (float)Scene::getWindowSize().y/2 + quit.getLocalBounds().height + 20.f});
+
+
+    sf::FloatRect localBounds = title.getLocalBounds();
+    title.setPosition((float)Scene::getWindowSize().x/2 - localBounds.width/2, 20);
 
     Scene::clear();
     Scene::draw(background);
@@ -44,30 +73,10 @@ int MainMenu::start() {
     Scene::display();
 
     while(Scene::isOpen()){
-        while(Scene::pollEvent()){
-            switch (Scene::getEvent().type) {
-                case sf::Event::Closed:
-                    Scene::close();
-                    break;
+        handleEvents();
 
-                case sf::Event::MouseButtonPressed:
-                    if (Scene::getEvent().mouseButton.button == sf::Mouse::Left) {
-
-                        if (play.clicked(Scene::getEvent().mouseButton)) {
-                            return 1;
-                        } else if (quit.clicked(Scene::getEvent().mouseButton)) {
-                            Scene::close();
-                            return 0;
-
-                        }
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
+        if(returnFlag != -1)
+            return returnFlag;
 
     }
     return 0;

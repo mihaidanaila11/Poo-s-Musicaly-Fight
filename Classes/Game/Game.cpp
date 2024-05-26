@@ -1,11 +1,22 @@
 #include "Game.h"
 
-Game::Game(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath) :
+Game::Game(sf::RenderWindow*& renderWindow,
+           const std::vector<std::string> &image_paths,
+           const std::string& fontPath) :
 Scene(renderWindow, image_paths, fontPath),
-player(100, Scene::getTexture("Player_SpriteSheet"), 2, Entity::RIGHT, 2.3f, 2.3f,
-0, 0, sf::Vector2f{-20.f, -10.f}, sf::Vector2f{40.f, 20.f}, Weapon::weapon_types::TRUMPET,
-Scene::getTexture("Trumpet"), 7.5f),
-attackCooldown(), paused(false){
+player(100,
+       Scene::getTexture("Player_SpriteSheet"),
+       2,
+       Entity::RIGHT,
+       2.3f, 2.3f,
+       0, 0,
+       sf::Vector2f{-20.f, -10.f},
+       sf::Vector2f{40.f, 20.f},
+       Weapon::weapon_types::TRUMPET,
+       Scene::getTexture("Trumpet"),
+       7.5f),
+attackCooldown(),
+paused(false){
     sf::Texture texture;
     sf::IntRect rect{0, 0, (int) Scene::getWindowSize().x,
                      (int) Scene::getWindowSize().y};
@@ -34,28 +45,32 @@ std::ostream &operator<<(std::ostream &os, const Game &game_) {
     return os;
 }
 
-void Game::handleEvents(const sf::Event &handeledEvent) {
-    switch (handeledEvent.type) {
-        case sf::Event::Closed:
-            Scene::close();
-            break;
-        case sf::Event::KeyPressed:
-            //37 is the key code for ESC
-            if (handeledEvent.key.scancode == 37) {
-                paused = true;
+void Game::handleEvents() {
+
+    while(Scene::pollEvent()) {
+        sf::Event handledEvent = Scene::getEvent();
+        switch (handledEvent.type) {
+            case sf::Event::Closed:
+                Scene::close();
                 break;
-            }
-            if (handeledEvent.key.scancode == sf::Keyboard::Scan::Space) {
-                if(attackCooldown.getElapsedTime().asSeconds() > 1.f){
-                    player.attack(enemies);
-                    attackCooldown.restart();
+            case sf::Event::KeyPressed:
+                //37 is the key code for ESC
+                if (handledEvent.key.scancode == 37) {
+                    paused = true;
                     break;
                 }
+                if (handledEvent.key.scancode == sf::Keyboard::Scan::Space) {
+                    if (attackCooldown.getElapsedTime().asSeconds() > 1.f) {
+                        player.attack(enemies);
+                        attackCooldown.restart();
+                        break;
+                    }
 
-            }
-            break;
-        default:
-            break;
+                }
+                break;
+            default:
+                break;
+        }
     }
 }
 
@@ -151,9 +166,7 @@ void Game::gameProc() {
             delta = clock.getElapsedTime().asSeconds() * 60;
         }
 
-        while (Scene::pollEvent()) {
-            handleEvents(Scene::getEvent());
-        }
+        handleEvents();
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
             player.moveSprites(Entity::UP, delta);

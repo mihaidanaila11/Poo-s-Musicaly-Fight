@@ -11,7 +11,10 @@ class Button {
     sf::Text text;
 
 public:
+    Button() = default;
+
     Button(const sf::Texture& texture_, const sf::Font &font, const std::string &text_);
+
 
     friend std::ostream &operator<<(std::ostream &os, const Button &button_);
 
