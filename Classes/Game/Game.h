@@ -42,6 +42,8 @@ private:
     void gameProc();
 
     void end();
+
+    static float vectorDistance(sf::Vector2f vector1, sf::Vector2f vector2);
 };
 
 

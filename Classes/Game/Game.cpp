@@ -39,6 +39,10 @@ sf::Vector2f Game::normalize(const sf::Vector2f &source) {
         return source;
 }
 
+float Game::vectorDistance(sf::Vector2f vector1, sf::Vector2f vector2) {
+    return sqrtf((vector1.x-vector2.x)*(vector1.x-vector2.x) + (vector1.y-vector2.y)*(vector1.y-vector2.y));
+}
+
 std::ostream &operator<<(std::ostream &os, const Game &game_) {
     os << "Paused?: " << game_.paused <<  "\n";
 
@@ -184,7 +188,7 @@ void Game::gameProc() {
 
         }
 
-        if (enemySpawnClock.getElapsedTime().asSeconds() >= 2 && enemies.size() < 10) {
+        if (enemySpawnClock.getElapsedTime().asSeconds() >= 2 && enemies.size() < 5) {
             int x = rand() % Scene::getWindowSize().x + 1;
             int y = rand() % Scene::getWindowSize().y + 1;
             while (x == player.getPosition().x &&
@@ -196,15 +200,27 @@ void Game::gameProc() {
             enemySpawnClock.restart();
         }
 
-        for (auto &enemy: enemies) {
+        for (unsigned int i=0; i<enemies.size(); i++) {
             sf::Vector2f direction = normalize(
-                    enemy.getPosition() - player.getPosition());
-            direction.x *= -enemy.getSpeed() * delta;
-            direction.y *= -enemy.getSpeed() * delta;
+                    enemies[i].getPosition() - player.getPosition());
+            direction.x *= -enemies[i].getSpeed() * delta;
+            direction.y *= -enemies[i].getSpeed() * delta;
 
-            enemy.move(direction);
+            for(unsigned int j=0; j<enemies.size(); j++){
+                if(j==i)
+                    continue;
+                if(enemies[i].getSprite().getGlobalBounds().intersects(enemies[j].getSprite().getGlobalBounds())){
+                    sf::Vector2f pos1 = enemies[i].getPosition();
+                    sf::Vector2f pos2 = enemies[j].getPosition();
+                    sf::Vector2f deltaPosition = pos2 - pos1;
+                    float distance = vectorDistance(enemies[i].getPosition(), enemies[j].getPosition());
+                    direction.x -= deltaPosition.x / distance;
+                }
+            }
 
-            if (player.getHitbox().intersects(enemy.getHitbox())) {
+            enemies[i].move(direction);
+
+            if (player.getHitbox().intersects(enemies[i].getHitbox())) {
 
                 if (damageCooldown.getElapsedTime().asSeconds() > 2) {
                     player.damage(25);
