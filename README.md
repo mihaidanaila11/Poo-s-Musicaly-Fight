@@ -65,7 +65,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
   - [x] utilizare cu sens: de exemplu, `throw` în constructor (sau funcție care întoarce un obiect), `try`/`catch` în `main`
 - [ ] funcții și atribute `static`
 - [ ] STL
-- [ ] cât mai multe `const`
+- [x] cât mai multe `const`
 - [ ] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, **pe lângă cele 3 derivate deja adăugate**
   - noua derivată nu poate fi una existentă care a fost ștearsă și adăugată din nou
 - [ ] tag de `git`: de exemplu `v0.2`
