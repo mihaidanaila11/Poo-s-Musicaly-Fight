@@ -12,13 +12,15 @@
 #include "Classes/Game/Game.h"
 
 #include "Scenes/MainMenu/MainMenu.h"
+#include "Exceptions/GraphicExceptions.hpp"
+
 int main() {
 
     auto* mainWindow = new sf::RenderWindow{sf::VideoMode{800, 600}, "POO'S MUSICALY FIGHT",
                                 sf::Style::Default};
 
     int flag;
-    {
+    try{
         MainMenu mainMenu{mainWindow, std::vector<std::string>{
                 "Textures/Grass_blured.png",
                 "Textures/Buton.png"
@@ -26,19 +28,30 @@ int main() {
 
         flag = mainMenu.start();
     }
+    catch (inexistent_path& err){
+        std::cout << err.what() << "\n";
+        return 0;
+    }
+
 
 
     if(flag == 1){
-        Game game{mainWindow, std::vector<std::string>{
-                "Textures/Weapons/Trumpet.png",
-                "Textures/Dummy.png",
-                "Textures/Player_SpriteSheet.png",
-                "Textures/Grass.jpg",
-                "Textures/Buton.png",
-                "Textures/HUD/HealthBar.png",
-                "Textures/HUD/HealthBottom.png"
-        }, "daydream_3/Daydream.ttf"};
-        game.start();
+        try{
+            Game game{mainWindow, std::vector<std::string>{
+                    "Textures/Weapons/Trumpet.png",
+                    "Textures/Dummy.png",
+                    "Textures/Player_SpriteSheet.png",
+                    "Textures/Grass.jpg",
+                    "Textures/Buton.png",
+                    "Textures/HUD/HealthBar.png",
+                    "Textures/HUD/HealthBottom.png"
+            }, "daydream_3/Daydream.ttf"};
+            game.start();
+        }
+        catch (TextureNotFound& err) {
+            std::cout << err.what() << "\n";
+        }        
+
     }
 
 

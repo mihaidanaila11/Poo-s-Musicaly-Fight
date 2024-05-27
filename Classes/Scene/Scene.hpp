@@ -28,10 +28,20 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Scene &scene_);
 
+    template<typename T>
+    static bool isInVector(const std::vector<T>& vector, const T& object){
+        for(const auto& item : vector){
+            if(item == object)
+                return true;
+        }
+
+        return false;
+    }
+    static bool exists(const std::string& path);
+    static bool isImageSupported(const std::string& path);
+
     sf::Texture& getTexture(const std::string& key);
     const sf::Font& getFont() const;
-
-    sf::Event getEvent() const;
 
     bool isOpen();
 

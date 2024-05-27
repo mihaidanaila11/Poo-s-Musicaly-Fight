@@ -132,6 +132,7 @@ add_executable(${PROJECT_NAME}
         Classes/Hud/Hud.h
         Classes/Hud/HealthBar/HealthBar.cpp
         Classes/Hud/HealthBar/HealthBar.h
+        Exceptions/GraphicExceptions.hpp
 )
 
 ###############################################################################

@@ -1,5 +1,4 @@
 #include "MainMenu.h"
-#include "../../Classes/Button/Button.h"
 #include "../../Classes/Game/Game.h"
 
 MainMenu::MainMenu(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths,

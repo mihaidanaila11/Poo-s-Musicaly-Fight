@@ -1,5 +1,26 @@
+#include <filesystem>
+#include <fstream>
 #include "Scene.hpp"
+#include "../../Exceptions/GraphicExceptions.hpp"
 
+bool Scene::exists(const std::string &path) { return std::ifstream(path).good(); }
+
+bool Scene::isImageSupported(const std::string &path) {
+    std::vector<std::string> supportedExtensions{
+        "jpg","png","gif","bmp","pnm","tga","psd","hdr","pic"};
+
+    std::string extension;
+    for(int i=3; i>0; i--){
+        extension += *(path.end() - i*sizeof(char));
+    }
+
+    std::transform(extension.begin(), extension.end(), extension.begin(),
+                   [](unsigned char c){ return std::tolower(c); });
+
+    if(isInVector(supportedExtensions, extension))
+        return true;
+    return false;
+}
 
 Scene::Scene(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath):
         window(renderWindow),
@@ -7,6 +28,13 @@ Scene::Scene(sf::RenderWindow*& renderWindow, const std::vector<std::string> &im
     std::cout << "constructor scene\n";
     window->setVerticalSyncEnabled(true);
     for (const auto &path: image_paths) {
+        if(!exists(path)){
+            throw inexistent_path();
+        }
+
+        if(!isImageSupported(path)) {
+            throw unsupported_image();
+        }
 
         std::string name;
         for(int i = path.size() - 5; i>=0; i--){
@@ -18,16 +46,10 @@ Scene::Scene(sf::RenderWindow*& renderWindow, const std::vector<std::string> &im
         std::reverse(name.begin(), name.end());
 
         sf::Image image;
-        if (!image.loadFromFile(path)) {
-            std::cout << "Trouble at loading Image File\n";
-            continue;
-        }
+        image.loadFromFile(path);
 
         sf::Texture texture;
-        if(!texture.loadFromImage(image)){
-            std::cout << "Trouble at loading Texture\n";
-            continue;
-        }
+        texture.loadFromImage(image);
 
         textures[name] = texture;
     }
@@ -54,9 +76,12 @@ std::ostream &operator<<(std::ostream &os, const Scene &scene_) {
     return os;
 }
 
-sf::Texture& Scene::getTexture(const std::string& key) { return textures[key]; }
+sf::Texture& Scene::getTexture(const std::string& key) {
+    if(textures.find(key) == textures.end())
+        throw TextureNotFound();
+    return textures[key];
+}
 
-sf::Event Scene::getEvent() const { return event; }
 
 bool Scene::isOpen() { return window->isOpen(); }
 

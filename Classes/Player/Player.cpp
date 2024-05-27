@@ -58,7 +58,7 @@ void Player::moveSprites(Entity::direction dir, float delta) {
 }
 
 void Player::attack(std::vector<Enemy> &targets) {
-    for (unsigned int i = 0; i < targets.size(); i++) {
+    for (int i = 0; i < targets.size(); i++) {
         if (attackRange.intersects(targets[i].getHitbox())) {
             targets[i].damage(50, targets, i);
             return;
