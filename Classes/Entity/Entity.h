@@ -13,17 +13,19 @@ public:
         LEFT, RIGHT, UP, DOWN
     };
 
+protected:
+    sf::Sprite sprite;
+    Hitbox hitbox;
+
 private:
     sf::IntRect textureRect;
     sf::Texture& texture;
-    sf::Sprite sprite;
 
     unsigned int frameSize;
     unsigned int frameCount;
 
-    Hitbox hitbox;
 
-    direction facing;
+
     float speed;
 
 public:
@@ -38,7 +40,7 @@ public:
     Entity &operator=(const Entity &other);
 
     // Destructor
-    ~Entity();
+    virtual ~Entity();
 
     Entity(sf::Texture& texture_, const float &scaleX,
            const float &scaleY, const double &posX, const double &posY);
@@ -51,10 +53,7 @@ public:
 
     void setTextureFrame(const int& frame);
 
-    void setPosition(float x, float y);
-
-
-    void move(sf::Vector2f vector);
+    virtual void move(sf::Vector2f vector);
 
 
     const sf::Sprite& getSprite() const;

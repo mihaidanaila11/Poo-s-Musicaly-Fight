@@ -7,12 +7,11 @@
 #include "../Enemy/Enemy.h"
 #include "cmath"
 
-class Player {
+class Player : public Entity{
 private:
     int health = 100;
     bool alive = true;
 
-    Entity entity;
     Weapon weapon;
 
     Hitbox attackRange;
@@ -28,9 +27,8 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Player &player_);
 
-    sf::Vector2f getPosition() const;
 
-
+    void move(sf::Vector2f vector) override;
     void moveSprites(Entity::direction dir, float delta);
 
     void attack(std::vector<Enemy> &targets);
@@ -39,11 +37,10 @@ public:
 
     bool isAlive() const;
 
-    const sf::Sprite& getSprite();
     const Weapon& getWeapon() const;
     int getHealth() const;
 
-    Hitbox getHitbox() const;
+    Hitbox getAttackRange() const;
 };
 
 
