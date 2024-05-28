@@ -1,9 +1,9 @@
 #include "Player.h"
 
-Player::Player(const int &health_, sf::Texture& texture, const int frameCount, const Entity::direction &facing,
+Player::Player(const int &health_, sf::Texture& texture, const int frameCount,
        const float &scaleX, const float &scaleY,
        const float &posX, const float &posY, const sf::Vector2f& hitboxOffset, const sf::Vector2f& attackRadius, const Weapon::weapon_types weapon_type_,
-       sf::Texture &weapon_texture, const float &speed_) :Entity(texture, frameCount, facing, hitboxOffset,
+       sf::Texture &weapon_texture, const float &speed_) :Entity(texture, frameCount, hitboxOffset,
                                                                  3.f, 3.f, posX, posY, speed_),
         health(health_), 
         weapon(weapon_type_, weapon_texture,

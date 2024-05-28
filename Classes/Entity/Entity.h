@@ -24,8 +24,6 @@ private:
     unsigned int frameSize;
     unsigned int frameCount;
 
-
-
     float speed;
 
 public:
@@ -45,7 +43,10 @@ public:
     Entity(sf::Texture& texture_, const float &scaleX,
            const float &scaleY, const double &posX, const double &posY);
 
-    Entity(sf::Texture& texture_, const int& frameCount_, const direction& facing_, const sf::Vector2f& hitboxOffset, const float& scaleX,
+    Entity(sf::Texture& texture_, const float &scaleX,
+           const float &scaleY, const double &posX, const double &posY, const float& speed_);
+
+    Entity(sf::Texture& texture_, const int& frameCount_, const sf::Vector2f& hitboxOffset, const float& scaleX,
            const float& scaleY, const float& posX, const float& posY, const float& speed_);
 
     // Operator <<

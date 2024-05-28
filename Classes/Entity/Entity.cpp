@@ -1,14 +1,10 @@
-//
-// Created by danai on 5/21/2024.
-//
-
 #include "Entity.h"
 
 //Constructor de copiere
 //Ignor warning pt constructor de copiere pt ca face parte din cerinta
 //NOLINTNEXTLINE
-Entity::Entity(const Entity &other) : textureRect(other.textureRect), texture(other.texture),
-                                      frameSize(other.frameSize), frameCount(other.frameCount), hitbox(other.hitbox), speed(other.speed) {
+Entity::Entity(const Entity &other) : hitbox(other.hitbox), textureRect(other.textureRect),
+                                      texture(other.texture), frameSize(other.frameSize), frameCount(other.frameCount), speed(other.speed) {
     std::cout << "copiere\n";
     sprite.setTexture(texture);
     sprite.setTextureRect(textureRect);
@@ -54,7 +50,22 @@ textureRect(), texture(texture_), frameCount(1), speed(0) {
 
 }
 
-Entity::Entity(sf::Texture& texture_, const int& frameCount_, const direction& facing_, const sf::Vector2f& hitboxOffset, const float& scaleX,
+Entity::Entity(sf::Texture& texture_, const float &scaleX,
+       const float &scaleY, const double &posX, const double &posY, const float& speed_) :
+        textureRect(), texture(texture_), frameCount(1), speed(speed_){
+    frameSize = texture.getSize().x;
+    textureRect.width = (int)texture.getSize().x;
+    textureRect.height = (int)texture.getSize().y;
+
+    sprite.setTexture(texture);
+    sprite.setTextureRect(textureRect);
+    sprite.setScale(scaleX, scaleY);
+    sprite.setPosition(static_cast<float>(posX), static_cast<float>(posY));
+
+    hitbox = Hitbox{sprite};
+}
+
+Entity::Entity(sf::Texture& texture_, const int& frameCount_, const sf::Vector2f& hitboxOffset, const float& scaleX,
 const float& scaleY, const float& posX, const float& posY, const float& speed_) : texture(texture_),
 frameCount(frameCount_), speed(speed_) {
 

@@ -19,7 +19,7 @@ private:
 
 public:
 
-    Player(const int &health_, sf::Texture& texture, int frameCount, const Entity::direction &facing,
+    Player(const int &health_, sf::Texture& texture, int frameCount,
            const float &scaleX, const float &scaleY,
            const float &posX, const float &posY, const sf::Vector2f& hitboxOffset, const sf::Vector2f& attackRadius, Weapon::weapon_types weapon_type_,
            sf::Texture &weapon_texture, const float &speed_);
