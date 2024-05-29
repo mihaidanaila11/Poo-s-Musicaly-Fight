@@ -170,11 +170,10 @@ void Game::pause() {
 
 void Game::gameProc() {
     sf::Clock enemySpawnClock;
-    float delta;
     renderAlert("WAVE " + std::to_string(wave.getWaveNumber()));
     wave.initWave(player.getPosition());
     while (Scene::isOpen()) {
-        delta = deltaTime.restart().asSeconds() * 60;
+        float delta = deltaTime.restart().asSeconds() * 60;
         if (!player.isAlive()) {
             end();
         }
