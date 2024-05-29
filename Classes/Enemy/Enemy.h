@@ -7,12 +7,12 @@
 class Enemy : public Alive{
 public:
     enum EnemyType{
-        ENEMY,
         BASIC,
         GHOST
     };
 private:
     EnemyType type;
+
 protected:
 int attackDamage;
 

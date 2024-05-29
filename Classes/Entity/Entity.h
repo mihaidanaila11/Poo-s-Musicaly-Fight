@@ -17,6 +17,8 @@ protected:
     sf::Sprite sprite;
     Hitbox hitbox;
 
+    void setSpeed(const float& speed_);
+
 private:
     sf::IntRect textureRect;
     sf::Texture& texture;

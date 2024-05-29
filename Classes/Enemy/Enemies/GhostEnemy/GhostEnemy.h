@@ -8,6 +8,7 @@ class GhostEnemy : public Enemy{
     sf::Clock ghostClock;
     static bool ghosted;
     static float ghostDuration;
+    float originalSpeed;
 public:
     GhostEnemy(sf::Texture& texture, const float &scaleX, const float &scaleY,
                const float &posX, const float &posY, const int &health_, const float &speed_, const int& attackDamage_);
