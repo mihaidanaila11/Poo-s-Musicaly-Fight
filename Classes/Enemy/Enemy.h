@@ -8,7 +8,8 @@ class Enemy : public Alive{
 public:
     enum EnemyType{
         BASIC,
-        GHOST
+        GHOST,
+        GIANT
     };
 private:
     EnemyType type;

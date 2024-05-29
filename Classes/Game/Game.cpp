@@ -3,6 +3,7 @@
 #include "../Enemy/Enemies/GhostEnemy/GhostEnemy.h"
 #include "../../Math/VectorMath.h"
 #include "../../Exceptions/GraphicExceptions.hpp"
+#include "../Enemy/Enemies/GiantEnemy/GiantEnemy.h"
 
 using std::swap;
 
@@ -23,8 +24,9 @@ Game::Game(sf::RenderWindow *&renderWindow,
                Scene::getTexture("Trumpet"),
                6.f, 2.f),
         wave{30, std::vector<Enemy *>{
-                BasicEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 2.f, 25}.clone(),
-                GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 25}.clone()
+                BasicEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 2.f, 5}.clone(),
+                GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 10}.clone(),
+                GiantEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 25}.clone()
         }, Scene::getWindowSize()},
         attackCooldown(),
         paused(false) {
@@ -307,13 +309,11 @@ void Game::wait(float secounds) {
 void Game::renderAlert(const std::string &message) {
     Alert alert{message,
                 Scene::getTexture("BigAlert"), Scene::getFont(), Scene::getWindowSize()};
-
-    float delta;
     float velocity = 7.f;
 
     while (alert.getPosition().y <
            (float) Scene::getWindowSize().y / 2 - alert.getSprite().getGlobalBounds().height / 2) {
-        delta = deltaTime.restart().asSeconds() * 60;
+        float delta = deltaTime.restart().asSeconds() * 60;
         alertHandleEvents();
         alert.move(sf::Vector2f{0.f, velocity * delta});
 

@@ -145,6 +145,8 @@ add_executable(${PROJECT_NAME}
         Math/VectorMath.cpp
         Math/VectorMath.h
         Classes/Wave/Waves.cpp
+        Classes/Enemy/Enemies/GiantEnemy/GiantEnemy.cpp
+        Classes/Enemy/Enemies/GiantEnemy/GiantEnemy.h
 )
 
 ###############################################################################
