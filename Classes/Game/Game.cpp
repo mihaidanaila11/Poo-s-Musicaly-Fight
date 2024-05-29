@@ -185,6 +185,7 @@ void Game::gameProc() {
                 pause();
             }
             catch(WindowClosed& err){
+                std::cout << err.what() << "\n";
                 return;
             }
 
@@ -328,6 +329,7 @@ void Game::renderAlert(const std::string &message) {
         wait(2);
     }
     catch(WindowClosed& err){
+        std::cout << err.what() << "\n";
         return;
     }
 }

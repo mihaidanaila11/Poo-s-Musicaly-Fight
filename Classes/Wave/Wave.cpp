@@ -29,6 +29,11 @@ void Wave::initWave(const sf::Vector2f& playerPosition) {
     }
     enemies.clear();
     switch (currentWave) {
+        case 0:
+            enemies.push_back(availableEnemies[Enemy::GIANT]->clone());
+            enemies[0]->setPosition(spawnRange.x/2, spawnRange.y/2);
+            break;
+
         case 1:
             enemies = init_wave1();
             for(const auto& enemy : enemies){

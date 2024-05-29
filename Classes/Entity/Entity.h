@@ -19,6 +19,16 @@ protected:
 
     void setSpeed(const float& speed_);
 
+    //Constructor de copiere
+    //Ignor warning pt constructor de copiere pt ca face parte din cerinta
+    //NOLINTNEXTLINE
+    Entity(const Entity &other);
+
+    // Constructor operator= de copiere
+    //Ignor warning pt operator= pt ca face parte din cerinta
+    //NOLINTNEXTLINE
+    Entity &operator=(const Entity &other);
+
 private:
     sf::IntRect textureRect;
     sf::Texture& texture;
@@ -29,15 +39,7 @@ private:
     float speed;
 
 public:
-    //Constructor de copiere
-    //Ignor warning pt constructor de copiere pt ca face parte din cerinta
-    //NOLINTNEXTLINE
-    Entity(const Entity &other);
 
-    // Constructor operator= de copiere
-    //Ignor warning pt operator= pt ca face parte din cerinta
-    //NOLINTNEXTLINE
-    Entity &operator=(const Entity &other);
 
     // Destructor
     virtual ~Entity();

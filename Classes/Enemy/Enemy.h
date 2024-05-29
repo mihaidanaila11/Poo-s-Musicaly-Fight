@@ -17,6 +17,9 @@ private:
 protected:
 int attackDamage;
 
+Enemy(const Enemy& other) = default;
+Enemy& operator=(const Enemy& other) = default;
+
 public:
 
 
