@@ -6,13 +6,10 @@
 #include "../Weapon/Weapon.h"
 #include "../Enemy/Enemy.h"
 #include "cmath"
+#include "../Alive/Alive.h"
 
-class Player {
+class Player : public Alive{
 private:
-    int health = 100;
-    bool alive = true;
-
-    Entity entity;
     Weapon weapon;
 
     Hitbox attackRange;
@@ -20,7 +17,7 @@ private:
 
 public:
 
-    Player(const int &health_, sf::Texture& texture, int frameCount, const Entity::direction &facing,
+    Player(const int &health_, sf::Texture& texture, int frameCount,
            const float &scaleX, const float &scaleY,
            const float &posX, const float &posY, const sf::Vector2f& hitboxOffset, const sf::Vector2f& attackRadius, Weapon::weapon_types weapon_type_,
            sf::Texture &weapon_texture, const float &speed_);
@@ -28,22 +25,20 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Player &player_);
 
-    sf::Vector2f getPosition() const;
 
-
+    void move(sf::Vector2f vector) override;
     void moveSprites(Entity::direction dir, float delta);
 
-    void attack(std::vector<Enemy> &targets);
+    void attack(std::vector<Enemy*> &targets);
 
     void damage(int damage);
 
     bool isAlive() const;
 
-    const sf::Sprite& getSprite();
     const Weapon& getWeapon() const;
     int getHealth() const;
 
-    Hitbox getHitbox() const;
+    Hitbox getAttackRange() const;
 };
 
 

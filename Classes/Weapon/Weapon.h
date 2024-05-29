@@ -26,6 +26,8 @@ public:
     sf::Sprite getSprite() const;
     Hitbox getHitbox() const;
 
+    int getDamage() const;
+
 };
 
 

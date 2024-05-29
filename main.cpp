@@ -40,6 +40,7 @@ int main() {
             Game game{mainWindow, std::vector<std::string>{
                     "Textures/Weapons/Trumpet.png",
                     "Textures/Dummy.png",
+                    "Textures/Enemies/Ghost.png",
                     "Textures/Player_SpriteSheet.png",
                     "Textures/Grass.jpg",
                     "Textures/Buton.png",

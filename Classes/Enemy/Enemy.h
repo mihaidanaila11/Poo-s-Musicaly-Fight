@@ -1,34 +1,24 @@
-//
-// Created by danai on 5/21/2024.
-//
-
 #ifndef OOP_ENEMY_H
 #define OOP_ENEMY_H
 
 #include "../Entity/Entity.h"
+#include "../Alive/Alive.h"
 
-class Enemy {
-    Entity entity;
-    float speed;
-
-    int health;
+class Enemy : public Alive{
+protected:
+int attackDamage;
 
 public:
     Enemy(sf::Texture& texture, const float &scaleX, const float &scaleY,
-          const float &posX, const float &posY, const int &health_, const float &speed_);
+          const float &posX, const float &posY, const int &health_, const float &speed_, const int& attackDamage_);
 
     friend std::ostream &operator<<(std::ostream &os, const Enemy &enemy_);
 
-    const sf::Sprite& getSprite() const;
+    void damage(int damage, std::vector<Enemy*> &enemies, int index);
 
-    sf::Vector2f getPosition() const;
+    virtual Enemy* clone() = 0;
 
-    void move(sf::Vector2f vector);
-
-    float getSpeed() const;
-    Hitbox getHitbox() const;
-
-    void damage(int damage, std::vector<Enemy> &enemies, int index);
+    virtual void attack(Alive& target) = 0;
 };
 
 

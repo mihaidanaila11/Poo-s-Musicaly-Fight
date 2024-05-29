@@ -5,7 +5,7 @@ const double &posX, const double &posY) :
 weapon_type(weapon_type_), entity(texture, scaleX, scaleY, posX, posY) {
     switch (weapon_type) {
         case TRUMPET:
-            damage = 25;
+            damage = 50;
             break;
         case KEYS:
             damage = 40;
@@ -28,3 +28,7 @@ void Weapon::move(sf::Vector2f vector) {
 
 sf::Sprite Weapon::getSprite() const { return entity.getSprite(); }
 Hitbox Weapon::getHitbox() const { return entity.getHitbox(); }
+
+int Weapon::getDamage() const {
+    return damage;
+}

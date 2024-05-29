@@ -13,17 +13,17 @@ public:
         LEFT, RIGHT, UP, DOWN
     };
 
+protected:
+    sf::Sprite sprite;
+    Hitbox hitbox;
+
 private:
     sf::IntRect textureRect;
     sf::Texture& texture;
-    sf::Sprite sprite;
 
     unsigned int frameSize;
     unsigned int frameCount;
 
-    Hitbox hitbox;
-
-    direction facing;
     float speed;
 
 public:
@@ -38,12 +38,15 @@ public:
     Entity &operator=(const Entity &other);
 
     // Destructor
-    ~Entity();
+    virtual ~Entity();
 
     Entity(sf::Texture& texture_, const float &scaleX,
            const float &scaleY, const double &posX, const double &posY);
 
-    Entity(sf::Texture& texture_, const int& frameCount_, const direction& facing_, const sf::Vector2f& hitboxOffset, const float& scaleX,
+    Entity(sf::Texture& texture_, const float &scaleX,
+           const float &scaleY, const double &posX, const double &posY, const float& speed_);
+
+    Entity(sf::Texture& texture_, const int& frameCount_, const sf::Vector2f& hitboxOffset, const float& scaleX,
            const float& scaleY, const float& posX, const float& posY, const float& speed_);
 
     // Operator <<
@@ -51,10 +54,7 @@ public:
 
     void setTextureFrame(const int& frame);
 
-    void setPosition(float x, float y);
-
-
-    void move(sf::Vector2f vector);
+    virtual void move(sf::Vector2f vector);
 
 
     const sf::Sprite& getSprite() const;
@@ -68,6 +68,7 @@ public:
 
     sf::Vector2f getPosition() const;
 
+    void setOpacity(const sf::Uint8& opacity);
 
 };
 

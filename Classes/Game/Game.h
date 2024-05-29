@@ -10,7 +10,7 @@
 
 class Game : Scene{
     Player player;
-    std::vector<Enemy> enemies;
+    std::vector<Enemy*> enemies;
     sf::Clock attackCooldown;
 
     Hud hud;
@@ -20,7 +20,7 @@ class Game : Scene{
     sf::Sprite background;
 
 public:
-    explicit Game(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
+    Game(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
 
     friend std::ostream &operator<<(std::ostream &os, const Game &game_);
 
