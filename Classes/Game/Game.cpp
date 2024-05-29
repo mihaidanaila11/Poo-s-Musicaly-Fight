@@ -66,7 +66,7 @@ void Game::handleEvents() {
                 }
                 if (handledEvent.key.scancode == sf::Keyboard::Scan::Space) {
                     if (attackCooldown.getElapsedTime().asSeconds() > 1.f) {
-                        for(unsigned int i; i < enemies.size(); i++){
+                        for(unsigned int i=0; i < enemies.size(); i++){
                             player.attack(enemies[i]);
                             if(!enemies[i]->isAlive()){
                                 delete enemies[i];
