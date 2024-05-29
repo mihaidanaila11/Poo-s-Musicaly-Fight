@@ -37,7 +37,6 @@ void Wave::initWave(const sf::Vector2f& playerPosition) {
         case 1:
             enemies = init_wave1();
             for(const auto& enemy : enemies){
-                std::cout << spawnRange.x << " " << spawnRange.y << "\n";
                 enemy->setPosition(spawnRange.x, spawnRange.y);
             }
 

@@ -26,7 +26,7 @@ Game::Game(sf::RenderWindow *&renderWindow,
         wave{30, std::vector<Enemy *>{
                 BasicEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 2.f, 5}.clone(),
                 GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 10}.clone(),
-                GiantEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 25}.clone()
+                GiantEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 150, 0.5f, 25}.clone()
         }, Scene::getWindowSize()},
         attackCooldown(),
         paused(false) {
@@ -81,6 +81,7 @@ void Game::handleEvents() {
                                 if (!enemies[i]->isAlive()) {
                                     wave.deleteEnemy(i);
                                 }
+                                std::cout << "Attacked!\n";
                                 break;
                             }
                         }
