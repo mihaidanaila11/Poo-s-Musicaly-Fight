@@ -4,27 +4,23 @@
 #pragma once
 #include "../Entity/Entity.h"
 
-class Weapon {
+class Weapon : public Entity{
 public:
     enum weapon_types {
         TRUMPET, KEYS, FLUTE
     };
 private:
     weapon_types weapon_type;
-    Entity entity;
-
     int damage;
 
 public:
     Weapon(weapon_types weapon_type_, sf::Texture &texture, const float &scaleX, const float &scaleY,
            const double &posX, const double &posY);
 
+    Weapon(const Weapon& other) = default;
+    Weapon& operator=(const Weapon& other) = default;
+
     friend std::ostream &operator<<(std::ostream &os, const Weapon &weapon_);
-
-    void move(sf::Vector2f vector);
-
-    sf::Sprite getSprite() const;
-    Hitbox getHitbox() const;
 
     int getDamage() const;
 

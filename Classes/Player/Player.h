@@ -22,6 +22,9 @@ public:
            const float &posX, const float &posY, const sf::Vector2f& hitboxOffset, const sf::Vector2f& attackRadius, Weapon::weapon_types weapon_type_,
            sf::Texture &weapon_texture, const float &speed_);
 
+    Player(const Player& other) = default;
+    Player& operator=(const Player& other) = default;
+
 
     friend std::ostream &operator<<(std::ostream &os, const Player &player_);
 

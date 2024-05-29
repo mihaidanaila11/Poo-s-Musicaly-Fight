@@ -2,7 +2,7 @@
 
 Weapon::Weapon(weapon_types weapon_type_, sf::Texture &texture, const float &scaleX, const float &scaleY,
 const double &posX, const double &posY) :
-weapon_type(weapon_type_), entity(texture, scaleX, scaleY, posX, posY) {
+Entity(texture, scaleX, scaleY, posX, posY), weapon_type(weapon_type_) {
     switch (weapon_type) {
         case TRUMPET:
             damage = 50;
@@ -21,13 +21,6 @@ std::ostream &operator<<(std::ostream &os, const Weapon &weapon_) {
 
     return os;
 }
-
-void Weapon::move(sf::Vector2f vector) {
-    entity.move(vector);
-}
-
-sf::Sprite Weapon::getSprite() const { return entity.getSprite(); }
-Hitbox Weapon::getHitbox() const { return entity.getHitbox(); }
 
 int Weapon::getDamage() const {
     return damage;

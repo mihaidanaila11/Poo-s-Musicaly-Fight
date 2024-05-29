@@ -2,6 +2,8 @@
 #include "../Enemy/Enemies/BasicEnemy/BasicEnemy.h"
 #include "../Enemy/Enemies/GhostEnemy/GhostEnemy.h"
 
+using std::swap;
+
 Game::Game(sf::RenderWindow*& renderWindow,
            const std::vector<std::string> &image_paths,
            const std::string& fontPath) :
@@ -63,8 +65,7 @@ void Game::handleEvents() {
                     break;
                 }
                 if (handledEvent.key.scancode == sf::Keyboard::Scan::Space) {
-                    std::cout << attackCooldown.getElapsedTime().asSeconds() << "\n";
-                    if (attackCooldown.getElapsedTime().asSeconds() > 1.f || true) {
+                    if (attackCooldown.getElapsedTime().asSeconds() > 1.f) {
                         player.attack(enemies);
                         attackCooldown.restart();
                         break;
@@ -280,3 +281,33 @@ void Game::end() {
         }
     }
 }
+
+Game::~Game() {
+    for(const auto enemy : enemies){
+        delete enemy;
+    }
+}
+
+Game::Game(const Game &other):
+        Scene(other),
+        player(other.player),
+        attackCooldown(other.attackCooldown),
+        paused(other.paused){
+}
+
+
+Game &Game::operator=(Game& other) {
+    swap(*this, other);
+    return *this;
+}
+
+void swap(Game &game1, Game &game2) {
+    swap(game1.player, game2.player);
+    swap(game1.enemies, game2.enemies);
+    swap(game1.attackCooldown, game2.attackCooldown);
+    swap(game1.hud, game2.hud);
+    swap(game1.paused, game2.paused);
+    swap(game1.background, game2.background);
+}
+
+
