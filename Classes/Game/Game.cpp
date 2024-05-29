@@ -24,7 +24,7 @@ player(100,
 wave{30, std::vector<Enemy*>{
         BasicEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 25}.clone(),
         GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 25}.clone()
-}, Scene::getWindowSize(), player.getPosition()},
+}, Scene::getWindowSize()},
 attackCooldown(),
 paused(false){
     std::cout << "game const";
