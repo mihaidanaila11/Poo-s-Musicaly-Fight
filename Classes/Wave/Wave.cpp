@@ -33,11 +33,26 @@ void Wave::initWave(const sf::Vector2f& playerPosition) {
         case 1:
             enemies = init_wave1();
             for(const auto& enemy : enemies){
+                std::cout << spawnRange.x << " " << spawnRange.y << "\n";
                 enemy->setPosition(spawnRange.x, spawnRange.y);
             }
 
             break;
 
+        case 2:
+            enemies = init_wave2();
+            for(const auto& enemy : enemies){
+                float x = rand() % spawnRange.x + 1;
+                float y = rand() % spawnRange.y + 1;
+
+                while(VectorMath::vectorDistance(playerPosition, sf::Vector2f{x,y}) < 50){
+                    x = rand() % spawnRange.x + 1;
+                    y = rand() % spawnRange.y + 1;
+                }
+                enemy->setPosition(x, y);
+            }
+
+            break;
         default:
             break;
     }
@@ -47,6 +62,16 @@ void Wave::initWave(const sf::Vector2f& playerPosition) {
 }
 
 std::vector<Enemy*> Wave::init_wave1(){
+    std::vector<Enemy*> result{};
+
+    for(int i=0; i < numberOfEnemies(currentWave); i++){
+        result.push_back(availableEnemies[Enemy::BASIC]->clone());
+    }
+
+    return result;
+}
+
+std::vector<Enemy*> Wave::init_wave2(){
     std::vector<Enemy*> result;
 
     for(int i=0; i < numberOfEnemies(currentWave); i++){
@@ -61,7 +86,7 @@ bool Wave::isCleared() const{
 }
 
 void Wave::next(sf::Vector2f playerPosition) {
-    //currentWave++;
+    currentWave++;
     initWave(playerPosition);
 }
 

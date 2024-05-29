@@ -26,7 +26,7 @@ player(100,
        Scene::getTexture("Trumpet"),
        7.5f, 2.f),
 wave{30, std::vector<Enemy*>{
-        BasicEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 25}.clone(),
+        BasicEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 2.f, 25}.clone(),
         GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 25}.clone()
 }, Scene::getWindowSize()},
 attackCooldown(),
@@ -77,14 +77,16 @@ void Game::handleEvents() {
                 if (handledEvent.key.scancode == sf::Keyboard::Scan::Space) {
                     if (attackCooldown.getElapsedTime().asSeconds() > 1.f) {
                         for(unsigned int i=0; i < enemies.size(); i++){
-                            player.attack(enemies[i]);
-                            if(!enemies[i]->isAlive()){
-
-                                wave.deleteEnemy(i);
+                            if (player.getAttackRange().intersects(enemies[i]->getHitbox())) {
+                                player.attack(enemies[i]);
+                                if(!enemies[i]->isAlive()){
+                                    wave.deleteEnemy(i);
+                                }
+                                break;
                             }
-
                         }
                         attackCooldown.restart();
+
                         break;
                     }
 
@@ -216,17 +218,21 @@ void Game::gameProc() {
             direction.x *= -enemy->getSpeed() * delta;
             direction.y *= -enemy->getSpeed() * delta;
 
+
             for(auto& enemy_ : wave.getEnemies()){
                 if(enemy_==enemy)
                     continue;
-                if(enemy_->getSprite().getGlobalBounds().intersects(enemy_->getSprite().getGlobalBounds())){
+                if(enemy->getSprite().getGlobalBounds().intersects(enemy_->getSprite().getGlobalBounds())){
+                    std::cout << "coliziune\n";
                     sf::Vector2f pos1 = enemy->getPosition();
                     sf::Vector2f pos2 = enemy_->getPosition();
                     sf::Vector2f deltaPosition = pos2 - pos1;
                     float distance = VectorMath::vectorDistance(enemy->getPosition(), enemy_->getPosition());
                     direction.x -= deltaPosition.x / distance;
+                    direction.y -= deltaPosition.y / distance;
                 }
             }
+
 
             enemy->move(direction);
 
