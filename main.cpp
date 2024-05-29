@@ -30,6 +30,7 @@ int main() {
     }
     catch (inexistent_path& err){
         std::cout << err.what() << "\n";
+        delete mainWindow;
         return 0;
     }
 
@@ -52,12 +53,13 @@ int main() {
         }
         catch (TextureNotFound& err) {
             std::cout << err.what() << "\n";
+            delete mainWindow;
+            return 0;
         }        
 
     }
 
-
-
+    delete mainWindow;
     return 0;
 }
 
