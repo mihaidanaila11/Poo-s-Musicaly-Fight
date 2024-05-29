@@ -144,6 +144,7 @@ add_executable(${PROJECT_NAME}
         Classes/Alert/Alert.h
         Math/VectorMath.cpp
         Math/VectorMath.h
+        Classes/Wave/Waves.cpp
 )
 
 ###############################################################################

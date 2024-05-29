@@ -39,6 +39,10 @@ private:
 
 
     std::vector<Enemy *> init_wave2();
+
+    std::vector<Enemy *> init_wave3();
+
+    std::vector<Enemy *> init_waveDefault();
 };
 
 

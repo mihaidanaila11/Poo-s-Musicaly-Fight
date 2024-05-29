@@ -1,14 +1,13 @@
 #include "Wave.h"
 
-#include <utility>
-#include <set>
 #include "cmath"
 #include "../Scene/Scene.hpp"
 #include "../../Math/VectorMath.h"
 
 
 double Wave::waveFunction(double x) {
-    return -(cos(3.14 * x) - 1) / 2;
+    //return -(cos(3.14 * x) - 1) / 2;
+    return x*x;
 }
 
 int Wave::numberOfEnemies(int wave) const {
@@ -53,7 +52,33 @@ void Wave::initWave(const sf::Vector2f& playerPosition) {
             }
 
             break;
+
+        case 3:
+            enemies = init_wave3();
+            for(const auto& enemy : enemies){
+                float x = rand() % spawnRange.x + 1;
+                float y = rand() % spawnRange.y + 1;
+
+                while(VectorMath::vectorDistance(playerPosition, sf::Vector2f{x,y}) < 50){
+                    x = rand() % spawnRange.x + 1;
+                    y = rand() % spawnRange.y + 1;
+                }
+                enemy->setPosition(x, y);
+            }
+
+            break;
         default:
+            enemies = init_waveDefault();
+            for(const auto& enemy : enemies){
+                float x = rand() % spawnRange.x + 1;
+                float y = rand() % spawnRange.y + 1;
+
+                while(VectorMath::vectorDistance(playerPosition, sf::Vector2f{x,y}) < 300){
+                    x = rand() % spawnRange.x + 1;
+                    y = rand() % spawnRange.y + 1;
+                }
+                enemy->setPosition(x, y);
+            }
             break;
     }
 
@@ -61,25 +86,7 @@ void Wave::initWave(const sf::Vector2f& playerPosition) {
 
 }
 
-std::vector<Enemy*> Wave::init_wave1(){
-    std::vector<Enemy*> result{};
 
-    for(int i=0; i < numberOfEnemies(currentWave); i++){
-        result.push_back(availableEnemies[Enemy::BASIC]->clone());
-    }
-
-    return result;
-}
-
-std::vector<Enemy*> Wave::init_wave2(){
-    std::vector<Enemy*> result;
-
-    for(int i=0; i < numberOfEnemies(currentWave); i++){
-        result.push_back(availableEnemies[Enemy::BASIC]->clone());
-    }
-
-    return result;
-}
 
 bool Wave::isCleared() const{
     return enemies.empty();
@@ -91,7 +98,7 @@ void Wave::next(sf::Vector2f playerPosition) {
 }
 
 Wave::Wave(const int &maxEnemies_, const std::vector<Enemy *>& availableEnemies_, const sf::Vector2u &spawnRange_):
-currentWave(1), maxEnmeies(maxEnemies_), spawnRange(spawnRange_){
+currentWave(3), maxEnmeies(maxEnemies_), spawnRange(spawnRange_){
     std::cout << "constructor wave";
     for(const auto& enemy : availableEnemies_){
         availableEnemies[enemy->getType()] = enemy;

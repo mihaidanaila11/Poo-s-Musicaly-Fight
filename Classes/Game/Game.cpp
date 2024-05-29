@@ -329,7 +329,7 @@ void Game::renderAlert(const std::string& message){
 }
 
 void Game::nextWave() {
-    renderAlert("WAVE " + std::to_string(wave.getWaveNumber()));
+    renderAlert("WAVE " + std::to_string(wave.getWaveNumber()+1));
 
     wave.next(player.getPosition());
 }

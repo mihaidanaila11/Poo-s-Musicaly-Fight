@@ -63,7 +63,6 @@ void Player::moveSprites(Entity::direction dir, float delta) {
 }
 
 void Player::attack(Enemy* &target) {
-
             target->damage(weapon.getDamage());
             return;
 
