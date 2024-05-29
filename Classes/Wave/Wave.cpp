@@ -76,8 +76,7 @@ void Wave::next(sf::Vector2f playerPosition) {
 }
 
 Wave::Wave(const int &maxEnemies_, const std::vector<Enemy *>& availableEnemies_, const sf::Vector2u &spawnRange_):
-currentWave(1), maxEnmeies(maxEnemies_), spawnRange(spawnRange_),
-           cleared(false){
+currentWave(1), maxEnmeies(maxEnemies_), spawnRange(spawnRange_){
     std::cout << "constructor wave";
     for(const auto& enemy : availableEnemies_){
         availableEnemies[enemy->getType()] = enemy;
