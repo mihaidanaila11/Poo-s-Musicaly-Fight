@@ -49,7 +49,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 
 #### Cerințe
 - [x] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
-- [ ] moșteniri:
+- [x] moșteniri:
   - minim o clasă de bază și **3 clase derivate**
   - ierarhia trebuie să fie cu bază proprie, nu derivată dintr-o clasă predefinită
   - [x] clasă cu atribut de tip pointer la o clasă de bază cu derivate
@@ -59,7 +59,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
   - [x] apelarea constructorului din clasa de bază din constructori din derivate
   - [ ] smart pointers (recomandat, opțional)
   - [ ] `dynamic_cast`/`std::dynamic_pointer_cast` pentru downcast cu sens
-- [ ] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
+- [x] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
 - [x] excepții
   - [x] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`; minim **3** clase pentru erori specifice
   - [x] utilizare cu sens: de exemplu, `throw` în constructor (sau funcție care întoarce un obiect), `try`/`catch` în `main`
