@@ -125,6 +125,4 @@ void Entity::setPosition(const float &x, const float &y) {
     hitbox.setPosition(x,y);
 }
 
-void Entity::setSpeed(const float &speed_) {
-    speed = speed_;
-}
+void Entity::setSpeed(const float &speed_) { speed = speed_;}

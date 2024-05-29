@@ -77,8 +77,6 @@ void Player::damage(const int& damageValue) {
     damageCooldownClock.restart();
 }
 
-bool Player::isAlive() const { return alive; }
-
 const Weapon& Player::getWeapon() const { return weapon; }
 
 int Player::getHealth() const { return health; }

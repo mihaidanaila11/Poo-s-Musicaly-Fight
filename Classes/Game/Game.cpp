@@ -1,36 +1,33 @@
 #include "Game.h"
 #include "../Enemy/Enemies/BasicEnemy/BasicEnemy.h"
 #include "../Enemy/Enemies/GhostEnemy/GhostEnemy.h"
-#include "../Wave/Wave.h"
-#include "../Alert/Alert.h"
 #include "../../Math/VectorMath.h"
-
-sf::Clock Game::deltaTime;
+#include "../../Exceptions/GraphicExceptions.hpp"
 
 using std::swap;
 
-Game::Game(sf::RenderWindow*& renderWindow,
+Game::Game(sf::RenderWindow *&renderWindow,
            const std::vector<std::string> &image_paths,
-           const std::string& fontPath) :
-Scene(renderWindow, image_paths, fontPath),
+           const std::string &fontPath) :
+        Scene(renderWindow, image_paths, fontPath),
 
 
-player(100,
-       Scene::getTexture("Player_SpriteSheet"),
-       2,
-       2.3f, 2.3f,
-       0, 0,
-       sf::Vector2f{-20.f, -10.f},
-       sf::Vector2f{60.f, 30.f},
-       Weapon::weapon_types::TRUMPET,
-       Scene::getTexture("Trumpet"),
-       7.5f, 2.f),
-wave{30, std::vector<Enemy*>{
-        BasicEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 2.f, 25}.clone(),
-        GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 25}.clone()
-}, Scene::getWindowSize()},
-attackCooldown(),
-paused(false){
+        player(100,
+               Scene::getTexture("Player_SpriteSheet"),
+               2,
+               2.3f, 2.3f,
+               0, 0,
+               sf::Vector2f{-25.f, -15.f},
+               sf::Vector2f{60.f, 30.f},
+               Weapon::weapon_types::TRUMPET,
+               Scene::getTexture("Trumpet"),
+               6.f, 2.f),
+        wave{30, std::vector<Enemy *>{
+                BasicEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 2.f, 25}.clone(),
+                GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 25}.clone()
+        }, Scene::getWindowSize()},
+        attackCooldown(),
+        paused(false) {
     std::cout << "game const";
     sf::Texture texture;
     sf::IntRect rect{0, 0, (int) Scene::getWindowSize().x,
@@ -53,16 +50,16 @@ sf::Vector2f Game::normalize(const sf::Vector2f &source) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Game &game_) {
-    os << "Paused?: " << game_.paused <<  "\n";
+    os << "Paused?: " << game_.paused << "\n";
 
     return os;
 }
 
 void Game::handleEvents() {
-    std::vector<Enemy*> enemies = wave.getEnemies();
+    std::vector<Enemy *> enemies = wave.getEnemies();
 
 
-    while(Scene::pollEvent()) {
+    while (Scene::pollEvent()) {
         sf::Event handledEvent = Scene::getEvent();
         switch (handledEvent.type) {
             case sf::Event::Closed:
@@ -75,11 +72,11 @@ void Game::handleEvents() {
                     break;
                 }
                 if (handledEvent.key.scancode == sf::Keyboard::Scan::Space) {
-                    if (attackCooldown.getElapsedTime().asSeconds() > 1.f) {
-                        for(unsigned int i=0; i < enemies.size(); i++){
+                    if (attackCooldown.getElapsedTime().asSeconds() > 0.3f) {
+                        for (unsigned int i = 0; i < enemies.size(); i++) {
                             if (player.getAttackRange().intersects(enemies[i]->getHitbox())) {
                                 player.attack(enemies[i]);
-                                if(!enemies[i]->isAlive()){
+                                if (!enemies[i]->isAlive()) {
                                     wave.deleteEnemy(i);
                                 }
                                 break;
@@ -99,7 +96,7 @@ void Game::handleEvents() {
 }
 
 void Game::renderSprites() {
-    std::vector<Enemy*> enemies = wave.getEnemies();
+    std::vector<Enemy *> enemies = wave.getEnemies();
 
     Scene::draw(player.getSprite());
     Scene::draw(player.getWeapon().getSprite());
@@ -112,8 +109,8 @@ void Game::renderSprites() {
     }
 }
 
-void Game::renderHud(){
-    for (const auto& sprite : hud.getSprites()){
+void Game::renderHud() {
+    for (const auto &sprite: hud.getSprites()) {
         Scene::draw(sprite);
     }
 }
@@ -126,11 +123,12 @@ void Game::pause() {
     quit.setPosition(sf::Vector2f{250, 400});
 
     while (paused) {
+        deltaTime.restart();
         while (Scene::pollEvent()) {
             switch (Scene::getEvent().type) {
                 case sf::Event::Closed:
                     Scene::close();
-                    break;
+                    throw WindowClosed();
 
                 case sf::Event::KeyPressed:
                     //37 is the key code for ESC
@@ -171,21 +169,24 @@ void Game::pause() {
 }
 
 void Game::gameProc() {
-
-
     sf::Clock enemySpawnClock;
-    float delta = deltaTime.restart().asSeconds() * 60;
+    float delta;
     renderAlert("WAVE " + std::to_string(wave.getWaveNumber()));
     wave.initWave(player.getPosition());
     while (Scene::isOpen()) {
         delta = deltaTime.restart().asSeconds() * 60;
         if (!player.isAlive()) {
             end();
-            return;
         }
 
         if (paused) {
-            pause();
+            try{
+                pause();
+            }
+            catch(WindowClosed& err){
+                return;
+            }
+
             deltaTime.restart();
             delta = deltaTime.getElapsedTime().asSeconds() * 60;
         }
@@ -208,21 +209,21 @@ void Game::gameProc() {
 
         }
 
-        if(wave.isCleared()){
+        if (wave.isCleared()) {
             nextWave();
         }
 
-        for (auto& enemy : wave.getEnemies()) {
+        for (auto &enemy: wave.getEnemies()) {
             sf::Vector2f direction = normalize(
                     enemy->getPosition() - player.getPosition());
             direction.x *= -enemy->getSpeed() * delta;
             direction.y *= -enemy->getSpeed() * delta;
 
 
-            for(auto& enemy_ : wave.getEnemies()){
-                if(enemy_==enemy)
+            for (auto &enemy_: wave.getEnemies()) {
+                if (enemy_ == enemy)
                     continue;
-                if(enemy->getSprite().getGlobalBounds().intersects(enemy_->getSprite().getGlobalBounds())){
+                if (enemy->getSprite().getGlobalBounds().intersects(enemy_->getSprite().getGlobalBounds())) {
                     std::cout << "coliziune\n";
                     sf::Vector2f pos1 = enemy->getPosition();
                     sf::Vector2f pos2 = enemy_->getPosition();
@@ -238,7 +239,7 @@ void Game::gameProc() {
 
 
             if (player.isDamageable()) {
-                if(enemy->getHitbox().intersects(player.getHitbox())){
+                if (enemy->getHitbox().intersects(player.getHitbox())) {
                     enemy->attack(player);
                     hud.updateHealth(player.getHealth());
                 }
@@ -265,14 +266,13 @@ void Game::end() {
     gameover.setString("GameOver!");
 
     Button quit(Scene::getTexture("Buton"), Scene::getFont(), "Quit");
-    quit.setPosition(sf::Vector2f{250, 400});
+    quit.setPosition(sf::Vector2f{250, 200});
+
 
     renderHud();
     Scene::draw(gameover);
-    Scene::draw(quit.getSprite());
-    Scene::draw(quit.getText());
+    Scene::draw(quit);
     Scene::display();
-
 
 
     while (Scene::isOpen()) {
@@ -297,22 +297,23 @@ void Game::end() {
     }
 }
 
-void Game::wait(float secounds){
+void Game::wait(float secounds) {
     sf::Clock clock_;
-    while(clock_.getElapsedTime().asSeconds() < secounds){
+    while (clock_.getElapsedTime().asSeconds() < secounds) {
         deltaTime.restart();
         alertHandleEvents();
     }
 }
 
-void Game::renderAlert(const std::string& message){
+void Game::renderAlert(const std::string &message) {
     Alert alert{message,
                 Scene::getTexture("BigAlert"), Scene::getFont(), Scene::getWindowSize()};
 
     float delta;
     float velocity = 7.f;
 
-    while(alert.getPosition().y < (float)Scene::getWindowSize().y/2 - alert.getSprite().getGlobalBounds().height/2){
+    while (alert.getPosition().y <
+           (float) Scene::getWindowSize().y / 2 - alert.getSprite().getGlobalBounds().height / 2) {
         delta = deltaTime.restart().asSeconds() * 60;
         alertHandleEvents();
         alert.move(sf::Vector2f{0.f, velocity * delta});
@@ -324,27 +325,39 @@ void Game::renderAlert(const std::string& message){
         Scene::draw(alert);
         Scene::display();
     }
-
-    wait(2);
+    try{
+        wait(2);
+    }
+    catch(WindowClosed& err){
+        return;
+    }
 }
 
 void Game::nextWave() {
-    renderAlert("WAVE " + std::to_string(wave.getWaveNumber()+1));
+    renderAlert("WAVE " + std::to_string(wave.getWaveNumber() + 1));
 
     wave.next(player.getPosition());
 }
 
-void Game::alertHandleEvents(){
-        while (Scene::pollEvent()) {
-            switch (Scene::getEvent().type) {
-                case sf::Event::Closed:
-                    Scene::close();
-                    return;
+void Game::alertHandleEvents() {
+    while (Scene::pollEvent()) {
+        switch (Scene::getEvent().type) {
+            case sf::Event::Closed:
+                Scene::close();
+                return;
 
-                default:
+            case sf::Event::KeyPressed:
+                //37 is the key code for ESC
+                if (Scene::getEvent().key.scancode == 37) {
+                    paused = true;
+                    Game::pause();
                     break;
-            }
+                }
+
+            default:
+                break;
         }
+    }
 }
 
 

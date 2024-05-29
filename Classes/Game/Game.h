@@ -10,7 +10,7 @@
 #include "../Wave/Wave.h"
 
 class Game : Scene{
-    static sf::Clock deltaTime;
+    sf::Clock deltaTime;
     Player player;
     Wave wave;
     sf::Clock attackCooldown;
