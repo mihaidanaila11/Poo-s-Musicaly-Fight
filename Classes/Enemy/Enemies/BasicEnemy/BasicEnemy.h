@@ -9,9 +9,10 @@
 #include "../../Enemy.h"
 
 class BasicEnemy : public Enemy{
-    using Enemy::Enemy;
 
 public:
+    BasicEnemy(sf::Texture& texture, const float &scaleX, const float &scaleY,
+               const float &posX, const float &posY, const int &health_, const float &speed_, const int& attackDamage_);
     Enemy* clone() override;
 
     void attack(Alive& target) override;

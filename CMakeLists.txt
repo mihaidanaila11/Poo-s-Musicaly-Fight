@@ -138,6 +138,8 @@ add_executable(${PROJECT_NAME}
         Classes/Enemy/Enemies/BasicEnemy/BasicEnemy.cpp
         Classes/Enemy/Enemies/GhostEnemy/GhostEnemy.cpp
         Classes/Enemy/Enemies/GhostEnemy/GhostEnemy.h
+        Classes/Wave/Wave.cpp
+        Classes/Wave/Wave.h
 )
 
 ###############################################################################

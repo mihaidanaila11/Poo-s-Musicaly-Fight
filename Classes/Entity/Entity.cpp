@@ -119,3 +119,8 @@ void Entity::setOpacity(const sf::Uint8 &opacity) {
     sf::Color color = sprite.getColor();
     sprite.setColor(sf::Color{color.r, color.g, color.b, opacity});
 }
+
+void Entity::setPosition(const float &x, const float &y) {
+    sprite.setPosition(x,y);
+    hitbox.setPosition(x,y);
+}

@@ -56,6 +56,7 @@ public:
 
     virtual void move(sf::Vector2f vector);
 
+    void setPosition(const float& x, const float& y);
 
     const sf::Sprite& getSprite() const;
     unsigned int getFrameCount() const;

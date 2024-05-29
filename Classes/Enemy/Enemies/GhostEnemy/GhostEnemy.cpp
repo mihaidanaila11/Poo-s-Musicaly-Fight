@@ -34,3 +34,9 @@ void GhostEnemy::attack(Alive &target) {
         target.damage(attackDamage);
     }
 }
+
+GhostEnemy::GhostEnemy(sf::Texture &texture, const float &scaleX, const float &scaleY, const float &posX,
+                       const float &posY, const int &health_, const float &speed_, const int &attackDamage_):
+        Enemy(EnemyType::GHOST, texture, scaleX, scaleY, posX, posY, health_, speed_, attackDamage_){
+
+}

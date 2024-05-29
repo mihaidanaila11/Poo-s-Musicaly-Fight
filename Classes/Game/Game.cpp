@@ -1,6 +1,7 @@
 #include "Game.h"
 #include "../Enemy/Enemies/BasicEnemy/BasicEnemy.h"
 #include "../Enemy/Enemies/GhostEnemy/GhostEnemy.h"
+#include "../Wave/Wave.h"
 
 using std::swap;
 
@@ -8,6 +9,8 @@ Game::Game(sf::RenderWindow*& renderWindow,
            const std::vector<std::string> &image_paths,
            const std::string& fontPath) :
 Scene(renderWindow, image_paths, fontPath),
+
+
 player(100,
        Scene::getTexture("Player_SpriteSheet"),
        2,
@@ -18,8 +21,13 @@ player(100,
        Weapon::weapon_types::TRUMPET,
        Scene::getTexture("Trumpet"),
        7.5f, 2.f),
+wave{30, std::vector<Enemy*>{
+        BasicEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 25}.clone(),
+        GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 25}.clone()
+}, Scene::getWindowSize(), player.getPosition()},
 attackCooldown(),
 paused(false){
+    std::cout << "game const";
     sf::Texture texture;
     sf::IntRect rect{0, 0, (int) Scene::getWindowSize().x,
                      (int) Scene::getWindowSize().y};
@@ -51,6 +59,8 @@ std::ostream &operator<<(std::ostream &os, const Game &game_) {
 }
 
 void Game::handleEvents() {
+    std::vector<Enemy*> enemies = wave.getEnemies();
+
 
     while(Scene::pollEvent()) {
         sf::Event handledEvent = Scene::getEvent();
@@ -69,8 +79,8 @@ void Game::handleEvents() {
                         for(unsigned int i=0; i < enemies.size(); i++){
                             player.attack(enemies[i]);
                             if(!enemies[i]->isAlive()){
-                                delete enemies[i];
-                                enemies.erase(enemies.begin() + i);
+
+                                wave.deleteEnemy(i);
                             }
 
                         }
@@ -86,11 +96,8 @@ void Game::handleEvents() {
     }
 }
 
-void Game::addEnemy(const float x, const float y) {
-    enemies.push_back(GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, x, y, 50, 0.5f, 25}.clone());
-}
-
 void Game::renderSprites() {
+    std::vector<Enemy*> enemies = wave.getEnemies();
 
     Scene::draw(player.getSprite());
     Scene::draw(player.getWeapon().getSprite());
@@ -165,7 +172,7 @@ void Game::gameProc() {
 
     sf::Clock clock;
     sf::Clock enemySpawnClock;
-
+    wave.initWave(player.getPosition());
     while (Scene::isOpen()) {
         float delta = clock.restart().asSeconds() * 60;
 
@@ -198,42 +205,34 @@ void Game::gameProc() {
 
         }
 
-        if (enemySpawnClock.getElapsedTime().asSeconds() >= 2 && enemies.size() < 5) {
-            int x = rand() % Scene::getWindowSize().x + 1;
-            int y = rand() % Scene::getWindowSize().y + 1;
-            while (x == player.getPosition().x &&
-                   y == player.getPosition().y) {
-                x = rand() % Scene::getWindowSize().x + 1;
-                y = rand() % Scene::getWindowSize().y + 1;
-            }
-            addEnemy(x, y);
-            enemySpawnClock.restart();
+        if(wave.isCleared()){
+            wave.next(player.getPosition());
         }
 
-        for (unsigned int i=0; i<enemies.size(); i++) {
+        for (auto& enemy : wave.getEnemies()) {
             sf::Vector2f direction = normalize(
-                    enemies[i]->getPosition() - player.getPosition());
-            direction.x *= -enemies[i]->getSpeed() * delta;
-            direction.y *= -enemies[i]->getSpeed() * delta;
+                    enemy->getPosition() - player.getPosition());
+            direction.x *= -enemy->getSpeed() * delta;
+            direction.y *= -enemy->getSpeed() * delta;
 
-            for(unsigned int j=0; j<enemies.size(); j++){
-                if(j==i)
+            for(auto& enemy_ : wave.getEnemies()){
+                if(enemy_==enemy)
                     continue;
-                if(enemies[i]->getSprite().getGlobalBounds().intersects(enemies[j]->getSprite().getGlobalBounds())){
-                    sf::Vector2f pos1 = enemies[i]->getPosition();
-                    sf::Vector2f pos2 = enemies[j]->getPosition();
+                if(enemy_->getSprite().getGlobalBounds().intersects(enemy_->getSprite().getGlobalBounds())){
+                    sf::Vector2f pos1 = enemy->getPosition();
+                    sf::Vector2f pos2 = enemy_->getPosition();
                     sf::Vector2f deltaPosition = pos2 - pos1;
-                    float distance = vectorDistance(enemies[i]->getPosition(), enemies[j]->getPosition());
+                    float distance = vectorDistance(enemy->getPosition(), enemy_->getPosition());
                     direction.x -= deltaPosition.x / distance;
                 }
             }
 
-            enemies[i]->move(direction);
+            enemy->move(direction);
 
 
             if (player.isDamageable()) {
-                if(enemies[i]->getHitbox().intersects(player.getHitbox())){
-                    enemies[i]->attack(player);
+                if(enemy->getHitbox().intersects(player.getHitbox())){
+                    enemy->attack(player);
                     hud.updateHealth(player.getHealth());
                 }
 
@@ -289,34 +288,6 @@ void Game::end() {
             }
         }
     }
-}
-
-Game::~Game() {
-    for(const auto enemy : enemies){
-        delete enemy;
-    }
-}
-
-Game::Game(const Game &other):
-        Scene(other),
-        player(other.player),
-        attackCooldown(other.attackCooldown),
-        paused(other.paused){
-}
-
-
-Game &Game::operator=(Game& other) {
-    swap(*this, other);
-    return *this;
-}
-
-void swap(Game &game1, Game &game2) {
-    swap(game1.player, game2.player);
-    swap(game1.enemies, game2.enemies);
-    swap(game1.attackCooldown, game2.attackCooldown);
-    swap(game1.hud, game2.hud);
-    swap(game1.paused, game2.paused);
-    swap(game1.background, game2.background);
 }
 
 
