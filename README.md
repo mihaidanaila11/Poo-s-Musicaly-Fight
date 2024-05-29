@@ -3,11 +3,12 @@
 ### Descriere
 POO's Musicaly Fight este un joc de tip wave fighting ce folosește muzica drept armă principală!
 Jucătorul trebuie să elimine valuri de inamici care devin din ce în ce mai periculoși!
+Cat de departe poti ajunge in aceasta batalie?
 
 ### Controale:
-- Movement: W,A,S,D (SUS, STANGA, JOS, DREAPTA)
-- Attack: SPACE
-- Pause: ESC
+- **Movement**: `W`,`A`,`S`,`D` (`SUS`, `STANGA`, `JOS`, `DREAPTA`)
+- **Attack** *(can't spam it)*: `SPACE`
+- **Pause**: `ESC`
 
 ### Important!
 Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnificativ doar în folder-ul `generated`.
@@ -64,11 +65,11 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
   - [x] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`; minim **3** clase pentru erori specifice
   - [x] utilizare cu sens: de exemplu, `throw` în constructor (sau funcție care întoarce un obiect), `try`/`catch` în `main`
 - [x] funcții și atribute `static`
-- [ ] STL
+- [x] STL
 - [x] cât mai multe `const`
-- [ ] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, **pe lângă cele 3 derivate deja adăugate**
+- [x] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, **pe lângă cele 3 derivate deja adăugate**
   - noua derivată nu poate fi una existentă care a fost ștearsă și adăugată din nou
-- [ ] tag de `git`: de exemplu `v0.2`
+- [x] tag de `git`: de exemplu `v0.2`
 
 ## Tema 3
 

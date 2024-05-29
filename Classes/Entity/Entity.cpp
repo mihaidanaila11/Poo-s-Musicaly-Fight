@@ -95,8 +95,6 @@ void Entity::setTextureFrame(const int& frame){
 
     textureRect.left = (int)frameSize*frame;
     sprite.setTextureRect(textureRect);
-
-    std::cout << sprite.getTextureRect().left<< "\n";
 }
 
 void Entity::move(sf::Vector2f vector) {
