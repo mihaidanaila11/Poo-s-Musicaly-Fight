@@ -10,6 +10,7 @@
 #include "../Wave/Wave.h"
 
 class Game : Scene{
+    static sf::Clock deltaTime;
     Player player;
     Wave wave;
     sf::Clock attackCooldown;
@@ -44,7 +45,12 @@ private:
 
     void end();
 
-    static float vectorDistance(sf::Vector2f vector1, sf::Vector2f vector2);
+    void alertHandleEvents();
+    void wait(float secounds);
+
+    void nextWave();
+
+    void renderAlert(const std::string& message);
 };
 
 

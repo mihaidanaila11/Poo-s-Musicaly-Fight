@@ -2,6 +2,10 @@
 #include "../Enemy/Enemies/BasicEnemy/BasicEnemy.h"
 #include "../Enemy/Enemies/GhostEnemy/GhostEnemy.h"
 #include "../Wave/Wave.h"
+#include "../Alert/Alert.h"
+#include "../../Math/VectorMath.h"
+
+sf::Clock Game::deltaTime;
 
 using std::swap;
 
@@ -46,10 +50,6 @@ sf::Vector2f Game::normalize(const sf::Vector2f &source) {
         return {source.x / length, source.y / length};
     else
         return source;
-}
-
-float Game::vectorDistance(sf::Vector2f vector1, sf::Vector2f vector2) {
-    return sqrtf((vector1.x-vector2.x)*(vector1.x-vector2.x) + (vector1.y-vector2.y)*(vector1.y-vector2.y));
 }
 
 std::ostream &operator<<(std::ostream &os, const Game &game_) {
@@ -170,12 +170,13 @@ void Game::pause() {
 
 void Game::gameProc() {
 
-    sf::Clock clock;
+
     sf::Clock enemySpawnClock;
+    float delta = deltaTime.restart().asSeconds() * 60;
+    renderAlert("WAVE " + std::to_string(wave.getWaveNumber()));
     wave.initWave(player.getPosition());
     while (Scene::isOpen()) {
-        float delta = clock.restart().asSeconds() * 60;
-
+        delta = deltaTime.restart().asSeconds() * 60;
         if (!player.isAlive()) {
             end();
             return;
@@ -183,8 +184,8 @@ void Game::gameProc() {
 
         if (paused) {
             pause();
-            clock.restart();
-            delta = clock.getElapsedTime().asSeconds() * 60;
+            deltaTime.restart();
+            delta = deltaTime.getElapsedTime().asSeconds() * 60;
         }
 
         handleEvents();
@@ -206,7 +207,7 @@ void Game::gameProc() {
         }
 
         if(wave.isCleared()){
-            wave.next(player.getPosition());
+            nextWave();
         }
 
         for (auto& enemy : wave.getEnemies()) {
@@ -222,7 +223,7 @@ void Game::gameProc() {
                     sf::Vector2f pos1 = enemy->getPosition();
                     sf::Vector2f pos2 = enemy_->getPosition();
                     sf::Vector2f deltaPosition = pos2 - pos1;
-                    float distance = vectorDistance(enemy->getPosition(), enemy_->getPosition());
+                    float distance = VectorMath::vectorDistance(enemy->getPosition(), enemy_->getPosition());
                     direction.x -= deltaPosition.x / distance;
                 }
             }
@@ -288,6 +289,56 @@ void Game::end() {
             }
         }
     }
+}
+
+void Game::wait(float secounds){
+    sf::Clock clock_;
+    while(clock_.getElapsedTime().asSeconds() < secounds){
+        deltaTime.restart();
+        alertHandleEvents();
+    }
+}
+
+void Game::renderAlert(const std::string& message){
+    Alert alert{message,
+                Scene::getTexture("BigAlert"), Scene::getFont(), Scene::getWindowSize()};
+
+    float delta;
+    float velocity = 7.f;
+
+    while(alert.getPosition().y < (float)Scene::getWindowSize().y/2 - alert.getSprite().getGlobalBounds().height/2){
+        delta = deltaTime.restart().asSeconds() * 60;
+        alertHandleEvents();
+        alert.move(sf::Vector2f{0.f, velocity * delta});
+
+        Scene::clear();
+        Scene::draw(background);
+        renderSprites();
+        renderHud();
+        Scene::draw(alert);
+        Scene::display();
+    }
+
+    wait(2);
+}
+
+void Game::nextWave() {
+    renderAlert("WAVE " + std::to_string(wave.getWaveNumber()));
+
+    wave.next(player.getPosition());
+}
+
+void Game::alertHandleEvents(){
+        while (Scene::pollEvent()) {
+            switch (Scene::getEvent().type) {
+                case sf::Event::Closed:
+                    Scene::close();
+                    return;
+
+                default:
+                    break;
+            }
+        }
 }
 
 

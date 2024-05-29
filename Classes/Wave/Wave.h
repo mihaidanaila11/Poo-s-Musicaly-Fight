@@ -28,6 +28,8 @@ public:
     void initWave(const sf::Vector2f& playerPosition);
 
     void deleteEnemy(const int& index);
+
+    int getWaveNumber() const;
 private:
     static double waveFunction(double x);
     [[nodiscard]] int numberOfEnemies(int wave) const;

@@ -45,7 +45,8 @@ int main() {
                     "Textures/Grass.jpg",
                     "Textures/Buton.png",
                     "Textures/HUD/HealthBar.png",
-                    "Textures/HUD/HealthBottom.png"
+                    "Textures/HUD/HealthBottom.png",
+                    "Textures/Alerts/BigAlert.png"
             }, "daydream_3/Daydream.ttf"};
             game.start();
         }

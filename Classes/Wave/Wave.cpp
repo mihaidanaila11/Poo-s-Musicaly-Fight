@@ -4,6 +4,7 @@
 #include <set>
 #include "cmath"
 #include "../Scene/Scene.hpp"
+#include "../../Math/VectorMath.h"
 
 
 double Wave::waveFunction(double x) {
@@ -28,11 +29,9 @@ void Wave::initWave(const sf::Vector2f& playerPosition) {
         delete enemy;
     }
     enemies.clear();
-    std::cout << "AICI\n";
     switch (currentWave) {
         case 1:
             enemies = init_wave1();
-
             for(const auto& enemy : enemies){
                 enemy->setPosition(spawnRange.x, spawnRange.y);
             }
@@ -43,17 +42,8 @@ void Wave::initWave(const sf::Vector2f& playerPosition) {
             break;
     }
 
-    float x = rand() % (int)spawnRange.x + 1;
-    float y = rand() % (int)spawnRange.y + 1;
-    for(const auto& enemy : enemies){
 
-        while(playerPosition.x == x && playerPosition.y == y){
-            x = rand() % (int)spawnRange.x + 1;
-            y = rand() % (int)spawnRange.y + 1;
-        }
 
-        enemy->setPosition(x,y);
-    }
 }
 
 std::vector<Enemy*> Wave::init_wave1(){
@@ -92,4 +82,7 @@ std::vector<Enemy *> &Wave::getEnemies() {
 void Wave::deleteEnemy(const int &index) {
     delete enemies[index];
     enemies.erase(enemies.begin() + index);
+}
+int Wave::getWaveNumber() const{
+    return currentWave;
 }
