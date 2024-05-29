@@ -68,6 +68,7 @@ public:
 
     sf::Vector2f getPosition() const;
 
+    void setOpacity(const sf::Uint8& opacity);
 
 };
 

@@ -133,6 +133,11 @@ add_executable(${PROJECT_NAME}
         Classes/Hud/HealthBar/HealthBar.cpp
         Classes/Hud/HealthBar/HealthBar.h
         Exceptions/GraphicExceptions.hpp
+        Classes/Alive/Alive.h
+        Classes/Alive/Alive.cpp
+        Classes/Enemy/Enemies/BasicEnemy/BasicEnemy.cpp
+        Classes/Enemy/Enemies/GhostEnemy/GhostEnemy.cpp
+        Classes/Enemy/Enemies/GhostEnemy/GhostEnemy.h
 )
 
 ###############################################################################

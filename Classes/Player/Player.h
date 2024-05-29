@@ -6,12 +6,10 @@
 #include "../Weapon/Weapon.h"
 #include "../Enemy/Enemy.h"
 #include "cmath"
+#include "../Alive/Alive.h"
 
-class Player : public Entity{
+class Player : public Alive{
 private:
-    int health = 100;
-    bool alive = true;
-
     Weapon weapon;
 
     Hitbox attackRange;
@@ -31,7 +29,7 @@ public:
     void move(sf::Vector2f vector) override;
     void moveSprites(Entity::direction dir, float delta);
 
-    void attack(std::vector<Enemy> &targets);
+    void attack(std::vector<Enemy*> &targets);
 
     void damage(int damage);
 

@@ -1,4 +1,6 @@
 #include "Game.h"
+#include "../Enemy/Enemies/BasicEnemy/BasicEnemy.h"
+#include "../Enemy/Enemies/GhostEnemy/GhostEnemy.h"
 
 Game::Game(sf::RenderWindow*& renderWindow,
            const std::vector<std::string> &image_paths,
@@ -10,7 +12,7 @@ player(100,
        2.3f, 2.3f,
        0, 0,
        sf::Vector2f{-20.f, -10.f},
-       sf::Vector2f{40.f, 20.f},
+       sf::Vector2f{60.f, 30.f},
        Weapon::weapon_types::TRUMPET,
        Scene::getTexture("Trumpet"),
        7.5f),
@@ -61,7 +63,8 @@ void Game::handleEvents() {
                     break;
                 }
                 if (handledEvent.key.scancode == sf::Keyboard::Scan::Space) {
-                    if (attackCooldown.getElapsedTime().asSeconds() > 1.f) {
+                    std::cout << attackCooldown.getElapsedTime().asSeconds() << "\n";
+                    if (attackCooldown.getElapsedTime().asSeconds() > 1.f || true) {
                         player.attack(enemies);
                         attackCooldown.restart();
                         break;
@@ -76,16 +79,18 @@ void Game::handleEvents() {
 }
 
 void Game::addEnemy(const float x, const float y) {
-    enemies.emplace_back(Scene::getTexture("Dummy"), 2.3f, 2.3f, x, y, 50, 2.5f);
+    enemies.push_back(GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, x, y, 50, 0.5f, 25}.clone());
 }
 
 void Game::renderSprites() {
 
     Scene::draw(player.getSprite());
     Scene::draw(player.getWeapon().getSprite());
+    Scene::draw(player.getAttackRange().getRect());
 
     for (auto &enemy: enemies) {
-        Scene::draw(enemy.getSprite());
+        Scene::draw(enemy->getSprite());
+        Scene::draw(enemy->getHitbox().getRect());
     }
 }
 
@@ -199,33 +204,31 @@ void Game::gameProc() {
 
         for (unsigned int i=0; i<enemies.size(); i++) {
             sf::Vector2f direction = normalize(
-                    enemies[i].getPosition() - player.getPosition());
-            direction.x *= -enemies[i].getSpeed() * delta;
-            direction.y *= -enemies[i].getSpeed() * delta;
+                    enemies[i]->getPosition() - player.getPosition());
+            direction.x *= -enemies[i]->getSpeed() * delta;
+            direction.y *= -enemies[i]->getSpeed() * delta;
 
             for(unsigned int j=0; j<enemies.size(); j++){
                 if(j==i)
                     continue;
-                if(enemies[i].getSprite().getGlobalBounds().intersects(enemies[j].getSprite().getGlobalBounds())){
-                    sf::Vector2f pos1 = enemies[i].getPosition();
-                    sf::Vector2f pos2 = enemies[j].getPosition();
+                if(enemies[i]->getSprite().getGlobalBounds().intersects(enemies[j]->getSprite().getGlobalBounds())){
+                    sf::Vector2f pos1 = enemies[i]->getPosition();
+                    sf::Vector2f pos2 = enemies[j]->getPosition();
                     sf::Vector2f deltaPosition = pos2 - pos1;
-                    float distance = vectorDistance(enemies[i].getPosition(), enemies[j].getPosition());
+                    float distance = vectorDistance(enemies[i]->getPosition(), enemies[j]->getPosition());
                     direction.x -= deltaPosition.x / distance;
                 }
             }
 
-            enemies[i].move(direction);
+            enemies[i]->move(direction);
 
-            if (player.getHitbox().intersects(enemies[i].getHitbox())) {
 
-                if (damageCooldown.getElapsedTime().asSeconds() > 2) {
-                    player.damage(25);
-                    hud.updateHealth(player.getHealth());
-                    damageCooldown.restart();
-                }
-
+            if (damageCooldown.getElapsedTime().asSeconds() > 2) {
+                enemies[i]->attack(player);
+                hud.updateHealth(player.getHealth());
+                damageCooldown.restart();
             }
+
         }
 
         Scene::clear();

@@ -114,3 +114,8 @@ Hitbox Entity::getHitbox() const { return hitbox; }
 float Entity::getSpeed() const { return speed; }
 
 sf::Vector2f Entity::getPosition() const { return sprite.getPosition(); }
+
+void Entity::setOpacity(const sf::Uint8 &opacity) {
+    sf::Color color = sprite.getColor();
+    sprite.setColor(sf::Color{color.r, color.g, color.b, opacity});
+}

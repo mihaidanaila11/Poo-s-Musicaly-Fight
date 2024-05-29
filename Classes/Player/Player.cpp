@@ -3,9 +3,8 @@
 Player::Player(const int &health_, sf::Texture& texture, const int frameCount,
        const float &scaleX, const float &scaleY,
        const float &posX, const float &posY, const sf::Vector2f& hitboxOffset, const sf::Vector2f& attackRadius, const Weapon::weapon_types weapon_type_,
-       sf::Texture &weapon_texture, const float &speed_) :Entity(texture, frameCount, hitboxOffset,
+       sf::Texture &weapon_texture, const float &speed_) :Alive(health_, texture, frameCount, hitboxOffset,
                                                                  3.f, 3.f, posX, posY, speed_),
-        health(health_), 
         weapon(weapon_type_, weapon_texture,
                2.3f, 2.3f,
                posX + 0.50 * sprite.getTexture()->getSize().x * scaleX,
@@ -62,10 +61,10 @@ void Player::moveSprites(Entity::direction dir, float delta) {
     weapon.move(offset);
 }
 
-void Player::attack(std::vector<Enemy> &targets) {
+void Player::attack(std::vector<Enemy*> &targets) {
     for (unsigned int i = 0; i < targets.size(); i++) {
-        if (attackRange.intersects(targets[i].getHitbox())) {
-            targets[i].damage(50, targets, i);
+        if (attackRange.intersects(targets[i]->getHitbox())) {
+            targets[i]->damage(weapon.getDamage(), targets, i);
             return;
         }
     }

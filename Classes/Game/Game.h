@@ -10,7 +10,7 @@
 
 class Game : Scene{
     Player player;
-    std::vector<Enemy> enemies;
+    std::vector<Enemy*> enemies;
     sf::Clock attackCooldown;
 
     Hud hud;
