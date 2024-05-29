@@ -13,6 +13,6 @@ void Alive::damage(const int &damageValue) {
 
 Alive::Alive(const int &health_, sf::Texture &texture, const float &scaleX, const float &scaleY,
              const float &posX, const float &posY, const float &speed_):
-        Entity( texture, scaleX, scaleY, posX, posY, speed_), health(health_){
+        Entity( texture, scaleX, scaleY, posX, posY, speed_), health(health_), alive(true){
 
 }
