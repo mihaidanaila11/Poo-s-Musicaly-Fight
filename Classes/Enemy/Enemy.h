@@ -14,8 +14,6 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Enemy &enemy_);
 
-    void damage(int damage, std::vector<Enemy*> &enemies, int index);
-
     virtual Enemy* clone() = 0;
 
     virtual void attack(Alive& target) = 0;

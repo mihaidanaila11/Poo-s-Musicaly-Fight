@@ -21,7 +21,9 @@ public:
           const float &scaleX, const float &scaleY,
           const float &posX, const float &posY, const float &speed_);
 
-    void damage(const int& damageValue);
+    virtual void damage(const int& damageValue);
+
+    bool isAlive() const;
 };
 
 

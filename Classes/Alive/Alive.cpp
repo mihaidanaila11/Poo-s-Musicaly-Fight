@@ -16,3 +16,7 @@ Alive::Alive(const int &health_, sf::Texture &texture, const float &scaleX, cons
         Entity( texture, scaleX, scaleY, posX, posY, speed_), health(health_), alive(true){
 
 }
+
+bool Alive::isAlive() const {
+    return alive;
+}

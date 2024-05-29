@@ -9,12 +9,3 @@ std::ostream &operator<<(std::ostream &os, const Enemy &enemy_) {
 
     return os;
 }
-
-
-void Enemy::damage(int damage, std::vector<Enemy*> &enemies, int index) {
-    health -= damage;
-    if (health <= 0) {
-        delete enemies[index];
-        enemies.erase(enemies.begin() + index);
-    }
-}

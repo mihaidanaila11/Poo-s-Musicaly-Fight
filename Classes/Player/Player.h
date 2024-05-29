@@ -13,6 +13,8 @@ private:
     Weapon weapon;
 
     Hitbox attackRange;
+    sf::Clock damageCooldownClock;
+    float damageCooldown;
 
 
 public:
@@ -20,7 +22,7 @@ public:
     Player(const int &health_, sf::Texture& texture, int frameCount,
            const float &scaleX, const float &scaleY,
            const float &posX, const float &posY, const sf::Vector2f& hitboxOffset, const sf::Vector2f& attackRadius, Weapon::weapon_types weapon_type_,
-           sf::Texture &weapon_texture, const float &speed_);
+           sf::Texture &weapon_texture, const float &speed_, const float& damageCooldown_);
 
     Player(const Player& other) = default;
     Player& operator=(const Player& other) = default;
@@ -32,9 +34,9 @@ public:
     void move(sf::Vector2f vector) override;
     void moveSprites(Entity::direction dir, float delta);
 
-    void attack(std::vector<Enemy*> &targets);
+    void attack(Enemy* &target);
 
-    void damage(int damage);
+    void damage(const int& damageValue) override;
 
     bool isAlive() const;
 
@@ -42,6 +44,8 @@ public:
     int getHealth() const;
 
     Hitbox getAttackRange() const;
+
+    bool isDamageable();
 };
 
 

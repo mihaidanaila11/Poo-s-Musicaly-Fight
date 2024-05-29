@@ -17,7 +17,7 @@ player(100,
        sf::Vector2f{60.f, 30.f},
        Weapon::weapon_types::TRUMPET,
        Scene::getTexture("Trumpet"),
-       7.5f),
+       7.5f, 2.f),
 attackCooldown(),
 paused(false){
     sf::Texture texture;
@@ -66,7 +66,14 @@ void Game::handleEvents() {
                 }
                 if (handledEvent.key.scancode == sf::Keyboard::Scan::Space) {
                     if (attackCooldown.getElapsedTime().asSeconds() > 1.f) {
-                        player.attack(enemies);
+                        for(unsigned int i; i < enemies.size(); i++){
+                            player.attack(enemies[i]);
+                            if(!enemies[i]->isAlive()){
+                                delete enemies[i];
+                                enemies.erase(enemies.begin() + i);
+                            }
+
+                        }
                         attackCooldown.restart();
                         break;
                     }
@@ -88,6 +95,7 @@ void Game::renderSprites() {
     Scene::draw(player.getSprite());
     Scene::draw(player.getWeapon().getSprite());
     Scene::draw(player.getAttackRange().getRect());
+    Scene::draw(player.getHitbox().getRect());
 
     for (auto &enemy: enemies) {
         Scene::draw(enemy->getSprite());
@@ -157,7 +165,6 @@ void Game::gameProc() {
 
     sf::Clock clock;
     sf::Clock enemySpawnClock;
-    sf::Clock damageCooldown;
 
     while (Scene::isOpen()) {
         float delta = clock.restart().asSeconds() * 60;
@@ -224,10 +231,12 @@ void Game::gameProc() {
             enemies[i]->move(direction);
 
 
-            if (damageCooldown.getElapsedTime().asSeconds() > 2) {
-                enemies[i]->attack(player);
-                hud.updateHealth(player.getHealth());
-                damageCooldown.restart();
+            if (player.isDamageable()) {
+                if(enemies[i]->getHitbox().intersects(player.getHitbox())){
+                    enemies[i]->attack(player);
+                    hud.updateHealth(player.getHealth());
+                }
+
             }
 
         }
