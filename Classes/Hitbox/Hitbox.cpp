@@ -48,7 +48,7 @@ bool Hitbox::intersects(const Hitbox &other) {
 
 sf::RectangleShape Hitbox::getRect() const { return rect; }
 
-void Hitbox::setPosition(float& x, float& y){
+void Hitbox::setPosition(const float& x, const float& y){
     rect.setPosition(x, y);
 }
 

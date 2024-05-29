@@ -5,14 +5,19 @@ float GhostEnemy::ghostDuration = 3.f;
 
 void GhostEnemy::move(sf::Vector2f vector) {
     if (ghostClock.getElapsedTime().asSeconds() < ghostDuration){
-        Entity::setOpacity(225);
-        ghosted = false;
+        if(ghosted){
+            Entity::setOpacity(225);
+            ghosted = false;
+            Entity::setSpeed(originalSpeed * 10);
+        }
 
     }
     else if(ghostClock.getElapsedTime().asSeconds() > ghostDuration && ghostClock.getElapsedTime().asSeconds() < 2 * ghostDuration){
-        Entity::setOpacity(0);
-
-        ghosted = true;
+        if(!ghosted){
+            Entity::setOpacity(0);
+            ghosted = true;
+            Entity::setSpeed(originalSpeed);
+        }
     }
     else{
         ghostClock.restart();
@@ -33,4 +38,11 @@ void GhostEnemy::attack(Alive &target) {
     if(hitbox.intersects(target.getHitbox())){
         target.damage(attackDamage);
     }
+}
+
+GhostEnemy::GhostEnemy(sf::Texture &texture, const float &scaleX, const float &scaleY, const float &posX,
+                       const float &posY, const int &health_, const float &speed_, const int &attackDamage_):
+        Enemy(EnemyType::GHOST, texture, scaleX, scaleY, posX, posY, health_, speed_, attackDamage_),
+        originalSpeed(speed_){
+
 }

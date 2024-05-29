@@ -24,5 +24,10 @@ public:
     TextureNotFound() : GraphicExceptions("Texture has not been found.") {}
 };
 
+class WindowClosed : public GraphicExceptions{
+public:
+    WindowClosed() : GraphicExceptions("The window has been closed."){}
+};
+
 
 #endif //OOP_GRAPHICEXCEPTIONS_HPP

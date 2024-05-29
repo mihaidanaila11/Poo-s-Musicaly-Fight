@@ -63,10 +63,9 @@ void Player::moveSprites(Entity::direction dir, float delta) {
 }
 
 void Player::attack(Enemy* &target) {
-        if (attackRange.intersects(target->getHitbox())) {
             target->damage(weapon.getDamage());
             return;
-        }
+
 }
 
 void Player::damage(const int& damageValue) {
@@ -77,8 +76,6 @@ void Player::damage(const int& damageValue) {
     }
     damageCooldownClock.restart();
 }
-
-bool Player::isAlive() const { return alive; }
 
 const Weapon& Player::getWeapon() const { return weapon; }
 

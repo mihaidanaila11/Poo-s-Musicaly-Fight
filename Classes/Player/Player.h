@@ -38,8 +38,6 @@ public:
 
     void damage(const int& damageValue) override;
 
-    bool isAlive() const;
-
     const Weapon& getWeapon() const;
     int getHealth() const;
 

@@ -21,7 +21,7 @@ public:
 
     sf::RectangleShape getRect() const;
 
-    void setPosition(float& x, float& y);
+    void setPosition(const float& x, const float& y);
 
     void move(sf::Vector2f vector);
 

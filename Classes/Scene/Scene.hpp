@@ -5,6 +5,8 @@
 #include "SFML/Graphics.hpp"
 #include "unordered_map"
 #include "iostream"
+#include "../Alert/Alert.h"
+#include "../Button/Button.h"
 
 const std::string GAME_TITLE = "Poo's Musicaly Fight";
 
@@ -49,6 +51,12 @@ public:
 
     template<typename T>
     void draw(const T &sprite) { window->draw(sprite); }
+
+    void draw(const Alert &alert) { window->draw(alert.getSprite());
+    window->draw(alert.getText());}
+
+    void draw(const Button &button) { window->draw(button.getSprite());
+        window->draw(button.getText());}
 
     void display();
 
