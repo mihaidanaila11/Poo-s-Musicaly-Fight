@@ -62,7 +62,7 @@ void Player::moveSprites(Entity::direction dir, float delta) {
     weapon.move(offset);
 }
 
-void Player::attack(Enemy* &target) {
+void Player::attack(Enemy* target) {
             target->damage(weapon.getDamage());
             return;
 

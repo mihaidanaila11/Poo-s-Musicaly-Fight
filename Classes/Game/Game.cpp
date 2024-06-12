@@ -22,7 +22,7 @@ Game::Game(sf::RenderWindow *&renderWindow,
                sf::Vector2f{60.f, 30.f},
                Weapon::weapon_types::TRUMPET,
                Scene::getTexture("Trumpet"),
-               6.f, 2.f),
+               6.f, 1.f),
         wave{30, std::vector<Enemy *>{
                 BasicEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 2.f, 5}.clone(),
                 GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 10}.clone(),

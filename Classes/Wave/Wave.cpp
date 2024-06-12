@@ -122,3 +122,38 @@ void Wave::deleteEnemy(const int &index) {
 int Wave::getWaveNumber() const{
     return currentWave;
 }
+
+void swap(Wave &wave, Wave &wave1) {
+    using std::swap;
+    swap(wave.currentWave, wave1.currentWave);
+    swap(wave.maxEnmeies, wave1.maxEnmeies);
+    swap(wave.spawnRange, wave1.spawnRange);
+    swap(wave.availableEnemies, wave1.availableEnemies);
+    swap(wave.enemies, wave1.enemies);
+}
+
+Wave &Wave::operator=(Wave other) {
+    swap(*this, other);
+    return *this;
+}
+
+Wave::Wave(const Wave &other) : currentWave(other.currentWave),
+                                maxEnmeies(other.maxEnmeies), spawnRange(other.spawnRange){
+    for(const auto enemy : other.enemies){
+        enemies.emplace_back(enemy->clone());
+    }
+
+    for(const auto& pair : other.availableEnemies){
+        availableEnemies[std::get<0>(pair)] = std::get<1>(pair)->clone();
+    }
+}
+
+Wave::~Wave(){
+    for(const auto enemy : enemies){
+        delete enemy;
+    }
+
+    for(const auto& pair : availableEnemies){
+        delete std::get<1>(pair);
+    }
+}
