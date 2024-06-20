@@ -1,7 +1,7 @@
 #include "MainMenu.h"
 #include "../../Classes/Game/Game.h"
 
-MainMenu::MainMenu(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths,
+MainMenu::MainMenu(sf::RenderWindow* renderWindow, const std::vector<std::string> &image_paths,
                    const std::string& fontPath) :
 Scene(renderWindow, image_paths, fontPath), play(Scene::getTexture("Buton"), Scene::getFont(), "PLAY"),
 quit(Scene::getTexture("Buton"), Scene::getFont(), "QUIT"),
@@ -79,4 +79,13 @@ int MainMenu::start() {
 
     }
     return 0;
+}
+
+MainMenu &MainMenu::getMainMenu(sf::RenderWindow *renderWindow) {
+    static MainMenu mainMenu{renderWindow, std::vector<std::string>{
+            "Textures/Grass_blured.png",
+            "Textures/Buton.png"
+    }, "daydream_3/Daydream.ttf"};
+
+    return mainMenu;
 }

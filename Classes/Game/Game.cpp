@@ -7,7 +7,7 @@
 
 using std::swap;
 
-Game::Game(sf::RenderWindow *&renderWindow,
+Game::Game(sf::RenderWindow *renderWindow,
            const std::vector<std::string> &image_paths,
            const std::string &fontPath) :
         Scene(renderWindow, image_paths, fontPath),
@@ -361,5 +361,24 @@ void Game::alertHandleEvents() {
         }
     }
 }
+
+Game &Game::getGame(sf::RenderWindow*& renderWindow) {
+    static Game game{renderWindow, std::vector<std::string>{
+            "Textures/Weapons/Trumpet.png",
+            "Textures/Dummy.png",
+            "Textures/Enemies/Ghost.png",
+            "Textures/Player_SpriteSheet.png",
+            "Textures/Grass.jpg",
+            "Textures/Buton.png",
+            "Textures/HUD/HealthBar.png",
+            "Textures/HUD/HealthBottom.png",
+            "Textures/Alerts/BigAlert.png"
+    }, "daydream_3/Daydream.ttf"};
+
+    return game;
+}
+
+
+
 
 
