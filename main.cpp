@@ -19,8 +19,8 @@ int main() {
     auto* mainWindow = new sf::RenderWindow{sf::VideoMode{800, 600}, "POO'S MUSICALY FIGHT",
                                 sf::Style::Default};
 
-    int flag;
     try {
+        int flag;
         MainMenu mainMenu{mainWindow, std::vector<std::string>{
                 "Textures/Grass_blured.png",
                 "Textures/Buton.png"
