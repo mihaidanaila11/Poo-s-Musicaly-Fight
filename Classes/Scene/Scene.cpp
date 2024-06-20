@@ -17,9 +17,7 @@ bool Scene::isImageSupported(const std::string &path) {
     std::transform(extension.begin(), extension.end(), extension.begin(),
                    [](unsigned char c){ return std::tolower(c); });
 
-    if(isInVector(supportedExtensions, extension))
-        return true;
-    return false;
+    return isInVector(supportedExtensions, extension);
 }
 
 Scene::Scene(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath):

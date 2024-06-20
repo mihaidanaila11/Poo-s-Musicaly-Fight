@@ -34,7 +34,7 @@ public:
     void move(sf::Vector2f vector) override;
     void moveSprites(Entity::direction dir, float delta);
 
-    void attack(Enemy* &target);
+    void attack(Enemy* target);
 
     void damage(const int& damageValue) override;
 

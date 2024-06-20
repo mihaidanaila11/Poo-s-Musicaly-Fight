@@ -19,25 +19,17 @@ int main() {
     auto* mainWindow = new sf::RenderWindow{sf::VideoMode{800, 600}, "POO'S MUSICALY FIGHT",
                                 sf::Style::Default};
 
-    int flag;
-    try{
+    try {
+        int flag;
         MainMenu mainMenu{mainWindow, std::vector<std::string>{
                 "Textures/Grass_blured.png",
                 "Textures/Buton.png"
         }, "daydream_3/Daydream.ttf"};
 
         flag = mainMenu.start();
-    }
-    catch (inexistent_path& err){
-        std::cout << err.what() << "\n";
-        delete mainWindow;
-        return 0;
-    }
 
 
-
-    if(flag == 1){
-        try{
+        if (flag == 1) {
             Game game{mainWindow, std::vector<std::string>{
                     "Textures/Weapons/Trumpet.png",
                     "Textures/Dummy.png",
@@ -51,12 +43,16 @@ int main() {
             }, "daydream_3/Daydream.ttf"};
             game.start();
         }
-        catch (TextureNotFound& err) {
-            std::cout << err.what() << "\n";
-            delete mainWindow;
-            return 0;
-        }        
-
+    }
+    catch (TextureNotFound& err) {
+        std::cout << err.what() << "\n";
+        delete mainWindow;
+        return 0;
+    }
+    catch (inexistent_path& err){
+        std::cout << err.what() << "\n";
+        delete mainWindow;
+        return 0;
     }
 
     delete mainWindow;
