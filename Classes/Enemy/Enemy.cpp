@@ -11,7 +11,3 @@ std::ostream &operator<<(std::ostream &os, const Enemy &enemy_) {
 
     return os;
 }
-
-Enemy::EnemyType Enemy::getType() const {
-    return type;
-}

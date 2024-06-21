@@ -34,7 +34,6 @@ public:
 
     virtual void attack(Alive& target) = 0;
 
-    EnemyType getType() const;
 };
 
 
