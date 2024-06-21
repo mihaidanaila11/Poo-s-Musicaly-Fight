@@ -112,7 +112,7 @@ TextureManager::~TextureManager() {
     usedTextures.clear();
 }
 
-sf::Texture &TextureManager::removeTexture(sf::Sprite &sprite) {
+void TextureManager::removeTexture(sf::Sprite &sprite) {
     delete usedTextures[&sprite];
     usedTextures.erase(&sprite);
 }

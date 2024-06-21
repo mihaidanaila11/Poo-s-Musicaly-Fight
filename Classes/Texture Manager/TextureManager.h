@@ -38,7 +38,7 @@ public:
 
     static sf::Texture& useTexture(const std::string& texture_name, sf::Sprite& sprite);
     static sf::Texture& useTexture(const sf::Sprite& other, sf::Sprite& sprite);
-    static sf::Texture& removeTexture(sf::Sprite& sprite);
+    static void removeTexture(sf::Sprite& sprite);
 };
 
 
