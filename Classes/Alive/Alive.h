@@ -14,11 +14,11 @@ protected:
     Alive& operator=(const Alive& other) = default;
 
 public:
-    Alive(const int &health_, sf::Texture& texture, const int& frameCount, const sf::Vector2f& hitboxOffset,
+    Alive(const int &health_, const std::string& textureKey, const int& frameCount, const sf::Vector2f& hitboxOffset,
           const float &scaleX, const float &scaleY,
           const float &posX, const float &posY, const float &speed_);
 
-    Alive(const int &health_, sf::Texture& texture,
+    Alive(const int &health_, const std::string& textureKey,
           const float &scaleX, const float &scaleY,
           const float &posX, const float &posY, const float &speed_);
 

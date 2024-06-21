@@ -1,8 +1,9 @@
+#include <iostream>
 #include "Button.h"
+#include "../Texture Manager/TextureManager.h"
 
-Button::Button(const sf::Texture& texture_, const sf::Font &font, const std::string &text_) : texture(texture_){
-
-    sprite.setTexture(texture);
+Button::Button(const std::string& textureKey, const sf::Font &font, const std::string &text_){
+    TextureManager::useTexture(textureKey, sprite);
 
     text.setFont(font);
     text.setCharacterSize(32);
@@ -47,3 +48,7 @@ bool Button::clicked(sf::Event::MouseButtonEvent mouse) {
 }
 
 sf::FloatRect Button::getLocalBounds() const { return sprite.getLocalBounds(); }
+
+Button::~Button() {
+    TextureManager::removeTexture(sprite);
+}

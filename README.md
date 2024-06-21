@@ -74,7 +74,7 @@ O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie
 ## Tema 3
 
 #### Cerințe
-- [ ] 2 șabloane de proiectare (design patterns)
+- [x] 2 șabloane de proiectare (design patterns)
 - [ ] o clasă șablon cu sens; minim **2 instanțieri**
   - [ ] preferabil și o funcție șablon (template) cu sens; minim 2 instanțieri
 <!-- - [ ] o specializare pe funcție/clasă șablon -->

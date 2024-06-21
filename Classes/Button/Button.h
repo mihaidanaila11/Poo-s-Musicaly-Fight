@@ -5,15 +5,15 @@
 #include "SFML/Graphics.hpp"
 
 class Button {
-    sf::Texture texture;
     sf::Sprite sprite;
     sf::Font font;
     sf::Text text;
 
 public:
     Button() = default;
+    ~Button();
 
-    Button(const sf::Texture& texture_, const sf::Font &font, const std::string &text_);
+    Button(const std::string& textureKey, const sf::Font &font, const std::string &text_);
 
 
     friend std::ostream &operator<<(std::ostream &os, const Button &button_);

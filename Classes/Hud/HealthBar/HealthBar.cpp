@@ -1,11 +1,12 @@
 #include "HealthBar.h"
+#include "../../Texture Manager/TextureManager.h"
 
 HealthBar::HealthBar() = default;
 
-HealthBar::HealthBar(const sf::Texture &healthBottomTexture, const sf::Texture &healthTexture, const int maxHealth_)
+HealthBar::HealthBar(const std::string& healthBottomTextureKey, const std::string& healthTextureKey, int maxHealth_)
 : maxHealth(maxHealth_){
-    healthBottom.setTexture(healthBottomTexture);
-    health.setTexture(healthTexture);
+    TextureManager::useTexture(healthBottomTextureKey, healthBottom);
+    TextureManager::useTexture(healthTextureKey, health);
 
     healthBottom.setScale(3.f,3.f);
     health.setScale(3.f,3.f);

@@ -28,7 +28,7 @@ public:
 
     ~Wave();
 
-    Wave(const int &maxEnemies_, const std::vector<Enemy*>& availableEnemies_, const sf::Vector2u& spawnRange_);
+    Wave(const int &maxEnemies_, const sf::Vector2u& spawnRange_);
     [[nodiscard]] bool isCleared() const;
     void next(sf::Vector2f playerPosition);
 

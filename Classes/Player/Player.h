@@ -19,10 +19,10 @@ private:
 
 public:
 
-    Player(const int &health_, sf::Texture& texture, int frameCount,
+    Player(const int &health_, const std::string& textureKey, int frameCount,
            const float &scaleX, const float &scaleY,
            const float &posX, const float &posY, const sf::Vector2f& hitboxOffset, const sf::Vector2f& attackRadius, Weapon::weapon_types weapon_type_,
-           sf::Texture &weapon_texture, const float &speed_, const float& damageCooldown_);
+           const std::string &weapon_textureKey, const float &speed_, const float& damageCooldown_);
 
     Player(const Player& other) = default;
     Player& operator=(const Player& other) = default;

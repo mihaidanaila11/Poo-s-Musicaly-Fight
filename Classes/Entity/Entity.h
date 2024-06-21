@@ -31,7 +31,6 @@ protected:
 
 private:
     sf::IntRect textureRect;
-    sf::Texture& texture;
 
     unsigned int frameSize;
     unsigned int frameCount;
@@ -44,13 +43,13 @@ public:
     // Destructor
     virtual ~Entity();
 
-    Entity(sf::Texture& texture_, const float &scaleX,
+    Entity(const std::string& textureKey, const float &scaleX,
            const float &scaleY, const double &posX, const double &posY);
 
-    Entity(sf::Texture& texture_, const float &scaleX,
+    Entity(const std::string& textureKey, const float &scaleX,
            const float &scaleY, const double &posX, const double &posY, const float& speed_);
 
-    Entity(sf::Texture& texture_, const int& frameCount_, const sf::Vector2f& hitboxOffset, const float& scaleX,
+    Entity(const std::string& textureKey, const int& frameCount_, const sf::Vector2f& hitboxOffset, const float& scaleX,
            const float& scaleY, const float& posX, const float& posY, const float& speed_);
 
     // Operator <<
@@ -66,7 +65,6 @@ public:
     unsigned int getFrameCount() const;
     unsigned int getFrameSize() const;
 
-    sf::Texture &getTexture();
     Hitbox getHitbox() const;
 
     float getSpeed() const;
