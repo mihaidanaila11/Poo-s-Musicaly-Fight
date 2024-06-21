@@ -13,8 +13,6 @@ public:
 
         ENUM_END
     };
-private:
-    EnemyType type;
 
 protected:
 int attackDamage;
@@ -25,7 +23,7 @@ Enemy& operator=(const Enemy& other) = default;
 public:
 
 
-    Enemy(EnemyType type_, const std::string& textureKey, const float &scaleX, const float &scaleY,
+    Enemy(const std::string& textureKey, const float &scaleX, const float &scaleY,
           const float &posX, const float &posY, const int &health_, const float &speed_, const int& attackDamage_);
 
     friend std::ostream &operator<<(std::ostream &os, const Enemy &enemy_);

@@ -42,7 +42,7 @@ void GhostEnemy::attack(Alive &target) {
 
 GhostEnemy::GhostEnemy(const std::string& textureKey, const float &scaleX, const float &scaleY, const float &posX,
                        const float &posY, const int &health_, const float &speed_, const int &attackDamage_):
-        Enemy(EnemyType::GHOST, textureKey, scaleX, scaleY, posX, posY, health_, speed_, attackDamage_),
+        Enemy(textureKey, scaleX, scaleY, posX, posY, health_, speed_, attackDamage_),
         originalSpeed(speed_){
 
 }
