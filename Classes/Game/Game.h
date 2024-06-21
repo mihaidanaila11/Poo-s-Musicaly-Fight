@@ -23,6 +23,8 @@ class Game : Scene{
 
 public:
 
+    ~Game();
+
     Game(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
 
     friend std::ostream &operator<<(std::ostream &os, const Game &game_);

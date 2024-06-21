@@ -78,3 +78,7 @@ int MainMenu::start() {
     }
     return 0;
 }
+
+MainMenu::~MainMenu() {
+    TextureManager::removeTexture(background);
+}

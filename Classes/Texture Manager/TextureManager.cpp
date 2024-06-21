@@ -101,3 +101,18 @@ sf::Texture &TextureManager::useTexture(const sf::Sprite& other, sf::Sprite &spr
 
     return *newTexture;
 }
+
+TextureManager::~TextureManager() {
+    textures.clear();
+
+    for(const auto& pair : usedTextures){
+        delete pair.second;
+    }
+
+    usedTextures.clear();
+}
+
+sf::Texture &TextureManager::removeTexture(sf::Sprite &sprite) {
+    delete usedTextures[&sprite];
+    usedTextures.erase(&sprite);
+}

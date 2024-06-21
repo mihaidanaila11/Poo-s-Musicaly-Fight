@@ -13,6 +13,7 @@ class MainMenu : Scene{
 
     int returnFlag;
 public:
+    ~MainMenu();
     MainMenu(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
 
     int start();

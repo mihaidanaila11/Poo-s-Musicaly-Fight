@@ -31,7 +31,7 @@ Entity &Entity::operator=(const Entity &other) {
 
 // Destructor
 Entity::~Entity() {
-
+    TextureManager::removeTexture(sprite);
     std::cout << "Destructorul a fost apelat!\n";
 }
 

@@ -361,4 +361,8 @@ void Game::alertHandleEvents() {
     }
 }
 
+Game::~Game() {
+    TextureManager::removeTexture(background);
+}
+
 

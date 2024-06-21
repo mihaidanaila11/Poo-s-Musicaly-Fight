@@ -11,6 +11,7 @@ class Button {
 
 public:
     Button() = default;
+    ~Button();
 
     Button(const std::string& textureKey, const sf::Font &font, const std::string &text_);
 

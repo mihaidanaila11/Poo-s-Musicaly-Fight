@@ -48,3 +48,7 @@ bool Button::clicked(sf::Event::MouseButtonEvent mouse) {
 }
 
 sf::FloatRect Button::getLocalBounds() const { return sprite.getLocalBounds(); }
+
+Button::~Button() {
+    TextureManager::removeTexture(sprite);
+}

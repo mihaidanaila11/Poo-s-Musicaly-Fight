@@ -29,6 +29,7 @@ public:
     }
 
     explicit TextureManager(const std::vector<std::string> &image_paths);
+    ~TextureManager();
 
     void loadFromFiles(const std::vector<std::string> &image_paths);
     void loadFromFile(const std::string &image_path);
@@ -37,6 +38,7 @@ public:
 
     static sf::Texture& useTexture(const std::string& texture_name, sf::Sprite& sprite);
     static sf::Texture& useTexture(const sf::Sprite& other, sf::Sprite& sprite);
+    static sf::Texture& removeTexture(sf::Sprite& sprite);
 };
 
 
