@@ -4,6 +4,7 @@
 #include "../../Math/VectorMath.h"
 #include "../../Exceptions/GraphicExceptions.hpp"
 #include "../Enemy/Enemies/GiantEnemy/GiantEnemy.h"
+#include "../Enemy/Enemies/EnemyFactory.h"
 
 using std::swap;
 
@@ -23,11 +24,7 @@ Game::Game(sf::RenderWindow *renderWindow,
                Weapon::weapon_types::TRUMPET,
                "Trumpet",
                6.f, 1.f),
-        wave{30, std::vector<Enemy *>{
-                BasicEnemy{"Dummy", 2.3f, 2.3f, 0, 0, 50, 2.f, 5}.clone(),
-                GhostEnemy{"Ghost", 2.3f, 2.3f, 0, 0, 50, 0.5f, 10}.clone(),
-                GiantEnemy{"Dummy", 2.3f, 2.3f, 0, 0, 150, 0.5f, 25}.clone()
-        }, Scene::getWindowSize()},
+        wave{30, Scene::getWindowSize()},
         attackCooldown(),
         paused(false) {
     std::cout << "game const";

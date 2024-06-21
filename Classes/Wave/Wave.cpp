@@ -3,7 +3,7 @@
 #include "cmath"
 #include "../Scene/Scene.hpp"
 #include "../../Math/VectorMath.h"
-
+#include "../Enemy/Enemies/EnemyFactory.h"
 
 double Wave::waveFunction(double x) {
     //return -(cos(3.14 * x) - 1) / 2;
@@ -101,10 +101,10 @@ void Wave::next(sf::Vector2f playerPosition) {
     initWave(playerPosition);
 }
 
-Wave::Wave(const int &maxEnemies_, const std::vector<Enemy *>& availableEnemies_, const sf::Vector2u &spawnRange_):
+Wave::Wave(const int &maxEnemies_, const sf::Vector2u &spawnRange_):
 currentWave(0), maxEnmeies(maxEnemies_), spawnRange(spawnRange_){
     std::cout << "constructor wave";
-    for(const auto& enemy : availableEnemies_){
+    for(const auto& enemy : EnemyFactory::getAvailableEnemies()){
         availableEnemies[enemy->getType()] = enemy;
         std::cout << "X";
     }
