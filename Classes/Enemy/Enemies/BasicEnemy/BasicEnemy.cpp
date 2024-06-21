@@ -12,11 +12,12 @@ void BasicEnemy::attack(Alive& target) {
 }
 
 Enemy* BasicEnemy::clone() {
+    std::cout << "Clonez inamic\n";
     return new BasicEnemy(*this);
 }
 
-BasicEnemy::BasicEnemy(sf::Texture& texture, const float &scaleX, const float &scaleY,
+BasicEnemy::BasicEnemy(const std::string& textureKey, const float &scaleX, const float &scaleY,
                        const float &posX, const float &posY, const int &health_, const float &speed_, const int& attackDamage_):
-        Enemy(EnemyType::BASIC, texture, scaleX, scaleY, posX, posY, health_, speed_, attackDamage_){
+        Enemy(EnemyType::BASIC, textureKey, scaleX, scaleY, posX, posY, health_, speed_, attackDamage_){
 
 }

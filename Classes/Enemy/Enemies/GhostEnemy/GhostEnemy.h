@@ -10,7 +10,7 @@ class GhostEnemy : public Enemy{
     static float ghostDuration;
     float originalSpeed;
 public:
-    GhostEnemy(sf::Texture& texture, const float &scaleX, const float &scaleY,
+    GhostEnemy(const std::string& textureKey, const float &scaleX, const float &scaleY,
                const float &posX, const float &posY, const int &health_, const float &speed_, const int& attackDamage_);
 
     void move(sf::Vector2f vector) override;

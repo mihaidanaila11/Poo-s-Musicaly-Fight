@@ -22,35 +22,9 @@ bool Scene::isImageSupported(const std::string &path) {
 
 Scene::Scene(sf::RenderWindow* renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath):
         window(renderWindow),
-        event(), font() {
-    std::cout << "constructor scene\n";
+        event(),
+        textureManager(image_paths), font() {
     window->setVerticalSyncEnabled(true);
-    for (const auto &path: image_paths) {
-        if(!exists(path)){
-            throw inexistent_path();
-        }
-
-        if(!isImageSupported(path)) {
-            throw unsupported_image();
-        }
-
-        std::string name;
-        for(int i = path.size() - 5; i>=0; i--){
-            if(path[i] == '/'){
-                break;
-            }
-            name += path[i];
-        }
-        std::reverse(name.begin(), name.end());
-
-        sf::Image image;
-        image.loadFromFile(path);
-
-        sf::Texture texture;
-        texture.loadFromImage(image);
-
-        textures[name] = texture;
-    }
 
     if(!font.loadFromFile(fontPath)){
         std::cout << "Error loading font from file";
@@ -68,13 +42,6 @@ std::ostream &operator<<(std::ostream &os, const Scene &scene_) {
 
     return os;
 }
-
-sf::Texture& Scene::getTexture(const std::string& key) {
-    if(textures.find(key) == textures.end())
-        throw TextureNotFound();
-    return textures[key];
-}
-
 
 bool Scene::isOpen() { return window->isOpen(); }
 

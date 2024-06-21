@@ -15,6 +15,7 @@ class MainMenu : Scene{
 
     MainMenu(sf::RenderWindow* renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
 public:
+    ~MainMenu();
     MainMenu(const MainMenu&) = delete;
     MainMenu& operator=(const MainMenu&) = delete;
 

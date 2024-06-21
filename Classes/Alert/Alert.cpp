@@ -3,11 +3,12 @@
 //
 
 #include "Alert.h"
+#include "../Texture Manager/TextureManager.h"
 
 #include <utility>
 
-Alert::Alert(const std::string& message_, const sf::Texture &texture, const sf::Font& font, const sf::Vector2u& windowSize){
-    frame.setTexture(texture);
+Alert::Alert(const std::string& message_, const std::string &textureKey, const sf::Font& font, const sf::Vector2u& windowSize){
+    TextureManager::useTexture(textureKey, frame);
 
     message = sf::Text(message_, font, 60);
 

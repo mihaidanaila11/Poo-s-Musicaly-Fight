@@ -147,6 +147,8 @@ add_executable(${PROJECT_NAME}
         Classes/Wave/Waves.cpp
         Classes/Enemy/Enemies/GiantEnemy/GiantEnemy.cpp
         Classes/Enemy/Enemies/GiantEnemy/GiantEnemy.h
+        "Classes/Texture Manager/TextureManager.cpp"
+        "Classes/Texture Manager/TextureManager.h"
 )
 
 ###############################################################################

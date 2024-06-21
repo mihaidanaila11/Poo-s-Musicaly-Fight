@@ -7,6 +7,7 @@
 #include "iostream"
 #include "../Alert/Alert.h"
 #include "../Button/Button.h"
+#include "../Texture Manager/TextureManager.h"
 
 const std::string GAME_TITLE = "Poo's Musicaly Fight";
 
@@ -16,6 +17,7 @@ class Scene {
     sf::Event event;
 
     std::unordered_map<std::string, sf::Texture> textures;
+    TextureManager textureManager;
     sf::Font font;
 
 protected:
@@ -41,7 +43,6 @@ public:
     static bool exists(const std::string& path);
     static bool isImageSupported(const std::string& path);
 
-    sf::Texture& getTexture(const std::string& key);
     const sf::Font& getFont() const;
 
     bool isOpen();

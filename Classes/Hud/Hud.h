@@ -10,8 +10,8 @@ class Hud {
 
 public:
     Hud();
-    Hud(const sf::Texture& healthBottomTexture, const sf::Texture& healthBarTexture, const sf::Vector2u& windowSize,
-        int maxHealth);
+    Hud(const std::string& healthBottomTextureKey, const std::string& healthBarTextureKey, const sf::Vector2u& windowSize,
+        const int maxHealth);
 
     std::vector<sf::Sprite> getSprites() const {
         std::vector<sf::Sprite> sprites;

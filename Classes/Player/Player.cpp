@@ -1,11 +1,11 @@
 #include "Player.h"
 
-Player::Player(const int &health_, sf::Texture& texture, const int frameCount,
+Player::Player(const int &health_, const std::string& textureKey, const int frameCount,
        const float &scaleX, const float &scaleY,
        const float &posX, const float &posY, const sf::Vector2f& hitboxOffset, const sf::Vector2f& attackRadius, const Weapon::weapon_types weapon_type_,
-       sf::Texture &weapon_texture, const float &speed_, const float& damageCooldown_) :Alive(health_, texture, frameCount, hitboxOffset,
+       const std::string &weapon_textureKey, const float &speed_, const float& damageCooldown_) :Alive(health_, textureKey, frameCount, hitboxOffset,
                                                                  3.f, 3.f, posX, posY, speed_),
-        weapon(weapon_type_, weapon_texture,
+        weapon(weapon_type_, weapon_textureKey,
                2.3f, 2.3f,
                posX + 0.50 * sprite.getTexture()->getSize().x * scaleX,
                posY + 0.40 * sprite.getTexture()->getSize().y * scaleY),
