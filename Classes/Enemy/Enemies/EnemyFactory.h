@@ -11,7 +11,6 @@ class EnemyFactory {
     static Enemy* giantEnemy();
 public:
     static Enemy* buildEnemy(Enemy::EnemyType enemyType);
-    static std::vector<Enemy*> getAvailableEnemies();
 };
 
 

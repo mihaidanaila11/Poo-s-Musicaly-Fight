@@ -9,7 +9,9 @@ public:
     enum EnemyType{
         BASIC,
         GHOST,
-        GIANT
+        GIANT,
+
+        ENUM_END
     };
 private:
     EnemyType type;

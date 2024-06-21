@@ -41,9 +41,9 @@ Enemy *EnemyFactory::buildEnemy(Enemy::EnemyType enemyType) {
 
         case Enemy::GIANT:
             return giantEnemy();
-    }
-}
 
-std::vector<Enemy *> EnemyFactory::getAvailableEnemies() {
-    return std::vector<Enemy*>{basicEnemy(), ghostEnemy(), giantEnemy()};
+
+        default:
+            break;
+    }
 }
