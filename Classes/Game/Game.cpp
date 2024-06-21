@@ -14,19 +14,19 @@ Game::Game(sf::RenderWindow *&renderWindow,
 
 
         player(100,
-               Scene::getTexture("Player_SpriteSheet"),
+               "Player_SpriteSheet",
                2,
                2.3f, 2.3f,
                0, 0,
                sf::Vector2f{-25.f, -15.f},
                sf::Vector2f{60.f, 30.f},
                Weapon::weapon_types::TRUMPET,
-               Scene::getTexture("Trumpet"),
+               "Trumpet",
                6.f, 1.f),
         wave{30, std::vector<Enemy *>{
-                BasicEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 50, 2.f, 5}.clone(),
-                GhostEnemy{Scene::getTexture("Ghost"), 2.3f, 2.3f, 0, 0, 50, 0.5f, 10}.clone(),
-                GiantEnemy{Scene::getTexture("Dummy"), 2.3f, 2.3f, 0, 0, 150, 0.5f, 25}.clone()
+                BasicEnemy{"Dummy", 2.3f, 2.3f, 0, 0, 50, 2.f, 5}.clone(),
+                GhostEnemy{"Ghost", 2.3f, 2.3f, 0, 0, 50, 0.5f, 10}.clone(),
+                GiantEnemy{"Dummy", 2.3f, 2.3f, 0, 0, 150, 0.5f, 25}.clone()
         }, Scene::getWindowSize()},
         attackCooldown(),
         paused(false) {
@@ -35,12 +35,11 @@ Game::Game(sf::RenderWindow *&renderWindow,
     sf::IntRect rect{0, 0, (int) Scene::getWindowSize().x,
                      (int) Scene::getWindowSize().y};
 
-    Scene::getTexture("Grass").setRepeated(true);
 
-    background.setTexture(Scene::getTexture("Grass"));
+    TextureManager::useTexture("Grass", background).setRepeated(true);
     background.setTextureRect(rect);
 
-    hud = Hud{Scene::getTexture("HealthBottom"), Scene::getTexture("HealthBar"), Scene::getWindowSize(), 100};
+    hud = Hud{"HealthBottom", "HealthBar", Scene::getWindowSize(), 100};
 }
 
 sf::Vector2f Game::normalize(const sf::Vector2f &source) {
@@ -119,10 +118,10 @@ void Game::renderHud() {
 }
 
 void Game::pause() {
-    Button resume(Scene::getTexture("Buton"), Scene::getFont(), "Resume");
+    Button resume("Buton", Scene::getFont(), "Resume");
     resume.setPosition(sf::Vector2f{250, 100});
 
-    Button quit(Scene::getTexture("Buton"), Scene::getFont(), "Quit");
+    Button quit("Buton", Scene::getFont(), "Quit");
     quit.setPosition(sf::Vector2f{250, 400});
 
     while (paused) {
@@ -268,7 +267,7 @@ void Game::end() {
     gameover.setFont(Scene::getFont());
     gameover.setString("GameOver!");
 
-    Button quit(Scene::getTexture("Buton"), Scene::getFont(), "Quit");
+    Button quit("Buton", Scene::getFont(), "Quit");
     quit.setPosition(sf::Vector2f{250, 200});
 
 
@@ -310,7 +309,7 @@ void Game::wait(float secounds) {
 
 void Game::renderAlert(const std::string &message) {
     Alert alert{message,
-                Scene::getTexture("BigAlert"), Scene::getFont(), Scene::getWindowSize()};
+                "BigAlert", Scene::getFont(), Scene::getWindowSize()};
     float velocity = 7.f;
 
     while (alert.getPosition().y <

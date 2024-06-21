@@ -1,12 +1,14 @@
 #include "Entity.h"
+#include "../Texture Manager/TextureManager.h"
 
 //Constructor de copiere
 //Ignor warning pt constructor de copiere pt ca face parte din cerinta
 //NOLINTNEXTLINE
 Entity::Entity(const Entity &other) : hitbox(other.hitbox), textureRect(other.textureRect),
-                                      texture(other.texture), frameSize(other.frameSize), frameCount(other.frameCount), speed(other.speed) {
+frameSize(other.frameSize), frameCount(other.frameCount), speed(other.speed) {
     std::cout << "copiere\n";
-    sprite.setTexture(texture);
+
+    TextureManager::useTexture(other.sprite, sprite);
     sprite.setTextureRect(textureRect);
     sprite.setScale(other.sprite.getScale().x, other.sprite.getScale().y);
     sprite.setPosition(static_cast<float>(other.sprite.getPosition().x),
@@ -18,7 +20,6 @@ Entity::Entity(const Entity &other) : hitbox(other.hitbox), textureRect(other.te
 //NOLINTNEXTLINE
 Entity &Entity::operator=(const Entity &other) {
     textureRect = other.textureRect;
-    texture = other.texture;
     sprite = other.sprite;
     hitbox = other.hitbox;
     frameSize = other.frameSize;
@@ -30,18 +31,20 @@ Entity &Entity::operator=(const Entity &other) {
 
 // Destructor
 Entity::~Entity() {
+
     std::cout << "Destructorul a fost apelat!\n";
 }
 
-Entity::Entity(sf::Texture& texture_, const float &scaleX,
+Entity::Entity(const std::string& textureKey, const float &scaleX,
 const float &scaleY, const double &posX, const double &posY) :
-textureRect(), texture(texture_), frameCount(1), speed(0) {
+textureRect(), frameCount(1), speed(0) {
 
-    frameSize = texture.getSize().x;
-    textureRect.width = (int)texture.getSize().x;
-    textureRect.height = (int)texture.getSize().y;
+    TextureManager::useTexture(textureKey, sprite);
 
-    sprite.setTexture(texture);
+    frameSize = sprite.getTexture()->getSize().x;
+    textureRect.width = (int)sprite.getTexture()->getSize().x;
+    textureRect.height = (int)sprite.getTexture()->getSize().y;
+
     sprite.setTextureRect(textureRect);
     sprite.setScale(scaleX, scaleY);
     sprite.setPosition(static_cast<float>(posX), static_cast<float>(posY));
@@ -50,14 +53,16 @@ textureRect(), texture(texture_), frameCount(1), speed(0) {
 
 }
 
-Entity::Entity(sf::Texture& texture_, const float &scaleX,
+Entity::Entity(const std::string& textureKey, const float &scaleX,
        const float &scaleY, const double &posX, const double &posY, const float& speed_) :
-        textureRect(), texture(texture_), frameCount(1), speed(speed_){
-    frameSize = texture.getSize().x;
-    textureRect.width = (int)texture.getSize().x;
-    textureRect.height = (int)texture.getSize().y;
+        textureRect(), frameCount(1), speed(speed_){
 
-    sprite.setTexture(texture);
+    TextureManager::useTexture(textureKey, sprite);
+
+    frameSize = sprite.getTexture()->getSize().x;
+    textureRect.width = (int)sprite.getTexture()->getSize().x;
+    textureRect.height = (int)sprite.getTexture()->getSize().y;
+
     sprite.setTextureRect(textureRect);
     sprite.setScale(scaleX, scaleY);
     sprite.setPosition(static_cast<float>(posX), static_cast<float>(posY));
@@ -65,13 +70,17 @@ Entity::Entity(sf::Texture& texture_, const float &scaleX,
     hitbox = Hitbox{sprite};
 }
 
-Entity::Entity(sf::Texture& texture_, const int& frameCount_, const sf::Vector2f& hitboxOffset, const float& scaleX,
-const float& scaleY, const float& posX, const float& posY, const float& speed_) : texture(texture_),
-frameCount(frameCount_), speed(speed_) {
+Entity::Entity(const std::string& textureKey, const int& frameCount_, const sf::Vector2f& hitboxOffset, const float& scaleX,
+const float& scaleY, const float& posX, const float& posY, const float& speed_) :frameCount(frameCount_),
+speed(speed_) {
 
-    textureRect = sf::IntRect(0, 0, texture.getSize().x / frameCount, texture.getSize().y);
-    frameSize = texture.getSize().x / frameCount;
-    sprite.setTexture(texture);
+
+    TextureManager::useTexture(textureKey, sprite);
+
+    textureRect = sf::IntRect(0, 0, sprite.getTexture()->getSize().x / frameCount,
+                              sprite.getTexture()->getSize().y);
+    frameSize = sprite.getTexture()->getSize().x / frameCount;
+
     sprite.setTextureRect(textureRect);
     sprite.setScale(scaleX, scaleY);
     sprite.setPosition(posX, posY);
@@ -81,7 +90,7 @@ frameCount(frameCount_), speed(speed_) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Entity &entity) {
-    os << "Texture Size: " << entity.texture.getSize().x << "/" << entity.texture.getSize().y << ", Frame Count: "
+    os << "Texture Size: " << entity.sprite.getTexture()->getSize().x << "/" << entity.sprite.getTexture()->getSize().y << ", Frame Count: "
        << entity.frameCount << "\n";
 
     return os;
@@ -106,7 +115,6 @@ const sf::Sprite& Entity::getSprite() const { return sprite; }
 unsigned int Entity::getFrameCount() const {return frameCount; }
 unsigned int Entity::getFrameSize() const { return frameSize; }
 
-sf::Texture& Entity::getTexture() { return texture; }
 Hitbox Entity::getHitbox() const { return hitbox; }
 
 float Entity::getSpeed() const { return speed; }

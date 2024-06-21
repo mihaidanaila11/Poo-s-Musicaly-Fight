@@ -13,7 +13,7 @@ class HealthBar {
 
 public:
     HealthBar();
-    HealthBar(const sf::Texture& healthBottomTexture, const sf::Texture& healthTexture, int maxHealth_);
+    HealthBar(const std::string& healthBottomTextureKey, const std::string& healthTextureKey, int maxHealth_);
 
     std::vector<sf::Sprite> getSprites() const;
 

@@ -1,8 +1,8 @@
 #include "Weapon.h"
 
-Weapon::Weapon(weapon_types weapon_type_, sf::Texture &texture, const float &scaleX, const float &scaleY,
+Weapon::Weapon(weapon_types weapon_type_, const std::string &textureKey, const float &scaleX, const float &scaleY,
 const double &posX, const double &posY) :
-Entity(texture, scaleX, scaleY, posX, posY), weapon_type(weapon_type_) {
+Entity(textureKey, scaleX, scaleY, posX, posY), weapon_type(weapon_type_) {
     switch (weapon_type) {
         case TRUMPET:
             damage = 50;

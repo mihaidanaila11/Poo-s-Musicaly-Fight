@@ -14,7 +14,7 @@ private:
     int damage;
 
 public:
-    Weapon(weapon_types weapon_type_, sf::Texture &texture, const float &scaleX, const float &scaleY,
+    Weapon(weapon_types weapon_type_, const std::string &textureKey, const float &scaleX, const float &scaleY,
            const double &posX, const double &posY);
 
     Weapon(const Weapon& other) = default;
