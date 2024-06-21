@@ -7,6 +7,7 @@
 #include "iostream"
 #include "../Alert/Alert.h"
 #include "../Button/Button.h"
+#include "../Texture Manager/TextureManager.h"
 
 const std::string GAME_TITLE = "Poo's Musicaly Fight";
 
@@ -16,17 +17,17 @@ class Scene {
     sf::Event event;
 
     std::unordered_map<std::string, sf::Texture> textures;
+    TextureManager textureManager;
     sf::Font font;
 
+protected:
+    Scene(sf::RenderWindow* renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
 
 public:
-    Scene(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
-
-    Scene& operator=(const Scene& other);
+    Scene& operator=(const Scene&) = delete;
+    Scene(const Scene&) = delete;
 
     virtual ~Scene();
-
-    Scene(const Scene &other);
 
     friend std::ostream &operator<<(std::ostream &os, const Scene &scene_);
 
@@ -42,7 +43,6 @@ public:
     static bool exists(const std::string& path);
     static bool isImageSupported(const std::string& path);
 
-    sf::Texture& getTexture(const std::string& key);
     const sf::Font& getFont() const;
 
     bool isOpen();

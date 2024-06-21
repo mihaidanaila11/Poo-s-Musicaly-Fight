@@ -23,13 +23,18 @@ class Game : Scene{
 
 public:
 
-    Game(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
+    ~Game();
+    Game(const Game&) = delete;
+    Game& operator=(const Game&) = delete;
+
+    static Game& getGame(sf::RenderWindow*& renderWindow);
 
     friend std::ostream &operator<<(std::ostream &os, const Game &game_);
 
     void start() { gameProc(); }
 
 private:
+    Game(sf::RenderWindow* renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
 
     static sf::Vector2f normalize(const sf::Vector2f &source);
 

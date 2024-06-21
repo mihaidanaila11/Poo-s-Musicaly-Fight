@@ -15,7 +15,7 @@ class Alert {
     sf::Sprite frame;
 
 public:
-    Alert(const std::string& message_, const sf::Texture &texture, const sf::Font& font, const sf::Vector2u& windowSize);
+    Alert(const std::string& message_, const std::string &textureKey, const sf::Font& font, const sf::Vector2u& windowSize);
 
     sf::Vector2f getPosition() const;
     void move(sf::Vector2f vector);
