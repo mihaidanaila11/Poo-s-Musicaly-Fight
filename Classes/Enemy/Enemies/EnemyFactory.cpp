@@ -42,8 +42,7 @@ Enemy *EnemyFactory::buildEnemy(Enemy::EnemyType enemyType) {
         case Enemy::GIANT:
             return giantEnemy();
 
-
         default:
-            break;
+            throw std::runtime_error("Invalid type");
     }
 }
