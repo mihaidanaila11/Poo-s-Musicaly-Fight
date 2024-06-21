@@ -50,9 +50,6 @@ std::ostream &operator<<(std::ostream &os, const Scene &scene_) {
     return os;
 }
 
-TextureManager& Scene::getTextureManager() { return  textureManager; }
-
-
 bool Scene::isOpen() { return window->isOpen(); }
 
 void Scene::clear() { window->clear(); }

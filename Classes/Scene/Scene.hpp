@@ -44,8 +44,6 @@ public:
     static bool exists(const std::string& path);
     static bool isImageSupported(const std::string& path);
 
-    TextureManager& getTextureManager();
-
     const sf::Font& getFont() const;
 
     bool isOpen();
