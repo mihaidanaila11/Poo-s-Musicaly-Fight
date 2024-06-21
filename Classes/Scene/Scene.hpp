@@ -20,15 +20,14 @@ class Scene {
     TextureManager textureManager;
     sf::Font font;
 
+protected:
+    Scene(sf::RenderWindow* renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
 
 public:
-    Scene(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
-
-    Scene& operator=(const Scene& other);
+    Scene& operator=(const Scene&) = delete;
+    Scene(const Scene&) = delete;
 
     virtual ~Scene();
-
-    Scene(const Scene &other);
 
     friend std::ostream &operator<<(std::ostream &os, const Scene &scene_);
 

@@ -12,9 +12,14 @@ class MainMenu : Scene{
     Button quit;
 
     int returnFlag;
+
+    MainMenu(sf::RenderWindow* renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
 public:
     ~MainMenu();
-    MainMenu(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths, const std::string& fontPath);
+    MainMenu(const MainMenu&) = delete;
+    MainMenu& operator=(const MainMenu&) = delete;
+
+    static MainMenu& getMainMenu(sf::RenderWindow* renderWindow);
 
     int start();
 

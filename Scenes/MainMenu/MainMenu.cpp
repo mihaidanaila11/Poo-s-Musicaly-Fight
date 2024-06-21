@@ -1,12 +1,11 @@
 #include "MainMenu.h"
 #include "../../Classes/Game/Game.h"
 
-MainMenu::MainMenu(sf::RenderWindow*& renderWindow, const std::vector<std::string> &image_paths,
+MainMenu::MainMenu(sf::RenderWindow* renderWindow, const std::vector<std::string> &image_paths,
                    const std::string& fontPath) :
 Scene(renderWindow, image_paths, fontPath), play("Buton", Scene::getFont(), "PLAY"),
 quit("Buton", Scene::getFont(), "QUIT"),
 returnFlag(-1){
-    std::cout << "start const\n";
     sf::IntRect rect{0, 0, (int) Scene::getWindowSize().x,
                      (int) Scene::getWindowSize().y};
 
@@ -81,4 +80,14 @@ int MainMenu::start() {
 
 MainMenu::~MainMenu() {
     TextureManager::removeTexture(background);
+}
+
+
+MainMenu &MainMenu::getMainMenu(sf::RenderWindow *renderWindow) {
+    static MainMenu mainMenu{renderWindow, std::vector<std::string>{
+            "Textures/Grass_blured.png",
+            "Textures/Buton.png"
+    }, "daydream_3/Daydream.ttf"};
+
+    return mainMenu;
 }

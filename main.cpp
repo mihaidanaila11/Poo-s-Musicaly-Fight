@@ -21,26 +21,13 @@ int main() {
 
     try {
         int flag;
-        MainMenu mainMenu{mainWindow, std::vector<std::string>{
-                "Textures/Grass_blured.png",
-                "Textures/Buton.png"
-        }, "daydream_3/Daydream.ttf"};
+        auto& mainMenu = MainMenu::getMainMenu(mainWindow);
 
         flag = mainMenu.start();
 
 
         if (flag == 1) {
-            Game game{mainWindow, std::vector<std::string>{
-                    "Textures/Weapons/Trumpet.png",
-                    "Textures/Dummy.png",
-                    "Textures/Enemies/Ghost.png",
-                    "Textures/Player_SpriteSheet.png",
-                    "Textures/Grass.jpg",
-                    "Textures/Buton.png",
-                    "Textures/HUD/HealthBar.png",
-                    "Textures/HUD/HealthBottom.png",
-                    "Textures/Alerts/BigAlert.png"
-            }, "daydream_3/Daydream.ttf"};
+            auto& game = Game::getGame(mainWindow);
             game.start();
         }
     }
