@@ -9,7 +9,7 @@
 #include "../Hud/Hud.h"
 #include "../Wave/Wave.h"
 
-class Game : Scene{
+class Game : public Scene{
     sf::Clock deltaTime;
     Player player;
     Wave wave;

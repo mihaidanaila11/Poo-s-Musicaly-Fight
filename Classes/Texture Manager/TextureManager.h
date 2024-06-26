@@ -8,8 +8,9 @@
 #include <memory>
 #include <unordered_set>
 #include "SFML/Graphics.hpp"
+#include "../Singleton CRTP/Singleton.h"
 
-class TextureManager {
+class TextureManager  : public Singleton<TextureManager>{
     static std::unordered_map<std::string, sf::Texture> textures;
 
     static std::unordered_map<sf::Sprite*, sf::Texture*> usedTextures;
