@@ -151,6 +151,7 @@ add_executable(${PROJECT_NAME}
         "Classes/Texture Manager/TextureManager.h"
         Classes/Enemy/Enemies/EnemyFactory.cpp
         Classes/Enemy/Enemies/EnemyFactory.h
+        "Classes/Singleton CRTP/Singleton.h"
 )
 
 ###############################################################################
