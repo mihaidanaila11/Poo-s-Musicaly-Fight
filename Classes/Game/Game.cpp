@@ -99,12 +99,12 @@ void Game::renderSprites() {
 
     Scene::draw(player.getSprite());
     Scene::draw(player.getWeapon().getSprite());
-    Scene::draw(player.getAttackRange().getRect());
-    Scene::draw(player.getHitbox().getRect());
+    // Scene::draw(player.getAttackRange().getRect());
+    // Scene::draw(player.getHitbox().getRect());
 
     for (auto &enemy: enemies) {
         Scene::draw(enemy->getSprite());
-        Scene::draw(enemy->getHitbox().getRect());
+        // Scene::draw(enemy->getHitbox().getRect());
     }
 }
 
