@@ -5,6 +5,8 @@ Poo's Musically Fight is a game that combines my two main passions: games and mu
 
 In this game, your mission is to fight against waves of enemies, with each hit contributing to the creation of a song. The more enemies you defeat, the more complex and interesting your musical composition becomes.
 
+![Gameplay](https://i.ibb.co/NgG8mBY8/2025-03-07-12-19-55-online-video-cutter-com.gif)
+
 ## Features
 - **C++ Development**: The game is developed in C++, showcasing proficiency in a widely-used programming language.
 - **Object-Oriented Programming**: Utilizes OOP concepts to create a modular and maintainable codebase.
