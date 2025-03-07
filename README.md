@@ -1,12 +1,19 @@
-# POO's Musicaly Fight!
+# POO's Musically Fight!
 
-### Descriere
-POO's Musicaly Fight este un joc de tip wave fighting ce folosește muzica drept armă principală!
-Jucătorul trebuie să elimine valuri de inamici care devin din ce în ce mai periculoși!
-Cat de departe poti ajunge in aceasta batalie?
+## Overview
+Poo's Musically Fight is a game that combines my two main passions: games and music. Built in C++ using Object-Oriented Programming (OOP) concepts, this project is designed to showcase my skills in game development and software engineering.
 
-### Controale:
-- **Movement**: `W`,`A`,`S`,`D` (`SUS`, `STANGA`, `JOS`, `DREAPTA`)
+In this game, your mission is to fight against waves of enemies, with each hit contributing to the creation of a song. The more enemies you defeat, the more complex and interesting your musical composition becomes.
+
+## Features
+- **C++ Development**: The game is developed in C++, showcasing proficiency in a widely-used programming language.
+- **Object-Oriented Programming**: Utilizes OOP concepts to create a modular and maintainable codebase.
+- **Interactive Gameplay**: Players engage in combat with waves of enemies, with each action contributing to a dynamic soundtrack.
+- **Music Integration**: Every hit and action in the game contributes to an evolving musical piece, making each playthrough unique.
+
+
+## KeyBinds:
+- **Movement**: `W`,`A`,`S`,`D` (`UP`, `LEFT`, `DOWN`, `RIGHT`)
 - **Attack** *(can't spam it)*: `SPACE`
 - **Pause**: `ESC`
 
@@ -15,72 +22,65 @@ Aveți voie cu cod generat de modele de limbaj la care nu ați contribuit semnif
 Codul generat pus "ca să fie"/pe care nu îl înțelegeți se punctează doar pentru puncte bonus, doar în contextul
 în care oferă funcționalități ajutătoare și doar dacă are sens.
 
-O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie de apeluri proxy către cod generat.
+O cerință nu se consideră îndeplinită dacă este realizată doar ca o serie de apeluri proxy către cod generate.
 
-### Cerințe modele de limbaj la nivel de semestru
-- [ ] minim o funcționalitate majoritar doar cu LLM
-- [ ] minim 2-3 funcționalități ~50% voi, ~50% LLM-ul
-- [ ] minim 2-3 funcționalități suficient de complicate pe care un LLM nu le poate implementa
+### Sprint 0
 
-### Tema 0
+- [X] Project name (can be changed later)
+- [X] Short description of the chosen theme, what you aim to implement
 
-- [X] Nume proiect (poate fi schimbat ulterior)
-- [X] Scurtă descriere a temei alese, ce v-ați propus să implementați
+## Sprint 1
 
-## Tema 1
-
-#### Cerințe
-- [X] definirea a minim **3-4 clase** folosind compunere cu clasele definite de voi
-- [X] constructori de inițializare
-- [X] pentru o aceeași (singură) clasă: constructor de copiere, `operator=` de copiere, destructor
-<!-- - [ ] pentru o altă clasă: constructor de mutare, `operator=` de mutare, destructor -->
-<!-- - [ ] pentru o altă clasă: toate cele 5 funcții membru speciale -->
-- [X] `operator<<` pentru toate clasele pentru afișare (std::ostream)
-- [X] cât mai multe `const` (unde este cazul)
-- [X] implementarea a minim 3 funcții membru publice pentru funcționalități specifice temei alese, dintre care cel puțin 1-2 funcții mai complexe
-  - nu doar citiri/afișări sau adăugat/șters elemente într-un/dintr-un vector
-<!-- - [ ] scenariu de utilizare a claselor definite:
-  - crearea de obiecte și apelarea tuturor funcțiilor membru publice în main
-  - vor fi adăugate în fișierul `tastatura.txt` DOAR exemple de date de intrare de la tastatură (dacă există); dacă aveți nevoie de date din fișiere, creați alte fișiere separat
+#### Tasks:
+- [X] Define at least **3-4 classes** using composition with the classes you have defined
+- [X] Initialization constructors
+- [X] For the same (single) class: copy constructor, copy `operator=`, destructor
+<!-- - [ ] For another class: move constructor, move `operator=`, destructor -->
+<!-- - [ ] For another class: all five special member functions -->
+- [X] `operator<<` for all classes for display (std::ostream)
+- [X] As many `const` as possible (where applicable)
+- [X] Implement at least 3 public member functions for functionalities specific to the chosen theme, including at least 1-2 more complex functions
+  - Not just read/display or add/remove elements in/from a vector
+<!-- - [ ] Usage scenario of the defined classes:
+  - Create objects and call all public member functions in main
+  - Only examples of keyboard input data will be added to the `tastatura.txt` file (if applicable); if you need data from files, create separate files
 -->
-- [X] tag de `git`: de exemplu `v0.1`
-- [X] serviciu de integrare continuă (CI); exemplu: GitHub Actions
+- [X] `git` tag: for example `v0.1`
+- [X] Continuous integration (CI) service; example: GitHub Actions
 
-## Tema 2
+## Sprint 2
 
-#### Cerințe
-- [x] separarea codului din clase în `.h` (sau `.hpp`) și `.cpp`
-- [x] moșteniri:
-  - minim o clasă de bază și **3 clase derivate**
-  - ierarhia trebuie să fie cu bază proprie, nu derivată dintr-o clasă predefinită
-  - [x] clasă cu atribut de tip pointer la o clasă de bază cu derivate
-  - [x] funcții virtuale (pure) apelate prin pointeri de bază din clasa care conține atributul de tip pointer de bază
-    - minim o funcție virtuală va fi **specifică temei** (e.g. nu simple citiri/afișări)
-    - constructori virtuali (clone): sunt necesari, dar nu se consideră funcții specifice temei
-  - [x] apelarea constructorului din clasa de bază din constructori din derivate
-  - [ ] smart pointers (recomandat, opțional)
-  - [ ] `dynamic_cast`/`std::dynamic_pointer_cast` pentru downcast cu sens
-- [x] suprascris cc/op= pentru copieri/atribuiri corecte, copy and swap
-- [x] excepții
-  - [x] ierarhie proprie cu baza `std::exception` sau derivată din `std::exception`; minim **3** clase pentru erori specifice
-  - [x] utilizare cu sens: de exemplu, `throw` în constructor (sau funcție care întoarce un obiect), `try`/`catch` în `main`
-- [x] funcții și atribute `static`
+#### Tasks:
+- [x] Separate code from classes into `.h` (or `.hpp`) and `.cpp`
+- [x] Inheritance:
+  - At least one base class and **3 derived classes**
+  - The hierarchy must have its own base, not derived from a predefined class
+  - [x] Class with an attribute of type pointer to a base class with derivatives
+  - [x] Virtual (pure) functions called through base pointers from the class containing the base pointer attribute
+    - At least one virtual function must be **specific to the theme** (e.g., not just simple read/display)
+    - Virtual constructors (clone): necessary but not considered specific functions for the theme
+  - [x] Call the base class constructor from the derived constructors
+  - [ ] Smart pointers (recommended, optional)
+  - [ ] `dynamic_cast`/`std::dynamic_pointer_cast` for meaningful downcasting
+- [x] Override cc/op= for correct copying/assigning, copy and swap
+- [x] Exceptions
+  - [x] Own hierarchy based on `std::exception` or derived from `std::exception`; at least **3** classes for specific errors
+  - [x] Meaningful usage: for example, `throw` in the constructor (or function returning an object), `try`/`catch` in `main`
+- [x] Static functions and attributes
 - [x] STL
-- [x] cât mai multe `const`
-- [x] la sfârșit: commit separat cu adăugarea unei noi clase derivate fără a modifica restul codului, **pe lângă cele 3 derivate deja adăugate**
-  - noua derivată nu poate fi una existentă care a fost ștearsă și adăugată din nou
-- [x] tag de `git`: de exemplu `v0.2`
+- [x] As many `const` as possible
+- [x] At the end: separate commit with the addition of a new derived class without modifying the rest of the code, **besides the already added 3 derived classes**
+  - The new derived class cannot be an existing one that was deleted and added again
+- [x] `git` tag: for example `v0.2`
 
-## Tema 3
+## Sprint 3
 
-#### Cerințe
-- [x] 2 șabloane de proiectare (design patterns)
-- [x] o clasă șablon cu sens; minim **2 instanțieri**
-  - [x] preferabil și o funcție șablon (template) cu sens; minim 2 instanțieri
-<!-- - [ ] o specializare pe funcție/clasă șablon -->
-- [ ] tag de `git`: de exemplu `v0.3` sau `v1.0`
-
-## Resurse
-
+#### Tasks:
+- [x] 2 design patterns
+- [x] A meaningful template class; at least **2 instantiations**
+  - [x] Preferably also a meaningful template function; at least 2 instantiations
+<!-- - [ ] A specialization on template function/class -->
+- [ ] `git` tag: for example `v0.3` or `v1.0`
+      
+## Resources
 - [SFML](https://github.com/SFML/SFML/tree/2.6.1) (Zlib)
-- adăugați trimiteri către resursele externe care v-au ajutat sau pe care le-ați folosit
