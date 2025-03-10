@@ -1,6 +1,7 @@
 # POO's Musically Fight!
 
 ## Overview
+**Used Tehnologies: C++, CMake, SFML**
 Poo's Musically Fight is a game that combines my two main passions: games and music. Built in C++ using Object-Oriented Programming (OOP) concepts, this project is designed to showcase my skills in game development and software engineering.
 
 In this game, your mission is to fight against waves of enemies, with each hit contributing to the creation of a song. The more enemies you defeat, the more complex and interesting your musical composition becomes.
