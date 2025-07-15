@@ -9,7 +9,7 @@ Hitbox::Hitbox(const sf::Sprite &sprite, const unsigned int &frameCount, const u
     rect.setPosition(sf::Vector2f{sprite.getPosition().x + (float)frameSize / 2 * sprite.getScale().x - rect.getSize().x / 2,
                                   sprite.getPosition().y + (float)sprite.getTexture()->getSize().y / 2 * sprite.getScale().y - rect.getSize().y / 2});
     rect.setFillColor(sf::Color::Transparent);
-    rect.setOutlineColor(sf::Color::Red);
+    rect.setOutlineColor(sf::Color(255,0,0,127));
     rect.setOutlineThickness(3.f);
 }
 

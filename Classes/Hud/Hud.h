@@ -4,14 +4,15 @@
 #pragma once
 #include "SFML/Graphics.hpp"
 #include "HealthBar/HealthBar.h"
+#include "Score/Score.h"
 
 class Hud {
     HealthBar healthBar;
-
+    Score score;
 public:
     Hud();
     Hud(const std::string& healthBottomTextureKey, const std::string& healthBarTextureKey, const sf::Vector2u& windowSize,
-        const int maxHealth);
+        int maxHealth, const sf::Font& font);
 
     std::vector<sf::Sprite> getSprites() const {
         std::vector<sf::Sprite> sprites;
@@ -19,10 +20,12 @@ public:
             sprites.push_back(sprite);
         }
 
+
         return sprites;
     };
 
     void updateHealth(int healthValue);
+    Score& getScore();
 };
 
 

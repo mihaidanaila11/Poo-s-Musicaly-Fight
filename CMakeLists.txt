@@ -152,6 +152,8 @@ add_executable(${PROJECT_NAME}
         Classes/Enemy/Enemies/EnemyFactory.cpp
         Classes/Enemy/Enemies/EnemyFactory.h
         "Classes/Singleton CRTP/Singleton.h"
+        Classes/Hud/Score/Score.cpp
+        Classes/Hud/Score/Score.h
 )
 
 ###############################################################################

@@ -25,7 +25,6 @@ int main() {
 
         flag = mainMenu.start();
 
-
         if (flag == 1) {
             auto& game = Game::getGame(mainWindow);
             game.start();

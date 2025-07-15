@@ -89,5 +89,7 @@ MainMenu &MainMenu::getMainMenu(sf::RenderWindow *renderWindow) {
             "Textures/Buton.png"
     }, "daydream_3/Daydream.ttf"};
 
+    std::cout << "test1\n";
+
     return mainMenu;
 }

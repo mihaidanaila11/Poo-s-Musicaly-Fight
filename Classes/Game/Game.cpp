@@ -36,7 +36,7 @@ Game::Game(sf::RenderWindow *renderWindow,
     TextureManager::useTexture("Grass", background).setRepeated(true);
     background.setTextureRect(rect);
 
-    hud = Hud{"HealthBottom", "HealthBar", Scene::getWindowSize(), 100};
+    hud = Hud{"HealthBottom", "HealthBar", Scene::getWindowSize(), 100, getFont()};
 }
 
 sf::Vector2f Game::normalize(const sf::Vector2f &source) {
@@ -76,6 +76,7 @@ void Game::handleEvents() {
                                 player.attack(enemies[i]);
                                 if (!enemies[i]->isAlive()) {
                                     wave.deleteEnemy(i);
+                                    hud.getScore().increase();
                                 }
                                 std::cout << "Attacked!\n";
                                 break;
@@ -99,7 +100,7 @@ void Game::renderSprites() {
 
     Scene::draw(player.getSprite());
     Scene::draw(player.getWeapon().getSprite());
-    // Scene::draw(player.getAttackRange().getRect());
+    Scene::draw(player.getAttackRange().getRect());
     // Scene::draw(player.getHitbox().getRect());
 
     for (auto &enemy: enemies) {
@@ -112,6 +113,8 @@ void Game::renderHud() {
     for (const auto &sprite: hud.getSprites()) {
         Scene::draw(sprite);
     }
+
+    draw(hud.getScore().getScoreText());
 }
 
 void Game::pause() {
